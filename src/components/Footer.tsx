@@ -137,14 +137,37 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Section - Copyright & Credits */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600">
-          <p>&copy; {new Date().getFullYear()} Natlaupa. All rights reserved.</p>
-          <p>
-            Powered by{' '}
-            <span className="text-gold font-medium">The Elites</span>
-          </p>
+      {/* Powered By Section */}
+      <div className="bg-deepBlue py-6">
+        <div className="max-w-6xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center gap-4"
+          >
+            {/* Gold Line with Diamond */}
+            <div className="flex items-center gap-4 w-full max-w-xs">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gold/30 to-gold/50" />
+              <div className="w-1.5 h-1.5 bg-gold rotate-45" />
+              <div className="flex-1 h-px bg-gradient-to-l from-transparent via-gold/30 to-gold/50" />
+            </div>
+
+            {/* Text */}
+            <a
+              href="https://theelitessolutions.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-2 text-white/40 hover:text-white/60 transition-colors duration-300"
+            >
+              <span className="text-[10px] uppercase tracking-[0.3em]">
+                Powered by
+              </span>
+              <span className="font-serif text-xs tracking-[0.15em] text-gold/70 group-hover:text-gold transition-colors duration-300">
+                THE ELITES SOLUTIONS
+              </span>
+            </a>
+          </motion.div>
         </div>
       </div>
     </footer>
