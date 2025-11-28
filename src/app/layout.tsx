@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
@@ -18,9 +18,70 @@ const playfair = Playfair_Display({
   style: ['normal', 'italic'],
 });
 
+const BASE_URL = 'https://www.natlaupa.com';
+
 export const metadata: Metadata = {
-  title: 'Natlaupa | Redefining the Art of Stay',
-  description: 'Experience luxury accommodations worldwide with personalized AI-powered travel concierge.',
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'Natlaupa | Redefining the Art of Stay',
+    template: '%s | Natlaupa',
+  },
+  description: 'Experience luxury accommodations worldwide with personalized AI-powered travel concierge. Discover handpicked hotels, resorts, and unique stays curated for discerning travelers.',
+  keywords: ['luxury hotels', 'travel', 'boutique hotels', 'luxury accommodations', 'travel concierge', 'premium stays', 'vacation', 'resorts'],
+  authors: [{ name: 'Natlaupa' }],
+  creator: 'Natlaupa',
+  publisher: 'Natlaupa',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: BASE_URL,
+    siteName: 'Natlaupa',
+    title: 'Natlaupa | Redefining the Art of Stay',
+    description: 'Experience luxury accommodations worldwide with personalized AI-powered travel concierge.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Natlaupa - Luxury Travel & Accommodations',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Natlaupa | Redefining the Art of Stay',
+    description: 'Experience luxury accommodations worldwide with personalized AI-powered travel concierge.',
+    images: ['/og-image.jpg'],
+  },
+  alternates: {
+    canonical: BASE_URL,
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/manifest.json',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#000000',
 };
 
 export default function RootLayout({
