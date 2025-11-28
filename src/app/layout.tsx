@@ -36,6 +36,15 @@ export default function RootLayout({
           <div className="flex-grow">
             {children}
           </div>
+          {/* Powered by The Elites Banner */}
+          <div className="w-full bg-midnight border-t border-white/10 py-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <p className="text-sm text-slate-400">
+                Powered by{' '}
+                <span className="text-gold font-semibold tracking-wide">The Elites</span>
+              </p>
+            </div>
+          </div>
         </SmoothScrollProvider>
       </body>
     </html>
