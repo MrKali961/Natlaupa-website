@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Sun, Snowflake, Leaf, Flower2, TrendingUp, Clock, MapPin, Star, ArrowRight, RefreshCw } from 'lucide-react';
+import { Sparkles, Sun, Snowflake, Leaf, Flower2, TrendingUp, Clock, MapPin, Star, ArrowRight, RefreshCw, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { TRENDING_HOTELS, DESTINATIONS } from '@/lib/constants';
+import { getUserMoodPreferences, getRecentViews, hasConsent } from '@/services/trackingService';
 
 type RecommendationType = 'seasonal' | 'trending' | 'for-you';
 
@@ -13,6 +13,26 @@ interface SeasonData {
   icon: React.ElementType;
   color: string;
   description: string;
+}
+
+interface Hotel {
+  id: string;
+  name: string;
+  location: string;
+  country: string;
+  category: string;
+  rating: number;
+  imageUrl: string;
+  personalizedReason?: string;
+  moodScore?: number;
+}
+
+interface Destination {
+  id: string;
+  name: string;
+  country: string;
+  imageUrl: string;
+  temp: number;
 }
 
 const SEASONS: Record<string, SeasonData> = {
@@ -33,11 +53,81 @@ const getCurrentSeason = (): string => {
 const ConciergeRecommendations: React.FC = () => {
   const [activeTab, setActiveTab] = useState<RecommendationType>('seasonal');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
 
   const currentSeason = getCurrentSeason();
   const seasonData = SEASONS[currentSeason];
   const SeasonIcon = seasonData.icon;
+
+  // Fetch recommendations based on tab
+  const fetchRecommendations = useCallback(async (type: RecommendationType, forceRefresh = false) => {
+    setIsLoading(true);
+
+    try {
+      // Build query params
+      const params = new URLSearchParams({
+        type,
+        limit: '4'
+      });
+
+      // Add user preferences for "for-you" tab
+      if (type === 'for-you' && hasConsent('personalization')) {
+        const preferences = getUserMoodPreferences();
+        const recentViews = getRecentViews(10);
+
+        if (preferences.length > 0) {
+          params.append('preferences', JSON.stringify(preferences));
+        }
+        if (recentViews.length > 0) {
+          params.append('recentViews', JSON.stringify(recentViews.map(v => v.hotelId)));
+        }
+      }
+
+      // Add cache buster for refresh
+      if (forceRefresh) {
+        params.append('_t', Date.now().toString());
+      }
+
+      const response = await fetch(`/api/recommendations?${params.toString()}`);
+      const data = await response.json();
+
+      if (data.hotels) {
+        setHotels(data.hotels.slice(0, 2));
+      }
+
+      // Fetch destinations separately (from database)
+      const destResponse = await fetch('/api/recommendations?type=trending&limit=2');
+      const destData = await destResponse.json();
+      if (destData.hotels) {
+        // Create destination-like objects from hotel countries
+        const uniqueDestinations: Destination[] = [];
+        const seenCountries = new Set<string>();
+
+        destData.hotels.forEach((hotel: Hotel) => {
+          if (!seenCountries.has(hotel.country) && uniqueDestinations.length < 2) {
+            seenCountries.add(hotel.country);
+            uniqueDestinations.push({
+              id: hotel.id,
+              name: hotel.location.split(',')[0],
+              country: hotel.country,
+              imageUrl: hotel.imageUrl,
+              temp: Math.floor(Math.random() * 20) + 15 // Random temp 15-35
+            });
+          }
+        });
+
+        setDestinations(uniqueDestinations);
+      }
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  }, []);
 
   // Update time
   useEffect(() => {
@@ -45,9 +135,14 @@ const ConciergeRecommendations: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Fetch on mount and tab change
+  useEffect(() => {
+    fetchRecommendations(activeTab);
+  }, [activeTab, fetchRecommendations]);
+
   const handleRefresh = () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1500);
+    fetchRecommendations(activeTab, true);
   };
 
   const getGreeting = () => {
@@ -63,36 +158,31 @@ const ConciergeRecommendations: React.FC = () => {
     { id: 'for-you' as const, label: 'For You', icon: Sparkles }
   ];
 
-  // Get recommendations based on tab
-  const getRecommendations = () => {
+  const getTabContent = () => {
     switch (activeTab) {
       case 'seasonal':
         return {
-          hotels: TRENDING_HOTELS.slice(0, 2),
-          destinations: DESTINATIONS.slice(0, 2),
           title: `Perfect for ${seasonData.name}`,
           subtitle: seasonData.description
         };
       case 'trending':
         return {
-          hotels: TRENDING_HOTELS.filter(h => h.isTrending).slice(0, 2),
-          destinations: DESTINATIONS.slice(1, 3),
-          title: 'What\'s Hot Right Now',
+          title: "What's Hot Right Now",
           subtitle: 'Most searched destinations this week'
         };
       case 'for-you':
         return {
-          hotels: TRENDING_HOTELS.slice(1, 3),
-          destinations: DESTINATIONS.slice(0, 2),
           title: 'Curated Just For You',
-          subtitle: 'Based on luxury preferences'
+          subtitle: hasConsent('personalization')
+            ? 'Based on your preferences'
+            : 'Enable personalization for tailored recommendations'
         };
       default:
-        return { hotels: [], destinations: [], title: '', subtitle: '' };
+        return { title: '', subtitle: '' };
     }
   };
 
-  const recommendations = getRecommendations();
+  const tabContent = getTabContent();
 
   return (
     <section className="py-24 bg-midnight relative overflow-hidden">
@@ -134,7 +224,7 @@ const ConciergeRecommendations: React.FC = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             onClick={handleRefresh}
-            disabled={isRefreshing}
+            disabled={isRefreshing || isLoading}
             className="mt-6 md:mt-0 flex items-center gap-2 text-gold hover:text-white transition-colors disabled:opacity-50"
           >
             <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
@@ -178,144 +268,167 @@ const ConciergeRecommendations: React.FC = () => {
           >
             {/* Section Title */}
             <div className="mb-8">
-              <h3 className="font-serif text-2xl text-white mb-2">{recommendations.title}</h3>
-              <p className="text-slate-400">{recommendations.subtitle}</p>
+              <h3 className="font-serif text-2xl text-white mb-2">{tabContent.title}</h3>
+              <p className="text-slate-400">{tabContent.subtitle}</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Featured Hotels */}
-              <div className="lg:col-span-2 space-y-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Star className="text-gold" size={16} />
-                  <span className="text-gold text-xs uppercase tracking-widest">Featured Properties</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {recommendations.hotels.map((hotel, index) => (
-                    <motion.div
-                      key={hotel.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Link href={`/offer/${hotel.id}`} className="group block">
-                        <div className="relative h-72 overflow-hidden rounded-sm mb-4 border border-white/10 group-hover:border-gold/30 transition-colors">
-                          <img
-                            src={hotel.imageUrl}
-                            alt={hotel.name}
-                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-transparent to-transparent" />
-
-                          {/* Rating Badge */}
-                          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
-                            <Star size={12} className="text-gold fill-gold" />
-                            <span className="text-deepBlue text-xs font-bold">{hotel.rating}</span>
-                          </div>
-
-                          {/* Season Badge */}
-                          {activeTab === 'seasonal' && (
-                            <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 rounded-full flex items-center gap-1">
-                              <SeasonIcon size={12} />
-                              <span className="text-xs font-bold uppercase">{seasonData.name} Pick</span>
-                            </div>
-                          )}
-
-                          {/* Content */}
-                          <div className="absolute bottom-0 left-0 right-0 p-6">
-                            <p className="text-gold text-xs uppercase tracking-widest mb-2">{hotel.category}</p>
-                            <h4 className="font-serif text-2xl text-white group-hover:text-gold transition-colors mb-2">
-                              {hotel.name}
-                            </h4>
-                            <div className="flex items-center gap-2 text-slate-300 text-sm">
-                              <MapPin size={14} />
-                              {hotel.location}
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="w-10 h-10 text-gold animate-spin" />
               </div>
-
-              {/* Destinations Sidebar */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <MapPin className="text-gold" size={16} />
-                  <span className="text-gold text-xs uppercase tracking-widest">Trending Destinations</span>
-                </div>
-
-                <div className="space-y-4">
-                  {recommendations.destinations.map((dest, index) => (
-                    <motion.div
-                      key={dest.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.15 }}
-                    >
-                      <Link href={`/countries/${dest.country.toLowerCase().replace(/\s+/g, '-')}`} className="group block">
-                        <div className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-sm hover:border-gold/30 transition-all">
-                          <div className="w-20 h-20 flex-shrink-0 overflow-hidden rounded-sm">
-                            <img
-                              src={dest.imageUrl}
-                              alt={dest.name}
-                              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h5 className="font-serif text-lg text-white group-hover:text-gold transition-colors truncate">
-                              {dest.name}
-                            </h5>
-                            <p className="text-slate-400 text-sm mb-2">{dest.country}</p>
-                            <div className="flex items-center gap-3 text-xs text-slate-500">
-                              <span className="flex items-center gap-1">
-                                <Clock size={12} />
-                                Now: {dest.temp}°C
-                              </span>
-                            </div>
-                          </div>
-                          <ArrowRight size={16} className="text-slate-500 group-hover:text-gold transition-colors self-center" />
-                        </div>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Quick Stats Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="p-6 bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 rounded-sm"
-                >
-                  <h5 className="font-serif text-lg text-white mb-4">This Week's Insights</h5>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 text-sm">Searches up</span>
-                      <span className="text-gold font-bold">+34%</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 text-sm">Top search</span>
-                      <span className="text-white text-sm">Maldives</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 text-sm">Avg. stay</span>
-                      <span className="text-white text-sm">5 nights</span>
-                    </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Featured Hotels */}
+                <div className="lg:col-span-2 space-y-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Star className="text-gold" size={16} />
+                    <span className="text-gold text-xs uppercase tracking-widest">Featured Properties</span>
                   </div>
-                </motion.div>
 
-                {/* View All CTA */}
-                <Link
-                  href="/offers"
-                  className="flex items-center justify-center gap-2 w-full py-4 border border-gold text-gold hover:bg-gold hover:text-deepBlue transition-all duration-300 rounded-sm font-bold uppercase tracking-widest text-sm"
-                >
-                  <span>View All Recommendations</span>
-                  <ArrowRight size={16} />
-                </Link>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {hotels.map((hotel, index) => (
+                      <motion.div
+                        key={hotel.id}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Link href={`/offer/${hotel.id}`} className="group block">
+                          <div className="relative h-72 overflow-hidden rounded-sm mb-4 border border-white/10 group-hover:border-gold/30 transition-colors">
+                            <img
+                              src={hotel.imageUrl}
+                              alt={hotel.name}
+                              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-transparent to-transparent" />
+
+                            {/* Rating Badge */}
+                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
+                              <Star size={12} className="text-gold fill-gold" />
+                              <span className="text-deepBlue text-xs font-bold">{hotel.rating}</span>
+                            </div>
+
+                            {/* Tab-specific Badge */}
+                            {activeTab === 'seasonal' && (
+                              <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 rounded-full flex items-center gap-1">
+                                <SeasonIcon size={12} />
+                                <span className="text-xs font-bold uppercase">{seasonData.name} Pick</span>
+                              </div>
+                            )}
+                            {activeTab === 'trending' && (
+                              <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 rounded-full flex items-center gap-1">
+                                <TrendingUp size={12} />
+                                <span className="text-xs font-bold uppercase">Trending</span>
+                              </div>
+                            )}
+                            {activeTab === 'for-you' && hotel.moodScore && (
+                              <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 rounded-full flex items-center gap-1">
+                                <Sparkles size={12} />
+                                <span className="text-xs font-bold uppercase">{Math.round(hotel.moodScore * 100)}% Match</span>
+                              </div>
+                            )}
+
+                            {/* Content */}
+                            <div className="absolute bottom-0 left-0 right-0 p-6">
+                              <p className="text-gold text-xs uppercase tracking-widest mb-2">{hotel.category}</p>
+                              <h4 className="font-serif text-2xl text-white group-hover:text-gold transition-colors mb-2">
+                                {hotel.name}
+                              </h4>
+                              <div className="flex items-center gap-2 text-slate-300 text-sm">
+                                <MapPin size={14} />
+                                {hotel.location}
+                              </div>
+                              {hotel.personalizedReason && (
+                                <p className="text-gold/80 text-xs mt-2 line-clamp-2">
+                                  {hotel.personalizedReason}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Destinations Sidebar */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <MapPin className="text-gold" size={16} />
+                    <span className="text-gold text-xs uppercase tracking-widest">Trending Destinations</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    {destinations.map((dest, index) => (
+                      <motion.div
+                        key={dest.id}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.15 }}
+                      >
+                        <Link href={`/countries/${dest.country.toLowerCase().replace(/\s+/g, '-')}`} className="group block">
+                          <div className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-sm hover:border-gold/30 transition-all">
+                            <div className="w-20 h-20 flex-shrink-0 overflow-hidden rounded-sm">
+                              <img
+                                src={dest.imageUrl}
+                                alt={dest.name}
+                                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h5 className="font-serif text-lg text-white group-hover:text-gold transition-colors truncate">
+                                {dest.name}
+                              </h5>
+                              <p className="text-slate-400 text-sm mb-2">{dest.country}</p>
+                              <div className="flex items-center gap-3 text-xs text-slate-500">
+                                <span className="flex items-center gap-1">
+                                  <Clock size={12} />
+                                  Now: {dest.temp}°C
+                                </span>
+                              </div>
+                            </div>
+                            <ArrowRight size={16} className="text-slate-500 group-hover:text-gold transition-colors self-center" />
+                          </div>
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Quick Stats Card */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="p-6 bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 rounded-sm"
+                  >
+                    <h5 className="font-serif text-lg text-white mb-4">This Week's Insights</h5>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400 text-sm">Searches up</span>
+                        <span className="text-gold font-bold">+34%</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400 text-sm">Top search</span>
+                        <span className="text-white text-sm">Maldives</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-400 text-sm">Avg. stay</span>
+                        <span className="text-white text-sm">5 nights</span>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* View All CTA */}
+                  <Link
+                    href="/offers"
+                    className="flex items-center justify-center gap-2 w-full py-4 border border-gold text-gold hover:bg-gold hover:text-deepBlue transition-all duration-300 rounded-sm font-bold uppercase tracking-widest text-sm"
+                  >
+                    <span>View All Recommendations</span>
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
               </div>
-            </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

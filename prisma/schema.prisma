@@ -32,6 +32,7 @@ model Hotel {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   reviews       Review[]
+  moodTags      HotelMoodTag[]
 
   @@index([country])
   @@index([category])
@@ -139,4 +140,94 @@ model AngelApplication {
 
   @@index([status])
   @@index([createdAt])
+}
+
+// ============================================
+// MOOD MATCHING & RECOMMENDATIONS
+// ============================================
+
+// Mood types for categorizing hotels
+model MoodTag {
+  id        String         @id @default(cuid())
+  name      String         @unique // romantic, adventure, cultural, wellness
+  label     String         // Display label: "Romantic Escape", "Adventure Seeker", etc.
+  icon      String?        // Icon name for UI
+  color     String?        // Color gradient for UI
+  hotels    HotelMoodTag[]
+}
+
+// Many-to-many relationship between hotels and moods
+model HotelMoodTag {
+  id        String   @id @default(cuid())
+  hotelId   String
+  moodId    String
+  weight    Float    @default(1.0) // 0-1 relevance score
+  hotel     Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  mood      MoodTag  @relation(fields: [moodId], references: [id], onDelete: Cascade)
+
+  @@unique([hotelId, moodId])
+  @@index([hotelId])
+  @@index([moodId])
+}
+
+// ============================================
+// USER TRACKING & PREFERENCES
+// ============================================
+
+// User accounts (optional - for hybrid tracking)
+model User {
+  id            String           @id @default(cuid())
+  email         String?          @unique
+  name          String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  preferences   UserPreference[]
+  interactions  UserInteraction[]
+}
+
+// User mood preferences (learned from interactions)
+model UserPreference {
+  id        String   @id @default(cuid())
+  userId    String
+  moodId    String
+  score     Float    @default(0) // preference strength (0-1)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, moodId])
+  @@index([userId])
+}
+
+// User interaction tracking
+model UserInteraction {
+  id          String   @id @default(cuid())
+  userId      String?  // null for anonymous users
+  sessionId   String   // for anonymous tracking
+  hotelId     String
+  action      String   // view, click, inquiry, bookmark
+  moodContext String?  // mood selected when interaction happened
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([sessionId])
+  @@index([hotelId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// ============================================
+// COOKIE CONSENT & PRIVACY
+// ============================================
+
+// Cookie consent tracking
+model CookieConsent {
+  id              String   @id @default(cuid())
+  sessionId       String   @unique
+  essential       Boolean  @default(true)  // always true
+  analytics       Boolean  @default(false)
+  personalization Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([sessionId])
 }

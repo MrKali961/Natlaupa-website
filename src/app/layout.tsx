@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
+import CookieConsentBanner from '@/components/CookieConsentBanner';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -98,6 +99,7 @@ export default function RootLayout({
           <div className="flex-grow">
             {children}
           </div>
+          <CookieConsentBanner />
         </SmoothScrollProvider>
       </body>
     </html>

@@ -69,6 +69,48 @@ const CATEGORIES = [
   'Wellness Sanctuaries',
 ];
 
+// Mood tags for hotel categorization
+const MOOD_TAGS = [
+  {
+    name: 'romantic',
+    label: 'Romantic Escape',
+    icon: 'Heart',
+    color: 'from-rose-500/20 to-pink-500/20'
+  },
+  {
+    name: 'adventure',
+    label: 'Adventure Seeker',
+    icon: 'Compass',
+    color: 'from-orange-500/20 to-amber-500/20'
+  },
+  {
+    name: 'cultural',
+    label: 'Cultural Immersion',
+    icon: 'Palette',
+    color: 'from-purple-500/20 to-indigo-500/20'
+  },
+  {
+    name: 'wellness',
+    label: 'Pure Relaxation',
+    icon: 'Leaf',
+    color: 'from-emerald-500/20 to-teal-500/20'
+  }
+];
+
+// Category to mood mapping with weights
+const CATEGORY_MOOD_WEIGHTS: Record<string, Record<string, number>> = {
+  'Eco-Lodges': { adventure: 0.9, wellness: 0.7, cultural: 0.3 },
+  'Urban Suites': { cultural: 0.9, romantic: 0.5, adventure: 0.3 },
+  'Historic Castles': { cultural: 0.95, romantic: 0.8, adventure: 0.4 },
+  'Overwater Villas': { romantic: 0.95, wellness: 0.8, adventure: 0.4 },
+  'Mountain Retreats': { adventure: 0.9, wellness: 0.7, romantic: 0.5 },
+  'Desert Oasis': { adventure: 0.8, wellness: 0.7, romantic: 0.6, cultural: 0.5 },
+  'Safari Lodges': { adventure: 0.95, cultural: 0.6, romantic: 0.4 },
+  'Ski Chalets': { adventure: 0.9, romantic: 0.7, wellness: 0.5 },
+  'Tropical Resorts': { romantic: 0.9, wellness: 0.8, adventure: 0.5 },
+  'Wellness Sanctuaries': { wellness: 0.95, romantic: 0.6, cultural: 0.3 },
+};
+
 const AMENITIES = [
   'Private Pool', 'Butler Service', 'Spa', 'Fitness Center', 'Private Beach',
   'Infinity Pool', 'Rooftop Bar', 'Fine Dining', 'Wine Cellar', 'Private Chef',
@@ -476,6 +518,12 @@ async function main() {
 
   // Clear existing data
   console.log('Clearing existing data...');
+  await prisma.hotelMoodTag.deleteMany();
+  await prisma.moodTag.deleteMany();
+  await prisma.userInteraction.deleteMany();
+  await prisma.userPreference.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.cookieConsent.deleteMany();
   await prisma.review.deleteMany();
   await prisma.hotel.deleteMany();
   await prisma.destination.deleteMany();
@@ -519,10 +567,46 @@ async function main() {
   }
   console.log(`Created ${hotelsData.length} hotels with ${reviewCount} reviews`);
 
-  // Get actual hotel IDs for inquiries
-  const allHotels = await prisma.hotel.findMany({ select: { id: true, name: true } });
+  // Seed mood tags
+  console.log('Seeding mood tags...');
+  const moodTagsCreated = await Promise.all(
+    MOOD_TAGS.map(tag =>
+      prisma.moodTag.create({ data: tag })
+    )
+  );
+  const moodTagMap = new Map(moodTagsCreated.map(t => [t.name, t.id]));
+  console.log(`Created ${moodTagsCreated.length} mood tags`);
+
+  // Get actual hotel IDs for inquiries and mood tag assignments
+  const allHotels = await prisma.hotel.findMany({ select: { id: true, name: true, category: true } });
   const hotelIds = allHotels.map(h => h.id);
   const hotelNamesMap = new Map(allHotels.map(h => [h.id, h.name]));
+
+  // Assign mood tags to hotels based on category
+  console.log('Assigning mood tags to hotels...');
+  let moodTagAssignments = 0;
+
+  for (const hotel of allHotels) {
+    const categoryWeights = CATEGORY_MOOD_WEIGHTS[hotel.category] || { romantic: 0.5, adventure: 0.5, cultural: 0.5, wellness: 0.5 };
+
+    for (const [moodName, weight] of Object.entries(categoryWeights)) {
+      const moodId = moodTagMap.get(moodName);
+      if (moodId && weight > 0) {
+        // Add some randomness to weights
+        const adjustedWeight = Math.min(1, Math.max(0.1, weight + (Math.random() - 0.5) * 0.2));
+
+        await prisma.hotelMoodTag.create({
+          data: {
+            hotelId: hotel.id,
+            moodId,
+            weight: parseFloat(adjustedWeight.toFixed(2))
+          }
+        });
+        moodTagAssignments++;
+      }
+    }
+  }
+  console.log(`Created ${moodTagAssignments} hotel mood tag assignments`);
 
   // Seed contact submissions
   console.log('Seeding contact submissions...');
@@ -559,6 +643,8 @@ async function main() {
   console.log(`  Destinations:  ${await prisma.destination.count()}`);
   console.log(`  Hotels:        ${await prisma.hotel.count()}`);
   console.log(`  Reviews:       ${await prisma.review.count()}`);
+  console.log(`  Mood Tags:     ${await prisma.moodTag.count()}`);
+  console.log(`  Hotel Moods:   ${await prisma.hotelMoodTag.count()}`);
   console.log(`  Contacts:      ${await prisma.contactSubmission.count()}`);
   console.log(`  Inquiries:     ${await prisma.hotelInquiry.count()}`);
   console.log(`  Partnerships:  ${await prisma.partnershipApplication.count()}`);

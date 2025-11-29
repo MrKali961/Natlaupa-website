@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Compass, Palette, Leaf, Sparkles, ArrowRight, Check } from 'lucide-react';
+import { Heart, Compass, Palette, Leaf, Sparkles, ArrowRight, Check, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { TRENDING_HOTELS } from '@/lib/constants';
+import { trackMoodSelection, hasConsent } from '@/services/trackingService';
 
 interface Mood {
   id: string;
@@ -15,6 +15,15 @@ interface Mood {
   keywords: string[];
   description: string;
   imageUrl: string;
+}
+
+interface Hotel {
+  id: string;
+  name: string;
+  location: string;
+  imageUrl: string;
+  moodScore?: number;
+  personalizedReason?: string;
 }
 
 const MOODS: Mood[] = [
@@ -63,15 +72,68 @@ const MOODS: Mood[] = [
 const MoodMatcher: React.FC = () => {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [hoveredMood, setHoveredMood] = useState<string | null>(null);
+  const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [defaultHotels, setDefaultHotels] = useState<Hotel[]>([]);
 
   const activeMood = MOODS.find(m => m.id === selectedMood);
 
-  // Filter hotels based on mood (in real app, this would use actual tags)
-  const getFilteredHotels = () => {
-    if (!selectedMood) return TRENDING_HOTELS.slice(0, 3);
-    // Simulate filtering - in production, hotels would have mood tags
-    return TRENDING_HOTELS.slice(0, 3);
+  // Fetch default trending hotels on mount
+  useEffect(() => {
+    const fetchDefaultHotels = async () => {
+      try {
+        const response = await fetch('/api/recommendations?type=trending&limit=3');
+        const data = await response.json();
+        if (data.hotels) {
+          setDefaultHotels(data.hotels);
+        }
+      } catch (error) {
+        console.error('Error fetching default hotels:', error);
+      }
+    };
+
+    fetchDefaultHotels();
+  }, []);
+
+  // Fetch hotels when mood is selected
+  const fetchMoodHotels = useCallback(async (moodId: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/recommendations?type=mood&mood=${moodId}&limit=3`);
+      const data = await response.json();
+      if (data.hotels) {
+        setHotels(data.hotels);
+      }
+    } catch (error) {
+      console.error('Error fetching mood hotels:', error);
+      setHotels([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Handle mood selection
+  const handleMoodSelect = async (moodId: string) => {
+    const isDeselecting = selectedMood === moodId;
+
+    if (isDeselecting) {
+      setSelectedMood(null);
+      setHotels([]);
+    } else {
+      setSelectedMood(moodId);
+
+      // Track mood selection if consent is given
+      if (hasConsent('personalization')) {
+        await trackMoodSelection(moodId);
+      }
+
+      // Fetch hotels for this mood
+      await fetchMoodHotels(moodId);
+    }
   };
+
+  // Get hotels to display
+  const displayHotels = selectedMood && hotels.length > 0 ? hotels : defaultHotels;
 
   return (
     <section className="py-24 bg-deepBlue relative overflow-hidden">
@@ -122,7 +184,7 @@ const MoodMatcher: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                onClick={() => setSelectedMood(isSelected ? null : mood.id)}
+                onClick={() => handleMoodSelect(mood.id)}
                 onMouseEnter={() => setHoveredMood(mood.id)}
                 onMouseLeave={() => setHoveredMood(null)}
                 className={`relative p-6 md:p-8 rounded-sm border transition-all duration-500 text-left group ${
@@ -233,37 +295,53 @@ const MoodMatcher: React.FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {getFilteredHotels().map((hotel, index) => (
-              <motion.div
-                key={hotel.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Link href={`/offer/${hotel.id}`} className="group block">
-                  <div className="relative h-64 overflow-hidden rounded-sm mb-4">
-                    <img
-                      src={hotel.imageUrl}
-                      alt={hotel.name}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-deepBlue to-transparent opacity-60" />
-                    {selectedMood && (
-                      <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full">
-                        {activeMood?.name} Match
-                      </div>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="w-8 h-8 text-gold animate-spin" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {displayHotels.map((hotel, index) => (
+                <motion.div
+                  key={hotel.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Link href={`/offer/${hotel.id}`} className="group block">
+                    <div className="relative h-64 overflow-hidden rounded-sm mb-4">
+                      <img
+                        src={hotel.imageUrl}
+                        alt={hotel.name}
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-deepBlue to-transparent opacity-60" />
+                      {selectedMood && (
+                        <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full">
+                          {activeMood?.name} Match
+                        </div>
+                      )}
+                      {hotel.moodScore && hotel.moodScore > 0.8 && (
+                        <div className="absolute top-4 right-4 bg-white/90 text-deepBlue px-2 py-1 text-xs font-bold rounded-full">
+                          {Math.round(hotel.moodScore * 100)}% Match
+                        </div>
+                      )}
+                    </div>
+                    <h4 className="font-serif text-xl text-white group-hover:text-gold transition-colors mb-1">
+                      {hotel.name}
+                    </h4>
+                    <p className="text-slate-400 text-sm">{hotel.location}</p>
+                    {hotel.personalizedReason && (
+                      <p className="text-gold/80 text-xs mt-2 line-clamp-2">
+                        {hotel.personalizedReason}
+                      </p>
                     )}
-                  </div>
-                  <h4 className="font-serif text-xl text-white group-hover:text-gold transition-colors mb-1">
-                    {hotel.name}
-                  </h4>
-                  <p className="text-slate-400 text-sm">{hotel.location}</p>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import Hero from '@/components/Hero';
 import ExperienceSelector from '@/components/ExperienceSelector';
 import ValueProps from '@/components/ValueProps';
-import TrendingSection from '@/components/TrendingSection';
 import ConciergeRecommendations from '@/components/ConciergeRecommendations';
 import MoodMatcher from '@/components/MoodMatcher';
 import Footer from '@/components/Footer';
@@ -37,7 +36,6 @@ export default function Home() {
           <MoodMatcher />
           <ConciergeRecommendations />
           <ValueProps />
-          <TrendingSection />
           <Footer />
         </motion.div>
       )}
