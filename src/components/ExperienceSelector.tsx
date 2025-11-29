@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, Building2, ThermometerSun, ArrowRight, Clock, MapPin, Plus, Sparkles, Moon } from 'lucide-react';
+import { Map, Building2, ThermometerSun, ArrowRight, Clock, MapPin, Plus, Sparkles, Moon, ChevronDown, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { DESTINATIONS, CATEGORIES } from '@/lib/constants';
 
@@ -37,10 +37,22 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
   const [liveTemps, setLiveTemps] = useState<Record<string, number>>({});
   const [liveTimes, setLiveTimes] = useState<Record<string, string>>({});
   const [activeDestination, setActiveDestination] = useState<string | null>(null);
+  const [clickedButton, setClickedButton] = useState<ExperienceMode>(null);
+  const [showToast, setShowToast] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleSelectionClick = (selected: ExperienceMode) => {
-    setIsTransitioning(true);
+    // Immediate visual feedback - pulse effect
+    setClickedButton(selected);
+
+    // Short delay before transition starts (snappier response)
+    setTimeout(() => {
+      setIsTransitioning(true);
+      setShowToast(true);
+
+      // Auto-dismiss toast after 3 seconds
+      setTimeout(() => setShowToast(false), 3000);
+    }, 300);
 
     setTimeout(() => {
       setMode(selected);
@@ -48,8 +60,9 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
 
       setTimeout(() => {
         setIsTransitioning(false);
+        setClickedButton(null);
       }, 800);
-    }, 1000);
+    }, 800);
   };
 
   // Golden Hour Mock Data
@@ -131,7 +144,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
   return (
     <div ref={containerRef} className="bg-deepBlue relative z-20 overflow-hidden">
 
-      {/* Blackout Curtain for Smooth Transition */}
+      {/* Blackout Curtain for Smooth Transition with Loading Indicator */}
       <AnimatePresence>
         {isTransitioning && (
           <motion.div
@@ -140,8 +153,44 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 bg-black z-[100] pointer-events-none"
-          />
+            className="fixed inset-0 bg-deepBlue z-[100] flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-col items-center gap-4"
+            >
+              <Loader2 className="w-8 h-8 text-gold animate-spin" />
+              <span className="text-gold text-sm uppercase tracking-[0.3em]">
+                Preparing your journey...
+              </span>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Selection Toast Notification */}
+      <AnimatePresence>
+        {showToast && clickedButton && (
+          <motion.div
+            key="selection-toast"
+            initial={{ opacity: 0, y: 50, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: 20, x: '-50%' }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="fixed bottom-8 left-1/2 z-[110] bg-deepBlue/95 backdrop-blur-md border border-gold/30 px-6 py-4 rounded-sm shadow-2xl"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+              <span className="text-white text-sm">
+                You selected{' '}
+                <span className="text-gold font-semibold">
+                  {clickedButton === 'destination' ? 'Destinations' : 'Styles'}
+                </span>
+              </span>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -187,12 +236,29 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-12 md:gap-40 lg:gap-60">
 
             {/* CHOICE 1: WHERE */}
-            <div
+            <motion.div
               className="group relative cursor-pointer"
               onMouseEnter={() => setHoveredChoice('destination')}
               onMouseLeave={() => setHoveredChoice(null)}
               onClick={() => handleSelectionClick('destination')}
+              animate={clickedButton === 'destination' ? {
+                scale: [1, 1.05, 1],
+              } : {}}
+              transition={{ duration: 0.6 }}
             >
+              {/* Pulse ring effect */}
+              <AnimatePresence>
+                {clickedButton === 'destination' && (
+                  <motion.div
+                    initial={{ opacity: 0.8, scale: 1 }}
+                    animate={{ opacity: 0, scale: 1.5 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
+                    style={{ boxShadow: '0 0 30px rgba(212, 175, 55, 0.5)' }}
+                  />
+                )}
+              </AnimatePresence>
               <motion.h2
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -217,18 +283,35 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
               >
                 Destinations
               </motion.p>
-            </div>
+            </motion.div>
 
             {/* DIVIDER (Visual Only) */}
             <div className="hidden md:block w-[1px] h-32 bg-white/10" />
 
             {/* CHOICE 2: HOW */}
-            <div
+            <motion.div
               className="group relative cursor-pointer"
               onMouseEnter={() => setHoveredChoice('category')}
               onMouseLeave={() => setHoveredChoice(null)}
               onClick={() => handleSelectionClick('category')}
+              animate={clickedButton === 'category' ? {
+                scale: [1, 1.05, 1],
+              } : {}}
+              transition={{ duration: 0.6 }}
             >
+              {/* Pulse ring effect */}
+              <AnimatePresence>
+                {clickedButton === 'category' && (
+                  <motion.div
+                    initial={{ opacity: 0.8, scale: 1 }}
+                    animate={{ opacity: 0, scale: 1.5 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
+                    style={{ boxShadow: '0 0 30px rgba(212, 175, 55, 0.5)' }}
+                  />
+                )}
+              </AnimatePresence>
               <motion.h2
                 initial={{ opacity: 0, x: 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -253,7 +336,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
               >
                 Styles
               </motion.p>
-            </div>
+            </motion.div>
 
           </div>
 
@@ -310,13 +393,27 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
           </div>
 
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2.5, duration: 1 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/50 text-xs uppercase tracking-widest"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2, duration: 0.8 }}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
           >
-            <span className="mb-2">Scroll to Explore</span>
-            <div className="w-[1px] h-12 bg-white/30" />
+            <span className="text-gold/80 text-sm uppercase tracking-[0.3em]">
+              Scroll to Explore
+            </span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <ChevronDown className="w-6 h-6 text-gold" />
+            </motion.div>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+              className="opacity-50"
+            >
+              <ChevronDown className="w-6 h-6 text-gold -mt-4" />
+            </motion.div>
           </motion.div>
         </section>
       )}
