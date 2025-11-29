@@ -261,6 +261,17 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
               } : {}}
               transition={{ duration: 0.6 }}
             >
+              {/* Flickering arrow indicator */}
+              <motion.div
+                className="absolute -top-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
+                animate={{
+                  y: [0, 8, 0],
+                  opacity: [0.4, 1, 0.4]
+                }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <ChevronDown className="w-6 h-6 text-gold" />
+              </motion.div>
               {/* Pulse ring effect */}
               <AnimatePresence>
                 {clickedButton === 'destination' && (
@@ -314,6 +325,17 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
               } : {}}
               transition={{ duration: 0.6 }}
             >
+              {/* Flickering arrow indicator */}
+              <motion.div
+                className="absolute -top-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
+                animate={{
+                  y: [0, 8, 0],
+                  opacity: [0.4, 1, 0.4]
+                }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+              >
+                <ChevronDown className="w-6 h-6 text-gold" />
+              </motion.div>
               {/* Pulse ring effect */}
               <AnimatePresence>
                 {clickedButton === 'category' && (
