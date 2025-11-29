@@ -34,8 +34,8 @@ export default function Home() {
           transition={{ duration: 1, ease: 'easeOut' }}
         >
           <MoodMatcher />
-          <ConciergeRecommendations />
           <ValueProps />
+          <ConciergeRecommendations />
           <Footer />
         </motion.div>
       )}
