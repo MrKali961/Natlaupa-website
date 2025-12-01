@@ -49,7 +49,7 @@ export default function Contact() {
 
   return (
     <>
-      <main className="bg-deepBlue min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+      <main className="bg-deepBlue min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
           {/* Contact Info */}
           <motion.div

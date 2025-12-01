@@ -4,24 +4,28 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import dynamic from 'next/dynamic';
 import Footer from '@/components/Footer';
 import { Compass, MapPin, Shield, Heart, Sparkles, Quote, ChevronDown } from 'lucide-react';
+import { MAP_DESTINATIONS } from '@/lib/constants';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Destination data for the interactive map
-const destinations = [
-  { id: 1, name: 'Santorini', country: 'Greece', x: 54, y: 38, story: 'Where whitewashed villas meet endless azure horizons.' },
-  { id: 2, name: 'Kyoto', country: 'Japan', x: 82, y: 35, story: 'Ancient temples whisper stories of timeless elegance.' },
-  { id: 3, name: 'Maldives', country: 'Indian Ocean', x: 68, y: 52, story: 'Overwater sanctuaries floating on crystalline dreams.' },
-  { id: 4, name: 'Tuscany', country: 'Italy', x: 51, y: 36, story: 'Rolling vineyards and Renaissance grandeur intertwined.' },
-  { id: 5, name: 'Bora Bora', country: 'French Polynesia', x: 5, y: 58, story: 'Paradise perfected in turquoise lagoons.' },
-  { id: 6, name: 'Swiss Alps', country: 'Switzerland', x: 50, y: 34, story: 'Majestic peaks where luxury meets adventure.' },
-  { id: 7, name: 'Marrakech', country: 'Morocco', x: 46, y: 40, story: 'Exotic riads hidden within ancient medina walls.' },
-  { id: 8, name: 'Patagonia', country: 'Argentina', x: 28, y: 82, story: 'Untamed wilderness at the edge of the world.' },
-  { id: 9, name: 'Reykjavik', country: 'Iceland', x: 42, y: 22, story: 'Where fire and ice create otherworldly beauty.' },
-  { id: 10, name: 'Cape Town', country: 'South Africa', x: 52, y: 72, story: 'Where mountains embrace the meeting of two oceans.' },
-];
+// Dynamic import for InteractiveMap (Mapbox requires client-side rendering)
+const InteractiveMap = dynamic(
+  () => import('@/components/InteractiveMap'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="aspect-[2/1] max-w-5xl mx-auto bg-midnight/50 rounded-lg flex items-center justify-center border border-gold/10">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <span className="text-gold">Loading map...</span>
+        </div>
+      </div>
+    ),
+  }
+);
 
 const testimonials = [
   {
@@ -87,7 +91,6 @@ const promises = [
 ];
 
 export default function About() {
-  const [selectedDestination, setSelectedDestination] = useState<typeof destinations[0] | null>(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -117,20 +120,6 @@ export default function About() {
         }
       });
     }
-
-    // Map dots pulsing animation
-    const dots = document.querySelectorAll('.map-dot');
-    dots.forEach((dot, i) => {
-      gsap.to(dot, {
-        scale: 1.2,
-        opacity: 0.8,
-        duration: 1.5,
-        repeat: -1,
-        yoyo: true,
-        delay: i * 0.2,
-        ease: "sine.inOut"
-      });
-    });
 
     // Auto-rotate testimonials
     const interval = setInterval(() => {
@@ -247,118 +236,8 @@ export default function About() {
               </p>
             </motion.div>
 
-            {/* World Map Container */}
-            <div className="relative aspect-[2/1] max-w-5xl mx-auto">
-              {/* Stylized World Map SVG */}
-              <svg viewBox="0 0 100 50" className="w-full h-full">
-                {/* Simple world outline - stylized */}
-                <defs>
-                  <linearGradient id="mapGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.1" />
-                    <stop offset="100%" stopColor="#D4AF37" stopOpacity="0.05" />
-                  </linearGradient>
-                </defs>
-
-                {/* Simplified continent shapes */}
-                <path
-                  d="M15,20 Q20,15 30,18 T40,20 Q45,22 48,25 T45,30 Q40,35 30,32 T20,28 Q15,25 15,20"
-                  fill="url(#mapGradient)"
-                  stroke="#D4AF37"
-                  strokeWidth="0.2"
-                  opacity="0.5"
-                />
-                <path
-                  d="M45,18 Q55,12 65,15 T75,20 Q78,25 75,30 T65,35 Q55,38 48,32 T45,25 Q44,20 45,18"
-                  fill="url(#mapGradient)"
-                  stroke="#D4AF37"
-                  strokeWidth="0.2"
-                  opacity="0.5"
-                />
-                <path
-                  d="M75,25 Q85,20 92,25 T90,35 Q85,40 78,38 T75,30 Q74,27 75,25"
-                  fill="url(#mapGradient)"
-                  stroke="#D4AF37"
-                  strokeWidth="0.2"
-                  opacity="0.5"
-                />
-                <path
-                  d="M48,35 Q55,32 58,38 T55,45 Q50,48 48,42 T48,35"
-                  fill="url(#mapGradient)"
-                  stroke="#D4AF37"
-                  strokeWidth="0.2"
-                  opacity="0.5"
-                />
-                <path
-                  d="M25,35 Q30,38 28,45 T22,48 Q18,45 20,40 T25,35"
-                  fill="url(#mapGradient)"
-                  stroke="#D4AF37"
-                  strokeWidth="0.2"
-                  opacity="0.5"
-                />
-
-                {/* Grid lines */}
-                {[...Array(10)].map((_, i) => (
-                  <line
-                    key={`h-${i}`}
-                    x1="0"
-                    y1={i * 5 + 5}
-                    x2="100"
-                    y2={i * 5 + 5}
-                    stroke="#D4AF37"
-                    strokeWidth="0.05"
-                    opacity="0.2"
-                  />
-                ))}
-                {[...Array(20)].map((_, i) => (
-                  <line
-                    key={`v-${i}`}
-                    x1={i * 5 + 5}
-                    y1="0"
-                    x2={i * 5 + 5}
-                    y2="50"
-                    stroke="#D4AF37"
-                    strokeWidth="0.05"
-                    opacity="0.2"
-                  />
-                ))}
-              </svg>
-
-              {/* Destination Dots */}
-              {destinations.map((dest) => (
-                <button
-                  key={dest.id}
-                  onClick={() => setSelectedDestination(selectedDestination?.id === dest.id ? null : dest)}
-                  className="map-dot absolute transform -translate-x-1/2 -translate-y-1/2 group"
-                  style={{ left: `${dest.x}%`, top: `${dest.y}%` }}
-                >
-                  <span className="block w-3 h-3 bg-gold rounded-full shadow-lg shadow-gold/50 group-hover:scale-150 transition-transform" />
-                  <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-gold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    {dest.name}
-                  </span>
-                </button>
-              ))}
-
-              {/* Selected Destination Card */}
-              <AnimatePresence>
-                {selectedDestination && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full mt-8 bg-midnight/95 backdrop-blur-sm border border-gold/20 rounded-lg p-6 w-80"
-                  >
-                    <div className="flex items-start gap-4">
-                      <MapPin className="w-6 h-6 text-gold flex-shrink-0 mt-1" />
-                      <div>
-                        <h3 className="text-xl text-white font-serif">{selectedDestination.name}</h3>
-                        <p className="text-gold text-sm mb-2">{selectedDestination.country}</p>
-                        <p className="text-slate-400 text-sm italic">&ldquo;{selectedDestination.story}&rdquo;</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            {/* Interactive Mapbox Globe */}
+            <InteractiveMap destinations={MAP_DESTINATIONS} />
           </div>
         </section>
 
