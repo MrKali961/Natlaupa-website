@@ -54,7 +54,6 @@ export default function SmoothScrollProvider({
       wheelMultiplier: 1,
       touchMultiplier: isIOS ? 1.5 : 2,
       infinite: false,
-      normalizeWheel: true,
     });
 
     // Expose lenis to window for global access
