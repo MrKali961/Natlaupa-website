@@ -5,10 +5,17 @@ import { usePathname } from 'next/navigation';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { setStableViewportHeight } from '@/lib/viewport';
 
 // Register GSAP plugin
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
+
+  // Configure ScrollTrigger for iOS to prevent layout jumps when address bar appears/disappears
+  ScrollTrigger.config({
+    ignoreMobileResize: true,
+    autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load'
+  });
 }
 
 export default function SmoothScrollProvider({
@@ -31,15 +38,23 @@ export default function SmoothScrollProvider({
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Initialize Lenis for smooth momentum scrolling
+    // Set stable viewport height to prevent iOS Safari address bar jumps
+    setStableViewportHeight();
+
+    // Detect iOS devices
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+
+    // Initialize Lenis for smooth momentum scrolling with iOS optimizations
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: isIOS ? 1.0 : 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1,
-      touchMultiplier: 2,
+      touchMultiplier: isIOS ? 1.5 : 2,
+      infinite: false,
+      normalizeWheel: true,
     });
 
     // Expose lenis to window for global access
@@ -57,13 +72,24 @@ export default function SmoothScrollProvider({
     gsap.ticker.lagSmoothing(0);
 
     // Add ResizeObserver to ensure Lenis recalculates when DOM changes
+    // Debounce for iOS to prevent excessive refreshes during address bar transitions
+    let resizeTimeout: NodeJS.Timeout;
     const resizeObserver = new ResizeObserver(() => {
-      lenis.resize();
-      ScrollTrigger.refresh();
+      if (isIOS) {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          lenis.resize();
+          ScrollTrigger.refresh();
+        }, 150);
+      } else {
+        lenis.resize();
+        ScrollTrigger.refresh();
+      }
     });
     resizeObserver.observe(document.body);
 
     return () => {
+      clearTimeout(resizeTimeout);
       resizeObserver.disconnect();
       lenis.destroy();
       gsap.ticker.remove(lenis.raf);

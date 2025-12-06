@@ -39,7 +39,13 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
   const [activeDestination, setActiveDestination] = useState<string | null>(null);
   const [clickedButton, setClickedButton] = useState<ExperienceMode>(null);
   const [showToast, setShowToast] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Detect touch devices to prevent double-tap requirement on iOS
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   const handleSelectionClick = (selected: ExperienceMode) => {
     // Immediate visual feedback - pulse effect
@@ -186,7 +192,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
               <span className="text-white text-sm">
                 You selected{' '}
                 <span className="text-gold font-semibold">
-                  {clickedButton === 'destination' ? 'Destinations' : 'Styles'}
+                  {clickedButton === 'destination' ? 'Destination' : 'Style'}
                 </span>
               </span>
             </div>
@@ -198,9 +204,10 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
       {!mode && (
         <section
           id="experience-selector"
-          className="h-[100dvh] w-full relative flex flex-col md:flex-row items-center justify-center bg-black overflow-hidden"
+          className="w-full relative flex flex-col md:flex-row items-center justify-center bg-black overflow-hidden"
+          style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
         >
-          {/* Background Layer: DESTINATIONS (WHERE) */}
+          {/* Background Layer: DESTINATION (WHERE) */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: hoveredChoice === 'destination' ? 0.6 : 0 }}
@@ -216,7 +223,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
           </motion.div>
 
-          {/* Background Layer: STYLES (HOW) */}
+          {/* Background Layer: STYLE (HOW) */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: hoveredChoice === 'category' ? 0.6 : 0 }}
@@ -248,132 +255,141 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
           </motion.div>
 
           {/* Content Layer */}
-          <div className="relative z-10 flex flex-col md:flex-row items-center gap-12 md:gap-40 lg:gap-60">
+          <div className="relative z-10 flex flex-col md:flex-row items-center w-full max-w-6xl mx-auto px-4">
 
-            {/* CHOICE 1: WHERE */}
-            <motion.div
-              className="group relative cursor-pointer"
-              onMouseEnter={() => setHoveredChoice('destination')}
-              onMouseLeave={() => setHoveredChoice(null)}
-              onClick={() => handleSelectionClick('destination')}
-              animate={clickedButton === 'destination' ? {
-                scale: [1, 1.05, 1],
-              } : {}}
-              transition={{ duration: 0.6 }}
-            >
-              {/* Flickering arrow indicator */}
+            {/* CHOICE 1: DESTINATION */}
+            <div className="flex-1 flex justify-center md:justify-end md:pr-16 lg:pr-24 py-8 md:py-0">
               <motion.div
-                className="absolute -top-10 sm:-top-12 md:-top-14 lg:-top-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
-                animate={{
-                  y: [0, 6, 0],
-                  opacity: [0.4, 1, 0.4]
-                }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                className="group relative cursor-pointer"
+                onMouseEnter={() => !isTouchDevice && setHoveredChoice('destination')}
+                onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
+                onClick={() => handleSelectionClick('destination')}
+                animate={clickedButton === 'destination' ? {
+                  scale: [1, 1.05, 1],
+                } : {}}
+                transition={{ duration: 0.6 }}
               >
-                <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-gold" />
+                {/* Flickering arrow indicator */}
+                <motion.div
+                  className="absolute -top-10 sm:-top-12 md:-top-14 lg:-top-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
+                  animate={{
+                    y: [0, 6, 0],
+                    opacity: [0.4, 1, 0.4]
+                  }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-gold" />
+                </motion.div>
+                {/* Pulse ring effect */}
+                <AnimatePresence>
+                  {clickedButton === 'destination' && (
+                    <motion.div
+                      initial={{ opacity: 0.8, scale: 1 }}
+                      animate={{ opacity: 0, scale: 1.5 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.8 }}
+                      className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
+                      style={{ boxShadow: '0 0 30px rgba(212, 175, 55, 0.5)' }}
+                    />
+                  )}
+                </AnimatePresence>
+                <motion.h2
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  animate={{
+                    opacity: hoveredChoice && hoveredChoice !== 'destination' ? 0.2 : 1,
+                    scale: hoveredChoice === 'destination' ? 1.1 : 1
+                  }}
+                  transition={{ duration: 0.5 }}
+                  className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight"
+                >
+                  DESTINATION
+                </motion.h2>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: hoveredChoice === 'destination' ? '100%' : '0%' }}
+                  className="h-1 bg-gold mt-2 md:mt-4"
+                />
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: hoveredChoice === 'destination' ? 1 : 0, y: hoveredChoice === 'destination' ? 0 : 10 }}
+                  className="absolute -bottom-8 md:-bottom-12 left-0 w-full text-center text-xs md:text-sm text-gold uppercase tracking-[0.3em]"
+                  style={{ marginRight: '-0.3em' }}
+                >
+                  Where
+                </motion.p>
               </motion.div>
-              {/* Pulse ring effect */}
-              <AnimatePresence>
-                {clickedButton === 'destination' && (
-                  <motion.div
-                    initial={{ opacity: 0.8, scale: 1 }}
-                    animate={{ opacity: 0, scale: 1.5 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
-                    style={{ boxShadow: '0 0 30px rgba(212, 175, 55, 0.5)' }}
-                  />
-                )}
-              </AnimatePresence>
-              <motion.h2
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                animate={{
-                  opacity: hoveredChoice && hoveredChoice !== 'destination' ? 0.2 : 1,
-                  scale: hoveredChoice === 'destination' ? 1.1 : 1
-                }}
-                transition={{ duration: 0.5 }}
-                className="font-serif text-6xl md:text-8xl lg:text-9xl text-white font-bold tracking-tight"
-              >
-                WHERE
-              </motion.h2>
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: hoveredChoice === 'destination' ? '100%' : '0%' }}
-                className="h-1 bg-gold mt-2 md:mt-4"
-              />
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: hoveredChoice === 'destination' ? 1 : 0, y: hoveredChoice === 'destination' ? 0 : 10 }}
-                className="absolute -bottom-8 md:-bottom-12 left-0 w-full text-center text-xs md:text-sm text-gold uppercase tracking-[0.3em]"
-              >
-                Destinations
-              </motion.p>
-            </motion.div>
+            </div>
 
-            {/* DIVIDER (Visual Only) */}
-            <div className="hidden md:block w-[1px] h-32 bg-white/10" />
+            {/* DIVIDER (Visual Only) - Absolutely centered */}
+            <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[1px] h-32 bg-white/20" />
 
-            {/* CHOICE 2: HOW */}
-            <motion.div
-              className="group relative cursor-pointer"
-              onMouseEnter={() => setHoveredChoice('category')}
-              onMouseLeave={() => setHoveredChoice(null)}
-              onClick={() => handleSelectionClick('category')}
-              animate={clickedButton === 'category' ? {
-                scale: [1, 1.05, 1],
-              } : {}}
-              transition={{ duration: 0.6 }}
-            >
-              {/* Flickering arrow indicator */}
+            {/* Mobile divider */}
+            <div className="block md:hidden w-24 h-[1px] bg-white/20" />
+
+            {/* CHOICE 2: STYLE */}
+            <div className="flex-1 flex justify-center md:justify-start md:pl-16 lg:pl-24 py-8 md:py-0">
               <motion.div
-                className="absolute -top-10 sm:-top-12 md:-top-14 lg:-top-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
-                animate={{
-                  y: [0, 6, 0],
-                  opacity: [0.4, 1, 0.4]
-                }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+                className="group relative cursor-pointer"
+                onMouseEnter={() => !isTouchDevice && setHoveredChoice('category')}
+                onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
+                onClick={() => handleSelectionClick('category')}
+                animate={clickedButton === 'category' ? {
+                  scale: [1, 1.05, 1],
+                } : {}}
+                transition={{ duration: 0.6 }}
               >
-                <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-gold" />
+                {/* Flickering arrow indicator */}
+                <motion.div
+                  className="absolute -top-10 sm:-top-12 md:-top-14 lg:-top-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
+                  animate={{
+                    y: [0, 6, 0],
+                    opacity: [0.4, 1, 0.4]
+                  }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+                >
+                  <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-gold" />
+                </motion.div>
+                {/* Pulse ring effect */}
+                <AnimatePresence>
+                  {clickedButton === 'category' && (
+                    <motion.div
+                      initial={{ opacity: 0.8, scale: 1 }}
+                      animate={{ opacity: 0, scale: 1.5 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.8 }}
+                      className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
+                      style={{ boxShadow: '0 0 30px rgba(212, 175, 55, 0.5)' }}
+                    />
+                  )}
+                </AnimatePresence>
+                <motion.h2
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  animate={{
+                    opacity: hoveredChoice && hoveredChoice !== 'category' ? 0.2 : 1,
+                    scale: hoveredChoice === 'category' ? 1.1 : 1
+                  }}
+                  transition={{ duration: 0.5 }}
+                  className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight"
+                >
+                  STYLE
+                </motion.h2>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: hoveredChoice === 'category' ? '100%' : '0%' }}
+                  className="h-1 bg-gold mt-2 md:mt-4"
+                />
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: hoveredChoice === 'category' ? 1 : 0, y: hoveredChoice === 'category' ? 0 : 10 }}
+                  className="absolute -bottom-8 md:-bottom-12 left-0 w-full text-center text-xs md:text-sm text-gold uppercase tracking-[0.3em]"
+                  style={{ marginRight: '-0.3em' }}
+                >
+                  How
+                </motion.p>
               </motion.div>
-              {/* Pulse ring effect */}
-              <AnimatePresence>
-                {clickedButton === 'category' && (
-                  <motion.div
-                    initial={{ opacity: 0.8, scale: 1 }}
-                    animate={{ opacity: 0, scale: 1.5 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
-                    style={{ boxShadow: '0 0 30px rgba(212, 175, 55, 0.5)' }}
-                  />
-                )}
-              </AnimatePresence>
-              <motion.h2
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                animate={{
-                  opacity: hoveredChoice && hoveredChoice !== 'category' ? 0.2 : 1,
-                  scale: hoveredChoice === 'category' ? 1.1 : 1
-                }}
-                transition={{ duration: 0.5 }}
-                className="font-serif text-6xl md:text-8xl lg:text-9xl text-white font-bold tracking-tight"
-              >
-                HOW
-              </motion.h2>
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: hoveredChoice === 'category' ? '100%' : '0%' }}
-                className="h-1 bg-gold mt-2 md:mt-4"
-              />
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: hoveredChoice === 'category' ? 1 : 0, y: hoveredChoice === 'category' ? 0 : 10 }}
-                className="absolute -bottom-8 md:-bottom-12 left-0 w-full text-center text-xs md:text-sm text-gold uppercase tracking-[0.3em]"
-              >
-                Styles
-              </motion.p>
-            </motion.div>
+            </div>
 
           </div>
 
@@ -383,6 +399,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
             animate={{ opacity: hoveredChoice ? 0 : 0.5 }}
             transition={{ delay: 1, duration: 1 }}
             className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/30 text-[10px] uppercase tracking-[0.4em]"
+            style={{ marginRight: '-0.4em' }}
           >
             Define Your Journey
           </motion.div>
@@ -392,7 +409,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
 
       {/* GOLDEN HOUR PREVIEW */}
       {mode && (
-        <section className="h-[100dvh] w-full relative overflow-hidden flex items-center justify-center">
+        <section className="w-full relative overflow-hidden flex items-center justify-center" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
           {/* Background with Slow Zoom */}
           <motion.div
             initial={{ scale: 1.2 }}
@@ -429,29 +446,6 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
             </motion.div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2, duration: 0.8 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
-          >
-            <span className="text-gold/80 text-sm uppercase tracking-[0.3em]">
-              Scroll to Explore
-            </span>
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <ChevronDown className="w-6 h-6 text-gold" />
-            </motion.div>
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-              className="opacity-50"
-            >
-              <ChevronDown className="w-6 h-6 text-gold -mt-4" />
-            </motion.div>
-          </motion.div>
         </section>
       )}
 

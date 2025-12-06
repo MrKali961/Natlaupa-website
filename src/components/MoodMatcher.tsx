@@ -75,6 +75,12 @@ const MoodMatcher: React.FC = () => {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [defaultHotels, setDefaultHotels] = useState<Hotel[]>([]);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  // Detect touch devices to prevent double-tap requirement on iOS
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   const activeMood = MOODS.find(m => m.id === selectedMood);
 
@@ -185,12 +191,12 @@ const MoodMatcher: React.FC = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => handleMoodSelect(mood.id)}
-                onMouseEnter={() => setHoveredMood(mood.id)}
-                onMouseLeave={() => setHoveredMood(null)}
+                onMouseEnter={() => !isTouchDevice && setHoveredMood(mood.id)}
+                onMouseLeave={() => !isTouchDevice && setHoveredMood(null)}
                 className={`relative p-6 md:p-8 rounded-sm border transition-all duration-500 text-left group ${
                   isSelected
                     ? 'border-gold bg-gold/10'
-                    : 'border-white/10 hover:border-gold/50 bg-white/5'
+                    : 'border-white/10 hover-capable:hover:border-gold/50 bg-white/5'
                 }`}
               >
                 {/* Selection Indicator */}

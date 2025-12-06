@@ -15,7 +15,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="relative h-[100dvh] w-full overflow-hidden bg-deepBlue">
+    <section className="relative w-full overflow-hidden bg-deepBlue" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
       {/* Background Image - Grayscale Mountains */}
       <div className="absolute inset-0">
         <img
@@ -83,7 +83,7 @@ const Hero: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, y: [0, 10, 0] }}
         transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
-        className="absolute bottom-8 md:bottom-10 left-1/2 transform -translate-x-1/2 text-white/30"
+        className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex justify-center text-white/30"
       >
         <ChevronDown size={28} strokeWidth={1} />
       </motion.div>

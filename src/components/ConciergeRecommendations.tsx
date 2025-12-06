@@ -225,7 +225,7 @@ const ConciergeRecommendations: React.FC = () => {
             viewport={{ once: true }}
             onClick={handleRefresh}
             disabled={isRefreshing || isLoading}
-            className="mt-6 md:mt-0 flex items-center gap-2 text-gold hover:text-white transition-colors disabled:opacity-50"
+            className="mt-6 md:mt-0 flex items-center gap-2 text-gold hover-capable:hover:text-white transition-colors disabled:opacity-50"
           >
             <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
             <span className="text-sm uppercase tracking-widest">Refresh</span>
@@ -247,7 +247,7 @@ const ConciergeRecommendations: React.FC = () => {
                 className={`flex items-center gap-3 px-6 py-3 rounded-full border transition-all duration-300 ${
                   isActive
                     ? 'bg-gold text-deepBlue border-gold'
-                    : 'bg-white/5 text-white border-white/10 hover:border-gold/50'
+                    : 'bg-white/5 text-white border-white/10 hover-capable:hover:border-gold/50'
                 }`}
               >
                 <Icon size={18} />
@@ -293,12 +293,12 @@ const ConciergeRecommendations: React.FC = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <Link href={`/offer/${hotel.id}`} className="group block">
-                          <div className="relative h-72 overflow-hidden rounded-sm mb-4 border border-white/10 group-hover:border-gold/30 transition-colors">
+                        <Link href={`/offer/${hotel.id}`} className="group/hotel block">
+                          <div className="relative h-72 overflow-hidden rounded-sm mb-4 border border-white/10 group-hover/hotel:border-gold/30 transition-colors">
                             <img
                               src={hotel.imageUrl}
                               alt={hotel.name}
-                              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                              className="w-full h-full object-cover grayscale group-hover/hotel:grayscale-0 transition-all duration-700 group-hover/hotel:scale-105"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-transparent to-transparent" />
 
@@ -331,7 +331,7 @@ const ConciergeRecommendations: React.FC = () => {
                             {/* Content */}
                             <div className="absolute bottom-0 left-0 right-0 p-6">
                               <p className="text-gold text-xs uppercase tracking-widest mb-2">{hotel.category}</p>
-                              <h4 className="font-serif text-2xl text-white group-hover:text-gold transition-colors mb-2">
+                              <h4 className="font-serif text-2xl text-white group-hover/hotel:text-gold transition-colors mb-2">
                                 {hotel.name}
                               </h4>
                               <div className="flex items-center gap-2 text-slate-300 text-sm">
@@ -366,17 +366,17 @@ const ConciergeRecommendations: React.FC = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.15 }}
                       >
-                        <Link href={`/countries/${dest.country.toLowerCase().replace(/\s+/g, '-')}`} className="group block">
-                          <div className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-sm hover:border-gold/30 transition-all">
+                        <Link href={`/countries/${dest.country.toLowerCase().replace(/\s+/g, '-')}`} className="group/dest block">
+                          <div className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-sm hover-capable:hover:border-gold/30 transition-all">
                             <div className="w-20 h-20 flex-shrink-0 overflow-hidden rounded-sm">
                               <img
                                 src={dest.imageUrl}
                                 alt={dest.name}
-                                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                                className="w-full h-full object-cover grayscale group-hover/dest:grayscale-0 transition-all duration-500"
                               />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h5 className="font-serif text-lg text-white group-hover:text-gold transition-colors truncate">
+                              <h5 className="font-serif text-lg text-white group-hover/dest:text-gold transition-colors truncate">
                                 {dest.name}
                               </h5>
                               <p className="text-slate-400 text-sm mb-2">{dest.country}</p>
@@ -387,7 +387,7 @@ const ConciergeRecommendations: React.FC = () => {
                                 </span>
                               </div>
                             </div>
-                            <ArrowRight size={16} className="text-slate-500 group-hover:text-gold transition-colors self-center" />
+                            <ArrowRight size={16} className="text-slate-500 group-hover/dest:text-gold transition-colors self-center" />
                           </div>
                         </Link>
                       </motion.div>
@@ -421,7 +421,7 @@ const ConciergeRecommendations: React.FC = () => {
                   {/* View All CTA */}
                   <Link
                     href="/offers"
-                    className="flex items-center justify-center gap-2 w-full py-4 border border-gold text-gold hover:bg-gold hover:text-deepBlue transition-all duration-300 rounded-sm font-bold uppercase tracking-widest text-sm"
+                    className="flex items-center justify-center gap-2 w-full py-4 border border-gold text-gold hover-capable:hover:bg-gold hover-capable:hover:text-deepBlue transition-all duration-300 rounded-sm font-bold uppercase tracking-widest text-sm"
                   >
                     <span>View All Recommendations</span>
                     <ArrowRight size={16} />

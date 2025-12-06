@@ -19,13 +19,13 @@ export default function HotelCard({ hotel, index = 0 }: HotelCardProps) {
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
     >
-      <Link href={`/offer/${hotel.id}`} className="group block">
-        <div className="relative overflow-hidden rounded-sm border border-white/10 hover:border-gold/30 transition-colors duration-300">
+      <Link href={`/offer/${hotel.id}`} className="group/hotel block">
+        <div className="relative overflow-hidden rounded-sm border border-white/10 hover-capable:hover:border-gold/30 transition-colors duration-300">
           <div className="relative h-64 overflow-hidden">
             <img
               src={hotel.imageUrl}
               alt={hotel.name}
-              className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+              className="w-full h-full object-cover grayscale group-hover/hotel:grayscale-0 group-hover/hotel:scale-110 transition-all duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-transparent to-transparent" />
 
@@ -46,7 +46,7 @@ export default function HotelCard({ hotel, index = 0 }: HotelCardProps) {
               <span>{hotel.category}</span>
             </div>
 
-            <h3 className="font-serif text-xl text-white mb-2 group-hover:text-gold transition-colors">
+            <h3 className="font-serif text-xl text-white mb-2 group-hover/hotel:text-gold transition-colors">
               {hotel.name}
             </h3>
 
@@ -56,9 +56,9 @@ export default function HotelCard({ hotel, index = 0 }: HotelCardProps) {
             </div>
 
             <div className="flex items-center justify-end pt-4 border-t border-white/10">
-              <div className="flex items-center text-white group-hover:text-gold transition-colors">
+              <div className="flex items-center text-white group-hover/hotel:text-gold transition-colors">
                 <span className="text-xs uppercase tracking-widest mr-2">View Details</span>
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} className="group-hover/hotel:translate-x-1 transition-transform" />
               </div>
             </div>
           </div>

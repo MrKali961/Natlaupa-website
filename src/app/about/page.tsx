@@ -212,9 +212,9 @@ export default function About() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2 }}
-              className="animate-bounce"
+              className="animate-bounce flex justify-center"
             >
-              <ChevronDown className="w-8 h-8 text-gold mx-auto" />
+              <ChevronDown className="w-8 h-8 text-gold" />
             </motion.div>
           </div>
         </section>

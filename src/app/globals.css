@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Stable viewport height for iOS Safari */
+:root {
+  --vh: 1vh;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+}
+
 /* Base styles for scroll functionality */
 html, body {
   width: 100%;
@@ -19,6 +29,22 @@ html, body {
 /* Hide scrollbar for Webkit (Chrome/Safari) */
 ::-webkit-scrollbar {
   display: none;
+}
+
+/* iOS touch optimizations */
+html, body {
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+html {
+  scroll-behavior: auto !important;
+}
+
+/* Prevent double-tap zoom on interactive elements */
+button, a {
+  touch-action: manipulation;
 }
 
 /* Lenis recommended styles */
@@ -96,7 +122,14 @@ html.lenis, html.lenis body {
   transform: translate(-50%, -50%);
 }
 
-.map-marker:hover .marker-dot,
+@media (hover: hover) and (pointer: fine) {
+  .map-marker:hover .marker-dot {
+    transform: translate(-50%, -50%) scale(1.4);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.9);
+  }
+}
+
+/* Keep .selected outside for tap selection */
 .map-marker.selected .marker-dot {
   transform: translate(-50%, -50%) scale(1.4);
   box-shadow: 0 0 20px rgba(212, 175, 55, 0.9);
@@ -141,6 +174,8 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-.map-marker-container:hover .marker-label {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .map-marker-container:hover .marker-label {
+    opacity: 1;
+  }
 }

@@ -122,7 +122,7 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
   return (
     <div className="bg-deepBlue min-h-screen text-slate-100">
       {/* Hero Section */}
-      <div className="relative h-[100dvh] w-full">
+      <div className="relative w-full" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
         <div className="absolute inset-0">
           <img
             src={hotel.imageUrl}
