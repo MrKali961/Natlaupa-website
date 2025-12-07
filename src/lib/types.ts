@@ -9,6 +9,7 @@ export interface Review {
 export interface Hotel {
   id: string;
   name: string;
+  slug?: string;
   location: string;
   country: string;
   rating: number;
@@ -62,6 +63,7 @@ export interface OfferReview {
 export interface Offer {
   id: string;
   title: string;
+  slug?: string;
   tagline?: string;
   description: string;
   duration: number;

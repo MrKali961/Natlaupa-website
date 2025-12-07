@@ -306,7 +306,7 @@ const ConciergeRecommendations: React.FC = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <Link href={`/offer/${offer.id}`} className="group/hotel block">
+                        <Link href={`/offer/${offer.slug || offer.id}`} className="group/hotel block">
                           <div className="relative h-72 overflow-hidden rounded-sm mb-4 border border-white/10 group-hover/hotel:border-gold/30 transition-colors">
                             <img
                               src={offer.imageUrl}

@@ -25,7 +25,7 @@ const TrendingSection: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {TRENDING_HOTELS.map((hotel) => (
-            <Link key={hotel.id} href={`/offer/${hotel.id}`} className="block group/trend">
+            <Link key={hotel.id} href={`/hotel/${hotel.slug || hotel.id}`} className="block group/trend">
               <motion.div
                 whileHover={{ y: -10 }}
                 className="bg-midnight rounded-sm overflow-hidden border border-white/5 hover-capable:hover:shadow-2xl hover-capable:hover:shadow-gold/10 transition-all duration-300 h-full flex flex-col"

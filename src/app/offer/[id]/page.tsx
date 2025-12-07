@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -19,9 +20,11 @@ import {
 } from 'lucide-react';
 import Footer from '@/components/Footer';
 import type { Offer } from '@/lib/types';
+import { isCuid } from '@/lib/slugify';
 
 export default function OfferDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
+  const router = useRouter();
   const [offer, setOffer] = useState<Offer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedSection, setExpandedSection] = useState<string | null>('accommodation');
@@ -38,7 +41,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ id: stri
     guests: ''
   });
 
-  // Fetch offer data
+  // Fetch offer data and handle redirects
   useEffect(() => {
     const fetchOffer = async () => {
       try {
@@ -46,6 +49,12 @@ export default function OfferDetailPage({ params }: { params: Promise<{ id: stri
         if (!response.ok) throw new Error('Offer not found');
         const data = await response.json();
         setOffer(data.offer);
+
+        // Redirect ID-based URLs to slug-based URLs (SEO best practice)
+        const isId = isCuid(id);
+        if (isId && data.offer.slug) {
+          router.replace(`/offer/${data.offer.slug}`);
+        }
       } catch (error) {
         console.error('Error fetching offer:', error);
       } finally {
@@ -55,7 +64,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ id: stri
 
     fetchOffer();
     window.scrollTo(0, 0);
-  }, [id]);
+  }, [id, router]);
 
   // Lock scroll when modal is open
   useEffect(() => {
@@ -215,7 +224,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ id: stri
                     <MapPin size={20} className="text-gold flex-shrink-0 mt-1" />
                     <div>
                       <Link
-                        href={`/hotel/${offer.hotel.id}`}
+                        href={`/hotel/${offer.hotel.slug || offer.hotel.id}`}
                         className="text-white hover:text-gold transition-colors font-medium"
                       >
                         {offer.hotel.name}
@@ -275,7 +284,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ id: stri
                   Your Base
                 </h3>
                 <Link
-                  href={`/hotel/${offer.hotel.id}`}
+                  href={`/hotel/${offer.hotel.slug || offer.hotel.id}`}
                   className="group block"
                 >
                   <div className="relative h-48 mb-4 overflow-hidden rounded-sm">

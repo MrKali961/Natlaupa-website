@@ -17,6 +17,7 @@ datasource db {
 model Hotel {
   id            String   @id @default(cuid())
   name          String
+  slug          String?  @unique
   location      String
   country       String
   category      String
@@ -78,6 +79,7 @@ model Category {
 model Offer {
   id             String        @id @default(cuid())
   title          String        // e.g., "Maldivian Paradise Escape"
+  slug           String?       @unique
   tagline        String?       // e.g., "7 Days of Overwater Bliss"
   description    String        @db.Text
   duration       Int           // in days

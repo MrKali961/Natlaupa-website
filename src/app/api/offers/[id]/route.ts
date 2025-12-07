@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOfferById } from '@/lib/db';
+import { getOfferByIdOrSlug } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
@@ -10,12 +10,13 @@ export async function GET(
 
     if (!id) {
       return NextResponse.json(
-        { error: 'Offer ID is required' },
+        { error: 'Offer ID or slug is required' },
         { status: 400 }
       );
     }
 
-    const offer = await getOfferById(id);
+    // Support both ID and slug lookups
+    const offer = await getOfferByIdOrSlug(id);
 
     if (!offer) {
       return NextResponse.json(

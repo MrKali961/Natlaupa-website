@@ -315,7 +315,7 @@ const MoodMatcher: React.FC = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Link href={`/hotel/${hotel.id}`} className="group block">
+                  <Link href={`/hotel/${hotel.slug || hotel.id}`} className="group block">
                     <div className="relative h-64 overflow-hidden rounded-sm mb-4">
                       <img
                         src={hotel.imageUrl}

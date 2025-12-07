@@ -2,14 +2,18 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Star, MapPin, ShieldCheck, Wifi, Coffee, Globe, ChevronLeft, ChevronRight, MessageSquare, Send, X, ExternalLink, Navigation, Loader2 } from 'lucide-react';
-import { ALL_HOTELS } from '@/lib/constants';
 import Footer from '@/components/Footer';
+import type { Hotel } from '@/lib/types';
+import { isCuid } from '@/lib/slugify';
 
 export default function OfferDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
-  const hotel = ALL_HOTELS.find(h => h.id === id);
+  const router = useRouter();
+  const [hotel, setHotel] = useState<Hotel | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -22,9 +26,30 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
     message: '',
   });
 
+  // Fetch hotel data and handle redirects
   useEffect(() => {
+    const fetchHotel = async () => {
+      try {
+        const response = await fetch(`/api/hotels/${id}`);
+        if (!response.ok) throw new Error('Hotel not found');
+        const data = await response.json();
+        setHotel(data.hotel);
+
+        // Redirect ID-based URLs to slug-based URLs (SEO best practice)
+        const isId = isCuid(id);
+        if (isId && data.hotel.slug) {
+          router.replace(`/hotel/${data.hotel.slug}`);
+        }
+      } catch (error) {
+        console.error('Error fetching hotel:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHotel();
     window.scrollTo(0, 0);
-  }, [id]);
+  }, [id, router]);
 
   // Lock scroll when modal is open
   useEffect(() => {
@@ -102,6 +127,14 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
       setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-deepBlue flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-gold animate-spin" />
+      </div>
+    );
+  }
 
   if (!hotel) {
     return (

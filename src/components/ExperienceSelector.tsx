@@ -255,12 +255,12 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
           </motion.div>
 
           {/* Content Layer */}
-          <div className="relative z-10 flex flex-col md:flex-row items-center w-full max-w-6xl mx-auto px-4">
+          <div className="relative z-10 flex flex-col md:flex-row w-full h-full px-4">
 
             {/* CHOICE 1: DESTINATION */}
-            <div className="flex-1 flex justify-center md:justify-end md:pr-16 lg:pr-24 py-8 md:py-0">
+            <div className="flex-1 flex justify-center items-center py-8 md:py-0">
               <motion.div
-                className="group relative cursor-pointer"
+                className="group relative cursor-pointer flex flex-col items-center"
                 onMouseEnter={() => !isTouchDevice && setHoveredChoice('destination')}
                 onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
                 onClick={() => handleSelectionClick('destination')}
@@ -271,7 +271,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
               >
                 {/* Flickering arrow indicator */}
                 <motion.div
-                  className="absolute -top-10 sm:-top-12 md:-top-14 lg:-top-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
+                  className="absolute -top-6 sm:-top-8 md:-top-10 lg:-top-12 left-1/2 -translate-x-1/2 flex flex-col items-center"
                   animate={{
                     y: [0, 6, 0],
                     opacity: [0.4, 1, 0.4]
@@ -301,7 +301,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
                     scale: hoveredChoice === 'destination' ? 1.1 : 1
                   }}
                   transition={{ duration: 0.5 }}
-                  className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight"
+                  className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight text-center"
                 >
                   DESTINATION
                 </motion.h2>
@@ -325,12 +325,12 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
             <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[1px] h-32 bg-white/20" />
 
             {/* Mobile divider */}
-            <div className="block md:hidden w-24 h-[1px] bg-white/20" />
+            <div className="block md:hidden w-[90%] h-[1px] bg-white/20 self-center" />
 
             {/* CHOICE 2: STYLE */}
-            <div className="flex-1 flex justify-center md:justify-start md:pl-16 lg:pl-24 py-8 md:py-0">
+            <div className="flex-1 flex justify-center items-center py-8 md:py-0">
               <motion.div
-                className="group relative cursor-pointer"
+                className="group relative cursor-pointer flex flex-col items-center"
                 onMouseEnter={() => !isTouchDevice && setHoveredChoice('category')}
                 onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
                 onClick={() => handleSelectionClick('category')}
@@ -341,7 +341,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
               >
                 {/* Flickering arrow indicator */}
                 <motion.div
-                  className="absolute -top-10 sm:-top-12 md:-top-14 lg:-top-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
+                  className="absolute -top-6 sm:-top-8 md:-top-10 lg:-top-12 left-1/2 -translate-x-1/2 flex flex-col items-center"
                   animate={{
                     y: [0, 6, 0],
                     opacity: [0.4, 1, 0.4]
@@ -371,7 +371,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
                     scale: hoveredChoice === 'category' ? 1.1 : 1
                   }}
                   transition={{ duration: 0.5 }}
-                  className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight"
+                  className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight text-center"
                 >
                   STYLE
                 </motion.h2>
@@ -436,7 +436,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
                 <span className="text-sm uppercase tracking-widest font-bold">Local Time</span>
               </div>
               <h2 className="font-serif text-4xl md:text-7xl text-white mb-6 leading-tight">
-                It is currently {goldenHourData.time} in <br/>
+                It is currently {goldenHourData.time} in <br />
                 <span className="italic text-gold">{goldenHourData.location.split(',')[0]}</span>.
               </h2>
               <div className="flex items-center justify-center space-x-3 text-slate-300">
@@ -504,9 +504,8 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({ onSelection }) 
                           whileHover={{ scale: 1.1 }}
                         >
                           <PulsingMarker active={activeDestination === dest.id} delay={idx * 0.2} />
-                          <span className={`text-xs uppercase tracking-widest transition-colors ${
-                            activeDestination === dest.id ? 'text-gold' : 'text-slate-500 group-hover:text-white'
-                          }`}>
+                          <span className={`text-xs uppercase tracking-widest transition-colors ${activeDestination === dest.id ? 'text-gold' : 'text-slate-500 group-hover:text-white'
+                            }`}>
                             {dest.name}
                           </span>
                         </motion.button>

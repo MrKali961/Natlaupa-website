@@ -19,7 +19,7 @@ export default function HotelCard({ hotel, index = 0 }: HotelCardProps) {
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
     >
-      <Link href={`/hotel/${hotel.id}`} className="group/hotel block">
+      <Link href={`/hotel/${hotel.slug || hotel.id}`} className="group/hotel block">
         <div className="relative overflow-hidden rounded-sm border border-white/10 hover-capable:hover:border-gold/30 transition-colors duration-300">
           <div className="relative h-64 overflow-hidden">
             <img

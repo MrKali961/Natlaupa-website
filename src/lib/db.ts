@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { isCuid } from './slugify';
 
 // Prevent multiple instances of Prisma Client in development
 const globalForPrisma = globalThis as unknown as {
@@ -92,6 +93,19 @@ export async function getHotelById(id: string) {
   });
 }
 
+/**
+ * Get hotel by ID or slug
+ * Supports both legacy ID-based URLs and new slug-based URLs
+ */
+export async function getHotelByIdOrSlug(idOrSlug: string) {
+  const isId = isCuid(idOrSlug);
+
+  return prisma.hotel.findUnique({
+    where: isId ? { id: idOrSlug } : { slug: idOrSlug },
+    include: { reviews: true },
+  });
+}
+
 export async function getTrendingHotels() {
   return prisma.hotel.findMany({
     where: { isTrending: true },
@@ -132,6 +146,27 @@ export async function getAllCategories() {
 export async function getOfferById(id: string) {
   return prisma.offer.findUnique({
     where: { id },
+    include: {
+      hotel: {
+        include: {
+          reviews: true,
+        },
+      },
+      activities: true,
+      reviews: true,
+    },
+  });
+}
+
+/**
+ * Get offer by ID or slug
+ * Supports both legacy ID-based URLs and new slug-based URLs
+ */
+export async function getOfferByIdOrSlug(idOrSlug: string) {
+  const isId = isCuid(idOrSlug);
+
+  return prisma.offer.findUnique({
+    where: isId ? { id: idOrSlug } : { slug: idOrSlug },
     include: {
       hotel: {
         include: {
