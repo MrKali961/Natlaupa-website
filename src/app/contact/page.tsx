@@ -11,6 +11,7 @@ export default function Contact() {
     email: "",
     phone: "",
     message: "",
+    subscribeNewsletter: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -19,8 +20,12 @@ export default function Contact() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,7 +46,7 @@ export default function Contact() {
       }
 
       setIsSubmitted(true);
-      setFormData({ name: "", email: "", phone: "", message: "" });
+      setFormData({ name: "", email: "", phone: "", message: "", subscribeNewsletter: false });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -185,11 +190,13 @@ export default function Contact() {
                   />
                 </div>
                 <div>
-                  <label className="inline-flex items-center text-white text-sm">
+                  <label className="inline-flex items-center text-white text-sm cursor-pointer">
                     <input
                       type="checkbox"
-                      name="subscribe"
-                      className="form-checkbox h-4 w-4 text-gold bg-deepBlue border-white/10 focus:ring-gold focus:ring-2 focus:outline-none transition-colors"
+                      name="subscribeNewsletter"
+                      checked={formData.subscribeNewsletter}
+                      onChange={handleChange}
+                      className="form-checkbox h-4 w-4 text-gold bg-deepBlue border-white/10 focus:ring-gold focus:ring-2 focus:outline-none transition-colors rounded"
                     />
                     <span className="ml-2">
                       Subscribe to our newsletter for exclusive offers

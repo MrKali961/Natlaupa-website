@@ -2,11 +2,27 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Flame, Star, ArrowRight } from 'lucide-react';
+import { Flame, Star, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { TRENDING_HOTELS } from '@/lib/constants';
+import { useTrendingHotels } from '@/hooks/useHotels';
 
 const TrendingSection: React.FC = () => {
+  const { hotels: trendingHotels, isLoading } = useTrendingHotels(6);
+
+  if (isLoading) {
+    return (
+      <section className="py-24 bg-deepBlue">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Loader2 className="w-8 h-8 text-gold animate-spin mx-auto" />
+        </div>
+      </section>
+    );
+  }
+
+  if (trendingHotels.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-24 bg-deepBlue overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,17 +40,17 @@ const TrendingSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {TRENDING_HOTELS.map((hotel) => (
-            <Link key={hotel.id} href={`/hotel/${hotel.slug || hotel.id}`} className="block group/trend">
+          {trendingHotels.map((hotel) => (
+            <Link key={hotel.id} href={`/offer/${hotel.id}`} className="block group/trend">
               <motion.div
                 whileHover={{ y: -10 }}
                 className="bg-midnight rounded-sm overflow-hidden border border-white/5 hover-capable:hover:shadow-2xl hover-capable:hover:shadow-gold/10 transition-all duration-300 h-full flex flex-col"
               >
                 <div className="relative h-72 overflow-hidden">
-                  <img 
-                    src={hotel.imageUrl} 
-                    alt={hotel.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover/trend:scale-110 grayscale group-hover/trend:grayscale-0" 
+                  <img
+                    src={hotel.imageUrl}
+                    alt={hotel.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover/trend:scale-110 grayscale group-hover/trend:grayscale-0"
                   />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center">
                     <Star size={12} className="text-gold fill-gold mr-1" />
@@ -43,12 +59,12 @@ const TrendingSection: React.FC = () => {
                 </div>
                 <div className="p-8 flex flex-col flex-grow">
                   <p className="text-gold text-xs uppercase tracking-wider mb-3">{hotel.category}</p>
-                  
+
                   <div className="mb-6 flex-grow">
                     <h3 className="text-2xl text-white font-serif mb-2 group-hover/trend:text-gold transition-colors duration-300">{hotel.name}</h3>
                     <p className="text-slate-400 text-sm font-light tracking-wide uppercase">{hotel.location}</p>
                   </div>
-                  
+
                   <div className="pt-6 border-t border-white/5 mt-auto">
                     <button className="w-full text-center py-3 border border-white/20 text-white/90 text-xs font-bold uppercase tracking-[0.2em] group-hover/trend:bg-gold group-hover/trend:text-deepBlue group-hover/trend:border-gold transition-all duration-300">
                       {hotel.ctaPhrase || "Discover More"}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 // POST - Save consent preferences
 export async function POST(request: NextRequest) {
@@ -14,31 +15,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Upsert consent record
-    const consent = await prisma.cookieConsent.upsert({
-      where: { sessionId },
-      update: {
-        essential: essential ?? true,
-        analytics: analytics ?? false,
-        personalization: personalization ?? false,
-        updatedAt: new Date()
-      },
-      create: {
+    // Forward to server API
+    const response = await fetch(`${API_URL}/consent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         sessionId,
         essential: essential ?? true,
         analytics: analytics ?? false,
         personalization: personalization ?? false
-      }
+      }),
     });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data.error?.message || 'Failed to save consent preferences' },
+        { status: response.status }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      consent: {
-        sessionId: consent.sessionId,
-        essential: consent.essential,
-        analytics: consent.analytics,
-        personalization: consent.personalization
-      }
+      consent: data.data || data.consent
     });
   } catch (error) {
     console.error('Error saving consent:', error);
@@ -62,24 +62,25 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const consent = await prisma.cookieConsent.findUnique({
-      where: { sessionId }
-    });
+    // Forward to server API
+    const response = await fetch(`${API_URL}/consent/${sessionId}`);
+    const data = await response.json();
 
-    if (!consent) {
+    if (!response.ok) {
+      if (response.status === 404) {
+        return NextResponse.json(
+          { consent: null },
+          { status: 200 }
+        );
+      }
       return NextResponse.json(
-        { consent: null },
-        { status: 200 }
+        { error: data.error?.message || 'Failed to fetch consent preferences' },
+        { status: response.status }
       );
     }
 
     return NextResponse.json({
-      consent: {
-        sessionId: consent.sessionId,
-        essential: consent.essential,
-        analytics: consent.analytics,
-        personalization: consent.personalization
-      }
+      consent: data.data || data.consent
     });
   } catch (error) {
     console.error('Error fetching consent:', error);

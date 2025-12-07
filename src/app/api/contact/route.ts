@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createContactSubmission } from '@/lib/db';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const { name, email, phone, message } = body;
+    const { name, email, phone, message, subscribeNewsletter } = body;
 
     // Validate required fields
     if (!name || !email || !message) {
@@ -24,16 +25,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create submission in database
-    const submission = await createContactSubmission({
-      name,
-      email,
-      phone: phone || undefined,
-      message,
+    // Forward to server API
+    const response = await fetch(`${API_URL}/contact-messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        email,
+        phone: phone && phone.trim() !== '' ? phone : undefined,
+        subject: 'Contact Form Submission',
+        message,
+      }),
     });
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data.error?.message || 'Failed to submit contact form' },
+        { status: response.status }
+      );
+    }
+
+    // If newsletter subscription is checked, also subscribe to newsletter
+    if (subscribeNewsletter) {
+      try {
+        await fetch(`${API_URL}/newsletters/subscribe`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+      } catch (newsletterError) {
+        console.error('Newsletter subscription error:', newsletterError);
+        // Don't fail the contact submission if newsletter fails
+      }
+    }
+
     return NextResponse.json(
-      { success: true, id: submission.id },
+      { success: true, id: data.data?.id },
       { status: 201 }
     );
   } catch (error) {

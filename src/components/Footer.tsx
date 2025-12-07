@@ -2,21 +2,46 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Instagram, Twitter, Facebook, ArrowRight } from 'lucide-react';
+import { Instagram, Twitter, Facebook, ArrowRight, Check, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { FOOTER_LINKS } from '@/lib/constants';
 
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    setError(null);
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok && !data.success) {
+        throw new Error(data.error || 'Failed to subscribe');
+      }
+
+      setIsSubscribed(true);
       setEmail('');
+
+      // Reset success state after 5 seconds
+      setTimeout(() => {
+        setIsSubscribed(false);
+      }, 5000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -152,25 +177,40 @@ const Footer: React.FC = () => {
             <p className="text-slate-500 text-sm uppercase tracking-widest mb-8">
               Subscribe for exclusive access
             </p>
-            <form onSubmit={handleSubmit} className="relative">
-              <div className="flex border-b border-slate-700 focus-within:border-gold transition-colors duration-300">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  className="flex-1 bg-transparent py-4 text-white text-center text-sm tracking-wide focus:outline-none placeholder:text-slate-600"
-                />
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-4 text-gold hover:text-white transition-colors duration-300 disabled:opacity-50"
-                >
-                  <ArrowRight size={20} strokeWidth={1.5} />
-                </button>
+            {isSubscribed ? (
+              <div className="flex items-center justify-center gap-2 py-4 text-gold">
+                <Check size={20} strokeWidth={1.5} />
+                <span className="text-sm tracking-wide">Thank you for subscribing!</span>
               </div>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="relative">
+                <div className="flex border-b border-slate-700 focus-within:border-gold transition-colors duration-300">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    required
+                    disabled={isSubmitting}
+                    className="flex-1 bg-transparent py-4 text-white text-center text-sm tracking-wide focus:outline-none placeholder:text-slate-600 disabled:opacity-50"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-4 text-gold hover:text-white transition-colors duration-300 disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 size={20} strokeWidth={1.5} className="animate-spin" />
+                    ) : (
+                      <ArrowRight size={20} strokeWidth={1.5} />
+                    )}
+                  </button>
+                </div>
+                {error && (
+                  <p className="text-red-400 text-xs mt-2 text-center">{error}</p>
+                )}
+              </form>
+            )}
           </motion.div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createHotelInquiry } from '@/lib/db';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,18 +25,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create inquiry in database
-    const inquiry = await createHotelInquiry({
-      hotelId,
-      hotelName,
-      name,
-      email,
-      phone: phone || undefined,
-      message,
+    // Forward to server API
+    const response = await fetch(`${API_URL}/hotel-inquiries`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        hotelId,
+        hotelName,
+        name,
+        email,
+        phone: phone || undefined,
+        message,
+      }),
     });
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data.error?.message || 'Failed to submit inquiry' },
+        { status: response.status }
+      );
+    }
+
     return NextResponse.json(
-      { success: true, id: inquiry.id },
+      { success: true, id: data.data?.id },
       { status: 201 }
     );
   } catch (error) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 // Valid action types
 const VALID_ACTIONS = ['view', 'click', 'inquiry', 'bookmark', 'mood_select'];
@@ -25,62 +26,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!hotelId) {
-      return NextResponse.json(
-        { error: 'Hotel ID is required' },
-        { status: 400 }
-      );
-    }
-
-    // Check if session has personalization consent
-    const consent = await prisma.cookieConsent.findUnique({
-      where: { sessionId }
-    });
-
-    // Only track if consent is given (or consent record doesn't exist yet for this session)
-    if (consent && !consent.analytics) {
-      return NextResponse.json({
-        success: false,
-        message: 'Tracking disabled by user consent preferences'
-      });
-    }
-
-    // Create interaction record
-    const interaction = await prisma.userInteraction.create({
-      data: {
+    // Forward to server API
+    const response = await fetch(`${API_URL}/tracking`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         sessionId,
-        userId: userId || null,
+        userId: userId || undefined,
         hotelId,
         action,
-        moodContext: moodContext || null
-      }
+        moodContext: moodContext || undefined
+      }),
     });
 
-    // If this is a mood selection, update user preferences if user exists
-    if (action === 'mood_select' && userId) {
-      await prisma.userPreference.upsert({
-        where: {
-          userId_moodId: {
-            userId,
-            moodId: hotelId // For mood_select, hotelId contains moodId
-          }
-        },
-        update: {
-          score: {
-            increment: 0.1 // Increment preference score
-          }
-        },
-        create: {
-          userId,
-          moodId: hotelId,
-          score: 0.1
-        }
-      });
+    const data = await response.json();
+
+    if (!response.ok) {
+      // If tracking is disabled by consent, return success with message
+      if (response.status === 403) {
+        return NextResponse.json({
+          success: false,
+          message: 'Tracking disabled by user consent preferences'
+        });
+      }
+      return NextResponse.json(
+        { error: data.error?.message || 'Failed to record interaction' },
+        { status: response.status }
+      );
     }
 
     return NextResponse.json({
       success: true,
-      interactionId: interaction.id
+      interactionId: data.data?.id
     });
   } catch (error) {
     console.error('Error recording interaction:', error);
@@ -97,88 +74,48 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const hotelId = searchParams.get('hotelId');
     const sessionId = searchParams.get('sessionId');
-    const days = parseInt(searchParams.get('days') || '7');
+    const days = searchParams.get('days') || '7';
 
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+    // Build query params
+    const params = new URLSearchParams();
+    if (hotelId) params.append('hotelId', hotelId);
+    if (sessionId) params.append('sessionId', sessionId);
+    params.append('days', days);
 
-    // Build query
-    const where: Record<string, unknown> = {
-      createdAt: { gte: startDate }
-    };
+    // Forward to server API - Note: stats endpoint requires auth, so we'll call the general endpoint
+    const response = await fetch(`${API_URL}/tracking/stats?${params.toString()}`);
 
-    if (hotelId) where.hotelId = hotelId;
-    if (sessionId) where.sessionId = sessionId;
+    // If unauthorized (needs admin auth), return local-only stats
+    if (response.status === 401 || response.status === 403) {
+      // Return empty stats for non-admin users
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - parseInt(days));
 
-    // Get interaction counts by action
-    const stats = await prisma.userInteraction.groupBy({
-      by: ['action'],
-      where,
-      _count: {
-        action: true
-      }
-    });
-
-    // Get total unique sessions
-    const uniqueSessions = await prisma.userInteraction.groupBy({
-      by: ['sessionId'],
-      where
-    });
-
-    // Get most viewed hotels
-    const topHotels = await prisma.userInteraction.groupBy({
-      by: ['hotelId'],
-      where: {
-        ...where,
-        action: 'view'
-      },
-      _count: {
-        hotelId: true
-      },
-      orderBy: {
-        _count: {
-          hotelId: 'desc'
+      return NextResponse.json({
+        period: {
+          start: startDate.toISOString(),
+          end: new Date().toISOString(),
+          days: parseInt(days)
+        },
+        stats: {
+          byAction: {},
+          uniqueSessions: 0,
+          topHotels: [],
+          moodDistribution: {}
         }
-      },
-      take: 10
-    });
+      });
+    }
 
-    // Get mood distribution
-    const moodStats = await prisma.userInteraction.groupBy({
-      by: ['moodContext'],
-      where: {
-        ...where,
-        moodContext: { not: null }
-      },
-      _count: {
-        moodContext: true
-      }
-    });
+    const data = await response.json();
 
-    return NextResponse.json({
-      period: {
-        start: startDate.toISOString(),
-        end: new Date().toISOString(),
-        days
-      },
-      stats: {
-        byAction: stats.reduce((acc, s) => {
-          acc[s.action] = s._count.action;
-          return acc;
-        }, {} as Record<string, number>),
-        uniqueSessions: uniqueSessions.length,
-        topHotels: topHotels.map(h => ({
-          hotelId: h.hotelId,
-          views: h._count.hotelId
-        })),
-        moodDistribution: moodStats.reduce((acc, m) => {
-          if (m.moodContext) {
-            acc[m.moodContext] = m._count.moodContext;
-          }
-          return acc;
-        }, {} as Record<string, number>)
-      }
-    });
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data.error?.message || 'Failed to fetch interaction statistics' },
+        { status: response.status }
+      );
+    }
+
+    return NextResponse.json(data.data || data);
   } catch (error) {
     console.error('Error fetching stats:', error);
     return NextResponse.json(

@@ -2,33 +2,33 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
-// GET - Fetch hotel by ID
+// GET - Fetch style by slug
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { id } = await params;
+    const { slug } = await params;
 
-    const response = await fetch(`${API_URL}/hotels/${id}`, {
+    const response = await fetch(`${API_URL}/hotel-styles/slug/${slug}`, {
       headers: { 'Content-Type': 'application/json' },
-      next: { revalidate: 60 }, // Cache for 60 seconds
+      next: { revalidate: 300 }, // Cache for 5 minutes
     });
 
     const data = await response.json();
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: data.error?.message || 'Hotel not found' },
+        { error: data.error?.message || 'Style not found' },
         { status: response.status }
       );
     }
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching hotel:', error);
+    console.error('Error fetching style:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch hotel' },
+      { error: 'Failed to fetch style' },
       { status: 500 }
     );
   }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAngelApplication } from '@/lib/db';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,19 +33,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create application in database
-    const application = await createAngelApplication({
-      firstName,
-      lastName,
-      email,
-      phone,
-      currentPosition,
-      yearsInHospitality,
-      motivation,
+    // Forward to server API
+    const response = await fetch(`${API_URL}/angel-applications`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        phone,
+        currentPosition,
+        yearsInHospitality,
+        motivation,
+      }),
     });
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data.error?.message || 'Failed to submit angel application' },
+        { status: response.status }
+      );
+    }
+
     return NextResponse.json(
-      { success: true, id: application.id },
+      { success: true, id: data.data?.id },
       { status: 201 }
     );
   } catch (error) {
