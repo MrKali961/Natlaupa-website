@@ -50,43 +50,36 @@ const testimonials = [
 
 const curators = [
   {
-    name: "Isabella Fontaine",
-    role: "Founder & Chief Curator",
-    region: "Europe & Mediterranean",
+    name: "SABINE FEREKH",
+    role: "Business Development Manager",
+    region: "Luxury Travel Expert",
     image: "https://picsum.photos/400/500?random=301",
-    bio: "Former luxury concierge with 15 years crafting bespoke experiences."
+    bio: "Driving growth through strategic partnerships and innovative luxury hospitality solutions."
   },
   {
-    name: "Kenji Nakamura",
-    role: "Asia-Pacific Director",
-    region: "Japan, SE Asia & Oceania",
+    name: "GAELLE KEHDI",
+    role: "Project Manager",
+    region: "Operations & Strategy",
     image: "https://picsum.photos/400/500?random=302",
-    bio: "Expert in blending traditional hospitality with modern luxury."
-  },
-  {
-    name: "Amara Okonkwo",
-    role: "Africa & Middle East Lead",
-    region: "Safari & Desert Experiences",
-    image: "https://picsum.photos/400/500?random=303",
-    bio: "Passionate about sustainable luxury and authentic cultural immersion."
+    bio: "Orchestrating seamless experiences through meticulous planning and execution excellence."
   }
 ];
 
 const promises = [
   {
     icon: MapPin,
-    title: "Local Expertise",
-    description: "Our curators live where they recommend. Every suggestion comes from genuine, firsthand experience."
+    title: "Hospitality Experts",
+    description: "Our team consists of seasoned professionals who understand the nuances of the luxury hospitality industry."
   },
   {
     icon: Sparkles,
-    title: "Authentic Luxury",
-    description: "We seek properties with soul—places where exceptional service meets meaningful experiences."
+    title: "Available 24/7 & Best price guaranteed",
+    description: "Natlaupa offers availablility 24/7, with privileged access to the best rates, always refined, always guaranteed."
   },
   {
     icon: Shield,
-    title: "Seamless Service",
-    description: "From first inquiry to final farewell, we handle every detail so you can simply... arrive."
+    title: "Trust",
+    description: "At Natlaupa, we ensure that every client is supported, listened to, and guided through a seamless, unforgettable experience."
   }
 ];
 
@@ -195,8 +188,8 @@ export default function About() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="font-serif text-5xl md:text-7xl lg:text-8xl text-white mb-6"
             >
-              Where Luxury Meets
-              <span className="block text-gold">Discovery</span>
+              Welcome to
+              <span className="block text-gold">Natlaupa</span>
             </motion.h1>
 
             <motion.p
@@ -205,7 +198,7 @@ export default function About() {
               transition={{ duration: 0.8, delay: 0.5 }}
               className="text-xl md:text-2xl text-slate-300 font-light max-w-2xl mx-auto mb-12"
             >
-              Every destination tells a story. We help you become part of it.
+              A network of hotel experts specialized in travel and personalized advice, offering a unique experience. We partner with the most beautiful destinations around the world to offer our clients advantageous rates and the best conditions. Natlaupa is here to make every journey unforgettable.
             </motion.p>
 
             <motion.div
@@ -220,7 +213,7 @@ export default function About() {
         </section>
 
         {/* Interactive Map Section */}
-        <section ref={mapRef} className="py-24 px-4 relative">
+        <section ref={mapRef} className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative">
           <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -228,10 +221,10 @@ export default function About() {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <h2 className="font-serif text-4xl md:text-5xl text-white mb-4">
+              <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-white mb-4">
                 Our Global Collection
               </h2>
-              <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto px-4">
                 Click on any destination to discover its story
               </p>
             </motion.div>
@@ -252,11 +245,13 @@ export default function About() {
               transition={{ duration: 0.8 }}
             >
               <Quote className="w-12 h-12 text-gold mx-auto mb-8 opacity-50" />
-              <h2 className="font-serif text-3xl md:text-5xl text-white leading-relaxed mb-8">
-                Every pin on our map represents a <span className="text-gold">promise</span>—
-                a commitment to experiences that transform, inspire, and endure.
+              <h2 className="font-serif text-3xl md:text-5xl text-white leading-relaxed mb-12">
+                We elevate luxury through <span className="text-gold">premium partnerships</span> and <span className="text-gold">expert curation</span>—empowering hotels to maximize visibility and profitability while delivering exceptional, personalized experiences to discerning travelers.
               </h2>
-              <div className="w-24 h-px bg-gold mx-auto" />
+              <div className="w-24 h-px bg-gold mx-auto mb-8" />
+              <p className="text-xl text-slate-300 leading-relaxed max-w-3xl mx-auto">
+                Breaking from conventional models, we create a community where hotels grow and travelers discover truly tailored journeys. This is luxury, reimagined.
+              </p>
             </motion.div>
           </div>
         </section>
@@ -371,7 +366,7 @@ export default function About() {
               </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {curators.map((curator, index) => (
                 <motion.div
                   key={curator.name}

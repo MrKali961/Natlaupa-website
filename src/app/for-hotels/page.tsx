@@ -187,7 +187,7 @@ export default function ForHotels() {
               transition={{ delay: 0.1 }}
               className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-8"
             >
-              Partner With Natlaupa
+              Elevate your hotel's potential with precision pricing & exclusive reach
             </motion.h1>
 
             <motion.p
@@ -196,9 +196,7 @@ export default function ForHotels() {
               transition={{ delay: 0.2 }}
               className="text-xl text-slate-300 font-light leading-relaxed mb-12 max-w-2xl mx-auto"
             >
-              Join our exclusive network of hospitality professionals. Access
-              premium deals, earn competitive commissions, and deliver
-              exceptional experiences to discerning travelers.
+              Unleash the full value of every room night with Natlaupa's luxury-grade revenue management. We marry advanced analytics and white-glove service to drive profit and prestige in perfect harmony.
             </motion.p>
 
             <motion.div

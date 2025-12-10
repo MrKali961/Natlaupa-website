@@ -50,11 +50,13 @@ export default function OffersPage() {
                 Our Collection
               </span>
               <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-6">
-                All Offers
+                Natlaupa redefines the way you travel.
               </h1>
+              <h2 className="font-serif text-2xl md:text-3xl text-gold mb-4">
+                WE DON'T JUST BOOK ROOMS. WE CURATE ESCAPES.
+              </h2>
               <p className="text-xl text-slate-300 font-light max-w-2xl mx-auto">
-                Discover our curated selection of exceptional properties around
-                the world.
+                Through privileged relationships with the world's finest hotels, we offer more than just a stay, we offer access. Preferential rates, tailored experiences, and discreet privileges curated with intention and elegance. Because true luxury should feel like it was made just for you.
               </p>
             </motion.div>
 

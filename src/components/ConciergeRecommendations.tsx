@@ -224,7 +224,7 @@ const ConciergeRecommendations: React.FC = () => {
               </div>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl text-white mb-2">
-              Today's <span className="italic">Recommendations</span>
+              WE DON'T JUST BOOK ROOMS. <span className="italic">WE CURATE ESCAPES.</span>
             </h2>
             <p className="text-slate-400">
               Handpicked selections updated daily just for you.

@@ -160,22 +160,22 @@ export default function InteractiveMap({ destinations }: InteractiveMapProps) {
   // Show error state
   if (mapError) {
     return (
-      <div className="relative aspect-[2/1] max-w-5xl mx-auto rounded-lg overflow-hidden bg-midnight/50 border border-gold/20 flex items-center justify-center">
-        <div className="text-center p-8">
-          <MapPin className="w-12 h-12 text-gold/50 mx-auto mb-4" />
-          <p className="text-slate-400">{mapError}</p>
+      <div className="relative aspect-[16/9] sm:aspect-[2/1] max-w-5xl mx-auto rounded-lg overflow-hidden bg-midnight/50 border border-gold/20 flex items-center justify-center" style={{ minHeight: '300px' }}>
+        <div className="text-center p-4 sm:p-8">
+          <MapPin className="w-8 h-8 sm:w-12 sm:h-12 text-gold/50 mx-auto mb-4" />
+          <p className="text-slate-400 text-sm sm:text-base px-4">{mapError}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative aspect-[2/1] max-w-5xl mx-auto rounded-lg overflow-hidden">
+    <div className="relative aspect-[16/9] sm:aspect-[2/1] max-w-5xl mx-auto rounded-lg overflow-hidden">
       {/* Map container */}
       <div
         ref={mapContainerRef}
         className="w-full h-full"
-        style={{ minHeight: '400px' }}
+        style={{ minHeight: '300px' }}
       />
 
       {/* Loading overlay */}
@@ -195,7 +195,7 @@ export default function InteractiveMap({ destinations }: InteractiveMapProps) {
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-midnight/95 backdrop-blur-sm border border-gold/20 rounded-lg p-6 w-80 z-10"
+            className="absolute bottom-2 sm:bottom-4 left-2 right-2 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-80 bg-midnight/95 backdrop-blur-sm border border-gold/20 rounded-lg p-4 sm:p-6 z-10"
           >
             <button
               onClick={() => {

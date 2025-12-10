@@ -101,9 +101,9 @@ const ValueProps: React.FC = () => {
       
       {/* Intro Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 md:mb-24 text-center">
-         <h2 className="font-serif text-3xl md:text-5xl text-white mb-6">The Natlaupa Philosophy</h2>
+         <h2 className="font-serif text-3xl md:text-5xl text-white mb-6">Natlaupa: Luxury one step closer</h2>
          <p className="text-slate-400 font-light max-w-2xl mx-auto text-sm md:text-base">
-            We believe that where you stay shapes who you become. Our three pillars ensure that your journey is as seamless as it is unforgettable.
+            YOU ARE UNIQUE, SO WILL YOUR EXPERIENCE. Enjoy exclusive access, VIP treatment, and unmatched comfort. Natlaupa secures elite rates and premium perks luxury without compromise. Travel with purpose, earn as you go, and elevate every journey. This is more than a stay. It's your gateway to the extraordinary.
          </p>
       </div>
 

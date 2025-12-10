@@ -158,7 +158,7 @@ export default function BecomeAngel() {
               transition={{ delay: 0.1 }}
               className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-8"
             >
-              Become a Natlaupa Angel
+              Join Natlaupa's Elite Angel Program
             </motion.h1>
 
             <motion.p
@@ -167,8 +167,7 @@ export default function BecomeAngel() {
               transition={{ delay: 0.2 }}
               className="text-xl text-slate-300 font-light leading-relaxed mb-12 max-w-2xl mx-auto"
             >
-              Join our exclusive community of hospitality professionals. Share extraordinary stays,
-              earn exceptional rewards, and shape the future of luxury travel.
+              Step into a world where your expertise fuels luxury travel—and your performance is richly rewarded. <strong className="text-white">Connect. Collaborate. Earn.</strong> As a Natlaupa Angel, you become an integral part of our global network. Drive high-impact partnerships, share bespoke experiences with discerning clients, and unlock a revenue stream that grows with every referral.
             </motion.p>
 
             <motion.div
