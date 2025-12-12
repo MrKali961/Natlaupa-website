@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Services Agreement - TES-NAT-2025-001</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Config for Gold Palette -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            100: '#F9F1D8',
+                            300: '#E6C885',
+                            500: '#C5A059', // Primary Gold
+                            600: '#A38240',
+                            800: '#5C4824',
+                        },
+                        dark: {
+                            900: '#1a1a1a',
+                            800: '#2d2d2d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Print Specific Styles */
+        @media print {
+            @page {
+                margin: 15mm 20mm;
+                size: A4;
+            }
+            
+            body {
+                background: white;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                font-size: 10.5pt; /* Slightly smaller to fit content nicely */
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+            
+            .avoid-break {
+                page-break-inside: avoid;
+            }
+
+            /* Ensure gold colors print correctly */
+            .text-gold-500 {
+                color: #C5A059 !important;
+            }
+            .border-gold-500 {
+                border-color: #C5A059 !important;
+            }
+            .bg-gold-50 {
+                background-color: #FAFAFA !important;
+            }
+            
+            /* Table formatting for print */
+            table { page-break-inside: avoid; }
+            tr    { page-break-inside: avoid; }
+        }
+
+        /* Screen Styles for Preview */
+        body {
+            background-color: #f3f4f6;
+        }
+        
+        .paper-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Lists */
+        ul.legal-list { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.5rem; }
+        ol.legal-list { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.5rem; }
+        .legal-list li { margin-bottom: 0.25rem; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen pb-20">
+
+    <!-- Floating Action Bar (Hidden when printing) -->
+    <div class="fixed top-0 left-0 w-full bg-dark-900 text-white p-4 shadow-lg z-50 flex justify-between items-center no-print opacity-95 backdrop-blur">
+        <div class="font-serif text-gold-300 font-bold text-lg tracking-wide">TES CONTRACT VIEWER</div>
+        <div class="flex gap-4">
+            <button onclick="window.print()" class="bg-gold-500 hover:bg-gold-600 text-white px-6 py-2 rounded font-medium transition-all shadow-md flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Print / Save as PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Contract Container -->
+    <div class="max-w-[210mm] mx-auto bg-white mt-24 mb-10 p-[20mm] paper-shadow min-h-screen leading-relaxed">
+        
+        <!-- HEADER / LOGO SECTION -->
+        <header class="text-center mb-12 border-b-2 border-gold-500 pb-8">
+            <!-- LOGO PLACEHOLDER -->
+            <img src="C:\Users\johnn\Documents\Private-work\The Elites\Logo\Logo.png" class="h-31 w-40 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"></img>
+      
+
+            <h1 class="font-serif text-4xl font-bold text-gray-900 mb-2 uppercase tracking-wide">Digital Services Agreement</h1>
+            <p class="text-gold-600 font-medium tracking-widest uppercase text-sm">Contract Ref: TES-NAT-2025-001</p>
+        </header>
+
+        <!-- PARTIES -->
+        <section class="mb-10 avoid-break">
+            <h2 class="font-serif text-xl font-bold text-gray-900 mb-6 border-l-4 border-gold-500 pl-4">PARTIES TO THIS AGREEMENT</h2>
+            
+            <div class="grid grid-cols-2 gap-8">
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-100">
+                    <p class="text-xs text-gold-600 font-bold uppercase tracking-wider mb-2">Service Provider ("Provider")</p>
+                    <h3 class="font-serif text-lg font-bold text-gray-900">Johnny Jneid</h3>
+                    <p class="text-sm text-gray-600 italic mb-2">Trading as: The Elites Solutions</p>
+                    <div class="text-sm space-y-1">
+                        <p><span class="font-semibold">Loc:</span> Lebanon</p>
+                        <p><span class="font-semibold">Email:</span> johnny@theelitessolutions.cloud</p>
+                        <p><span class="font-semibold">Tel:</span> +961 81 898 056</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-100">
+                    <p class="text-xs text-gold-600 font-bold uppercase tracking-wider mb-2">Client ("Client")</p>
+                    <h3 class="font-serif text-lg font-bold text-gray-900">Natlaupa</h3>
+                    <p class="text-sm text-gray-600 italic mb-2">Luxury Hospitality Services</p>
+                    <div class="text-sm space-y-1">
+                        <p><span class="font-semibold">Offices:</span> Paris | Barcelona | Beirut</p>
+                        <p><span class="font-semibold">Email:</span> hello@natlaupa.fr</p>
+                        <p><span class="font-semibold">Tel:</span> +33 7 75 74 38 75</p>
+                        <p><span class="font-semibold">Web:</span> www.natlaupa.fr</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RECITALS -->
+        <section class="mb-10 text-justify leading-relaxed">
+            <h2 class="font-serif text-lg font-bold text-gray-900 mb-4 border-b border-gold-100 pb-2">RECITALS</h2>
+            <p class="mb-4 text-sm"><span class="font-bold text-gold-600 mr-2">WHEREAS:</span></p>
+            <ol class="list-[upper-alpha] pl-6 space-y-2 text-sm text-gray-700 marker:font-bold marker:text-gold-600">
+                <li>The Provider specializes in software development, web development, and digital marketing services;</li>
+                <li>The Client operates a luxury hospitality-services firm specializing in hotel consulting, distribution, and revenue management, present on 3 continents and in 10 countries, managing a portfolio of over 60 hotels;</li>
+                <li>The Client desires to engage the Provider to develop, maintain, and optimize digital platforms and services to support the Client's business operations;</li>
+                <li>The Provider agrees to provide such services under the terms and conditions set forth in this Agreement.</li>
+            </ol>
+            <p class="mt-4 font-serif italic text-center text-gray-600">NOW, THEREFORE, in consideration of the mutual covenants and agreements herein contained, the Parties agree as follows:</p>
+        </section>
+
+        <hr class="border-gold-300 my-8">
+
+        <!-- ARTICLE 1 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 1: Definitions</h3>
+            <div class="text-sm space-y-3 text-gray-700">
+                <p><strong>1.1 "Agreement"</strong> means this Digital Services Agreement, including all schedules, exhibits, and amendments.</p>
+                <p><strong>1.2 "Deliverables"</strong> means all work product, software, documentation, and materials created or provided by the Provider under this Agreement.</p>
+                <p><strong>1.3 "Services"</strong> means the website development, admin dashboard, SEO services, support, maintenance, and hosting services described in Article 3.</p>
+                <p><strong>1.4 "Effective Date"</strong> means the date of the last signature on this Agreement.</p>
+                <p><strong>1.5 "Term"</strong> means the duration of this Agreement as specified in Article 12.</p>
+                <p><strong>1.6 "Confidential Information"</strong> means any non-public information disclosed by either Party, including but not limited to business strategies, customer data, technical specifications, and financial information.</p>
+            </div>
+        </article>
+
+        <!-- ARTICLE 2 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 2: Purpose</h3>
+            <div class="text-sm space-y-3 text-gray-700">
+                <p><strong>2.1</strong> The Provider agrees to provide comprehensive digital services to support the Client's luxury hospitality platform, including:</p>
+                <ul class="legal-list">
+                    <li>Development and maintenance of the Natlaupa website</li>
+                    <li>Development and maintenance of an administrative dashboard</li>
+                    <li>Search Engine Optimization (SEO) services</li>
+                    <li>Technical support and maintenance</li>
+                    <li>Web hosting and domain management</li>
+                </ul>
+                <p><strong>2.2</strong> This Agreement establishes a long-term partnership focused on enhancing the Client's digital presence and operational efficiency in the luxury hospitality sector.</p>
+            </div>
+        </article>
+
+        <div class="page-break"></div>
+
+        <!-- ARTICLE 3 -->
+        <article class="mb-8">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 3: Scope of Services</h3>
+            
+            <div class="space-y-6 text-sm text-gray-700">
+                <!-- 3.1 -->
+                <div class="avoid-break">
+                    <h4 class="font-bold text-gray-900 text-base mb-2">3.1 Website Development & Maintenance</h4>
+                    <p class="mb-2">The Provider shall develop, deploy, and maintain a luxury hotel booking platform with the following features:</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                        <div class="bg-gray-50 p-4 rounded border border-gray-100">
+                            <p class="font-bold text-xs uppercase text-gold-600 mb-2">Technical Specifications</p>
+                            <ul class="legal-list text-xs">
+                                <li>Next.js 15 framework with App Router</li>
+                                <li>React 19 for user interface components</li>
+                                <li>TailwindCSS for responsive styling</li>
+                                <li>GSAP and Framer Motion for premium animations</li>
+                                <li>Lenis for smooth scrolling experience</li>
+                                <li>Mapbox GL for interactive destination maps</li>
+                                <li>Google Gemini API integration for AI-powered recommendations</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded border border-gray-100">
+                            <p class="font-bold text-xs uppercase text-gold-600 mb-2">Website Features</p>
+                            <ul class="legal-list text-xs">
+                                <li>Homepage with hero section, trending hotels, mood matching</li>
+                                <li>Hotel listing and detail pages with galleries</li>
+                                <li>Offer listing and detail pages</li>
+                                <li>Blog section with individual post pages</li>
+                                <li>Country and style-based hotel filtering</li>
+                                <li>AI-powered concierge recommendations</li>
+                                <li>Mobile-responsive design (Desktop, Laptop, Tablet, Mobile)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-xs italic text-gray-500">Includes 20 API Endpoints covering Hotels management, Offers, Blog posts, Destinations, Contact forms, Inquiries, Applications, Newsletter, AI recommendations, and User tracking.</p>
+                </div>
+
+                <!-- 3.2 -->
+                <div class="avoid-break">
+                    <h4 class="font-bold text-gray-900 text-base mb-2">3.2 Administrative Dashboard</h4>
+                    <p class="mb-2">The Provider shall develop a comprehensive admin dashboard for business management:</p>
+                    <ul class="legal-list">
+                        <li><strong>Content Management:</strong> Hotels (CRUD), Offers, Blog Posts (Rich Text), Destinations, Styles/Categories.</li>
+                        <li><strong>Business Management:</strong> Inbox for user inquiries, Partnership/Angel applications, Newsletter subscriber management, Analytics dashboard.</li>
+                        <li><strong>Dashboard Features:</strong> Secure authentication, Clean UI, Real-time sync, Export functionality, Search and filter capabilities.</li>
+                    </ul>
+                </div>
+
+                <!-- 3.3 -->
+                <div class="avoid-break">
+                    <h4 class="font-bold text-gray-900 text-base mb-2">3.3 SEO Services (Comprehensive Package)</h4>
+                    <p class="mb-2">The Provider shall deliver ongoing SEO services including:</p>
+                    <ul class="legal-list">
+                        <li><strong>On-Page Optimization:</strong> Meta titles/descriptions, Header tags (H1-H3), Image alt text, Internal linking, URL structure.</li>
+                        <li><strong>Technical SEO:</strong> XML sitemaps, Robots.txt, Google Search Console, Core Web Vitals, Mobile-friendliness, Page speed.</li>
+                        <li><strong>Ongoing Services:</strong> Monthly keyword research, Quarterly competitor analysis, Monthly performance reports, Ranking monitoring.</li>
+                    </ul>
+                </div>
+
+                <!-- 3.4 -->
+                <div class="avoid-break">
+                    <h4 class="font-bold text-gray-900 text-base mb-2">3.4 Technical Support & Maintenance</h4>
+                    <p class="mb-1"><strong>Support Hours:</strong> Monday through Saturday, 9:00 AM to 9:00 PM (Lebanon/Paris time)</p>
+                    <p class="mb-1"><strong>Support Channels:</strong> Email (johnny@theelitessolutions.cloud) & WhatsApp (+961 81 898 056)</p>
+                    <p class="mb-2"><strong>Response Times:</strong> Critical (4h), High (12h), Normal (24h), Low (48h).</p>
+                    <p class="text-xs text-gray-500">Includes bug fixes, security patches, minor feature enhancements, performance monitoring, database maintenance, and backup management.</p>
+                </div>
+
+                <!-- 3.5 -->
+                <div class="avoid-break">
+                    <h4 class="font-bold text-gray-900 text-base mb-2">3.5 Hosting & Infrastructure</h4>
+                    <ul class="legal-list">
+                        <li>Web hosting for the Natlaupa platform</li>
+                        <li>Domain management and DNS configuration</li>
+                        <li>SSL certificate provisioning and renewal</li>
+                        <li>CDN integration for optimal performance</li>
+                        <li>Regular automated backups</li>
+                        <li>99.5% uptime guarantee (excluding scheduled maintenance)</li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+
+        <!-- ARTICLE 4 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 4: Deliverables</h3>
+            <div class="text-sm text-gray-700 space-y-4">
+                
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-2">4.1 Initial Deliverables</h4>
+                    <table class="w-full text-xs text-left border border-gray-200">
+                        <thead class="bg-gray-100 font-bold">
+                            <tr>
+                                <th class="p-2 border border-gray-200">Deliverable</th>
+                                <th class="p-2 border border-gray-200">Description</th>
+                                <th class="p-2 border border-gray-200">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="p-2 border border-gray-200">Natlaupa Website</td>
+                                <td class="p-2 border border-gray-200">Fully functional luxury hotel booking platform</td>
+                                <td class="p-2 border border-gray-200">Completed</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-gray-200">Admin Dashboard</td>
+                                <td class="p-2 border border-gray-200">Business management interface</td>
+                                <td class="p-2 border border-gray-200">To be delivered within 60 days of contract signing</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-gray-200">SEO Setup</td>
+                                <td class="p-2 border border-gray-200">Initial optimization and tool configuration</td>
+                                <td class="p-2 border border-gray-200">Within 30 days of contract signing</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-2">4.2 Ongoing Deliverables</h4>
+                    <p>SEO Performance Report (Monthly), Keyword Research Update (Monthly), Security Updates (As needed), Bug Fixes (As needed), Backup Verification (Weekly).</p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-2">4.3 Acceptance Criteria</h4>
+                    <p>All deliverables shall function as specified, be compatible with modern browsers (Chrome, Firefox, Safari, Edge), be responsive across all devices, meet WCAG 2.1 AA accessibility standards where applicable, and pass security vulnerability scans.</p>
+                </div>
+            </div>
+        </article>
+
+        <div class="page-break"></div>
+
+        <!-- ARTICLE 5 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 5: Service Level Agreement (SLA)</h3>
+            <div class="text-sm space-y-4 text-gray-700">
+                <p><strong>5.1 Availability:</strong> The Provider guarantees 99.5% monthly uptime. Downtime excludes scheduled maintenance (48h notice), force majeure, client actions, or third-party outages.</p>
+                
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-2">5.2 Response & Resolution</h4>
+                    <table class="w-full text-xs text-left border border-gray-200">
+                        <thead class="bg-gray-100 font-bold">
+                            <tr>
+                                <th class="p-2 border border-gray-200">Priority</th>
+                                <th class="p-2 border border-gray-200">Definition</th>
+                                <th class="p-2 border border-gray-200">Response Time</th>
+                                <th class="p-2 border border-gray-200">Target Resolution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="p-2 border border-gray-200 font-bold text-red-600">Critical</td>
+                                <td class="p-2 border border-gray-200">Complete service outage</td>
+                                <td class="p-2 border border-gray-200">4 hours</td>
+                                <td class="p-2 border border-gray-200">24 hours</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-gray-200 font-bold text-orange-600">High</td>
+                                <td class="p-2 border border-gray-200">Major feature unavailable</td>
+                                <td class="p-2 border border-gray-200">12 hours</td>
+                                <td class="p-2 border border-gray-200">72 hours</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-gray-200">Normal</td>
+                                <td class="p-2 border border-gray-200">Partial functionality issue</td>
+                                <td class="p-2 border border-gray-200">24 hours</td>
+                                <td class="p-2 border border-gray-200">7 business days</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-gray-200">Low</td>
+                                <td class="p-2 border border-gray-200">Minor issue or question</td>
+                                <td class="p-2 border border-gray-200">48 hours</td>
+                                <td class="p-2 border border-gray-200">14 business days</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </article>
+
+        <!-- ARTICLE 6 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 6: Financial Terms</h3>
+            <div class="text-sm space-y-4 text-gray-700">
+                
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 bg-gold-50 p-4 rounded border border-gold-200">
+                        <p class="text-xs uppercase text-gold-600 font-bold">Annual Service Fee</p>
+                        <p class="text-xl font-serif font-bold text-gray-900">1,800.00 EUR</p>
+                    </div>
+                    <div class="flex-1 bg-gray-900 p-4 rounded border border-gray-800 text-white">
+                        <p class="text-xs uppercase text-gray-400 font-bold">Monthly Payment</p>
+                        <p class="text-xl font-serif font-bold text-gold-300">150.00 EUR</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-1">6.2 Payment Schedule</h4>
+                        <ul class="legal-list text-xs">
+                            <li>Payments are due on the <strong>1st day of each calendar month</strong>.</li>
+                            <li>First payment due upon contract execution.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-1">6.3 Payment Methods</h4>
+                        <ul class="legal-list text-xs">
+                            <li>Western Union Transfer</li>
+                            <li>Whish Link Payment</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-1">6.4 Late Payment & 6.5 Adjustments</h4>
+                    <p class="text-xs">A 15-day grace period applies. Afterward, services may be suspended, and a 2% late fee applies. Fees are fixed for 12 months. Adjustments upon renewal shall not exceed 10% without agreement.</p>
+                </div>
+            </div>
+        </article>
+
+        <!-- ARTICLE 7 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 7: Intellectual Property Rights</h3>
+            <div class="text-sm space-y-3 text-gray-700">
+                <p><strong>7.1 License Grant to Client:</strong> Upon full payment, the Provider grants the Client a perpetual, non-exclusive, worldwide license to use, host, operate, modify, and create derivative works of the Deliverables, and sub-license to third parties solely for hosting/operating purposes.</p>
+                <p><strong>7.2 Ownership Retained by Provider:</strong> The Provider retains ownership of source code, methodologies, pre-existing tools, libraries, frameworks, and generic components reused in other projects.</p>
+                <p><strong>7.3 Third-Party Components:</strong> The Deliverables incorporate third-party components (Next.js, React, TailwindCSS, GSAP) subject to their respective licenses.</p>
+                <p><strong>7.4 Client Materials:</strong> The Client retains full ownership of brand assets, logos, content, customer data, and domain names.</p>
+            </div>
+        </article>
+
+        <!-- ARTICLE 8 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 8: Confidentiality</h3>
+            <div class="text-sm space-y-3 text-gray-700">
+                <p><strong>8.1</strong> Each Party agrees to maintain the confidentiality of the other Party's Confidential Information, use it solely for this Agreement, and not disclose it without consent.</p>
+                <p><strong>8.2</strong> Exceptions include information that is publicly available, known prior to disclosure, independently developed, or required by law.</p>
+                <p><strong>8.3</strong> Confidentiality obligations survive termination for a period of <strong>six (6) months</strong>.</p>
+            </div>
+        </article>
+
+        <div class="page-break"></div>
+
+        <!-- ARTICLE 9 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 9: Data Protection</h3>
+            <div class="text-sm space-y-3 text-gray-700">
+                <p><strong>9.1 GDPR Compliance:</strong> Both Parties agree to comply with the General Data Protection Regulation (GDPR).</p>
+                <p><strong>9.2 Data Processing:</strong> The Provider acts as a <strong>Data Processor</strong> on behalf of the Client (Data Controller).</p>
+                <p><strong>9.3 Provider Obligations:</strong> Process data only on instructions, ensure confidentiality, implement security measures, assist with requests, and delete/return data upon termination.</p>
+                <p><strong>9.4 Security Measures:</strong> Encrypted transmission (HTTPS/TLS), secure authentication, updates, access controls, and regular backups.</p>
+            </div>
+        </article>
+
+        <!-- ARTICLE 10 & 11 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <article class="avoid-break">
+                <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 10: Warranties</h3>
+                <div class="text-sm space-y-2 text-gray-700">
+                    <p><strong>10.1</strong> The Provider warrants quality workmanship, substantial conformity to specs for 90 days, non-infringement, and authority to enter this Agreement.</p>
+                    <p><strong>10.2</strong> Remedies for breach include repair, replacement, or refund.</p>
+                    <p><strong>10.3</strong> EXCEPT AS SET FORTH HEREIN, THE PROVIDER MAKES NO OTHER WARRANTIES, EXPRESS OR IMPLIED.</p>
+                </div>
+            </article>
+
+            <article class="avoid-break">
+                <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 11: Liability</h3>
+                <div class="text-sm space-y-2 text-gray-700">
+                    <p><strong>11.1</strong> TOTAL LIABILITY SHALL NOT EXCEED FEES PAID IN THE PRECEDING 12 MONTHS.</p>
+                    <p><strong>11.2</strong> NEITHER PARTY IS LIABLE FOR INDIRECT, SPECIAL, OR CONSEQUENTIAL DAMAGES, LOST PROFITS, OR DATA LOSS.</p>
+                    <p><strong>11.3</strong> Exceptions apply to confidentiality breaches, willful misconduct, indemnification, and IP infringement.</p>
+                </div>
+            </article>
+        </div>
+
+        <!-- ARTICLE 12 & 13 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 12 & 13: Term & Termination</h3>
+            <div class="text-sm space-y-3 text-gray-700">
+                <p><strong>12. Term:</strong> Initial term of <strong>twelve (12) months</strong>. Automatically renews for successive 12-month periods unless 30 days' notice is given.</p>
+                <p><strong>13.1 Termination for Convenience:</strong> 30 days written notice.</p>
+                <p><strong>13.2 Termination for Cause:</strong> Immediate upon material breach (uncured 15 days), insolvency, or failure to pay (30 days overdue).</p>
+                <p><strong>13.3 Effects:</strong> Client pays fees due; Provider delivers work product and data; Transition assistance provided (up to 10 hours).</p>
+            </div>
+        </article>
+
+        <!-- ARTICLE 14 & 15 -->
+        <article class="mb-8 avoid-break">
+            <h3 class="font-serif text-xl font-bold text-gold-500 mb-4 uppercase tracking-wider">Article 14 & 15: General Provisions</h3>
+            <div class="text-sm space-y-3 text-gray-700">
+                <p><strong>14. Dispute Resolution:</strong> Good faith negotiation -> Mediation (after 30 days) -> Courts of Beirut (Provider) or Paris (Client). Governing law follows jurisdiction. Language: English or French.</p>
+                <p><strong>15. General:</strong> This Agreement constitutes the entire agreement. Amendments must be in writing. Invalidity of one provision does not affect others. Failure to enforce is not a waiver. No assignment without consent (except mergers). Force majeure applies.</p>
+            </div>
+        </article>
+
+        <!-- SIGNATURES -->
+        <section class="mt-16 pt-8 border-t-2 border-gray-900 avoid-break page-break">
+            <h2 class="font-serif text-2xl font-bold text-center text-gray-900 mb-2">SIGNATURES</h2>
+            <p class="text-center text-sm text-gray-500 mb-12">IN WITNESS WHEREOF, the Parties have executed this Agreement as of the date last signed below.</p>
+            
+            <div class="grid grid-cols-2 gap-12">
+                <!-- Provider Signature Block -->
+                <div class="space-y-4">
+                    <p class="text-xs font-bold text-gold-600 uppercase tracking-widest">Service Provider</p>
+                    <p class="font-serif text-xl font-bold">The Elites Solutions</p>
+                    
+                    <div class="h-24 border-b-2 border-dashed border-gray-300 flex items-end pb-2">
+                        <span class="text-gray-400 text-sm font-handwriting"></span>
+                    </div>
+                    
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between border-b border-gray-100 py-1">
+                            <span class="text-gray-500">Name:</span>
+                            <span class="font-medium">Johnny Jneid</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-100 py-1">
+                            <span class="text-gray-500">Title:</span>
+                            <span class="font-medium">Co-Founder / Representative</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-100 py-1">
+                            <span class="text-gray-500">Date:</span>
+                            <span class="font-medium">_________________</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Client Signature Block -->
+                <div class="space-y-4">
+                    <p class="text-xs font-bold text-gold-600 uppercase tracking-widest">Client</p>
+                    <p class="font-serif text-xl font-bold">Natlaupa</p>
+                    
+                    <div class="h-24 border-b-2 border-dashed border-gray-300"></div>
+                    
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between border-b border-gray-100 py-1">
+                            <span class="text-gray-500">Name:</span>
+                            <span class="font-medium">_________________</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-100 py-1">
+                            <span class="text-gray-500">Title:</span>
+                            <span class="font-medium">_________________</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-100 py-1">
+                            <span class="text-gray-500">Date:</span>
+                            <span class="font-medium">_________________</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCHEDULES -->
+        <div class="page-break"></div>
+        
+        <section class="mt-8">
+             <h2 class="font-serif text-2xl font-bold text-gray-900 mb-8 border-b-4 border-gold-500 pb-2 inline-block">Schedules</h2>
+
+             <!-- Schedule A -->
+             <div class="mb-8 avoid-break">
+                 <h3 class="font-serif text-lg font-bold text-gold-500 mb-4">Schedule A: Contact Information</h3>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div>
+                         <h4 class="font-bold text-gray-900 text-sm mb-2">Provider Contacts</h4>
+                         <table class="w-full text-xs text-left border border-gray-200">
+                             <tr class="bg-gray-50"><th class="p-2 border">Role</th><th class="p-2 border">Details</th></tr>
+                             <tr><td class="p-2 border">Primary</td><td class="p-2 border">Johnny Jneid</td></tr>
+                             <tr><td class="p-2 border">Email</td><td class="p-2 border">johnny@theelitessolutions.cloud</td></tr>
+                             <tr><td class="p-2 border">Phone</td><td class="p-2 border">+961 81 898 056</td></tr>
+                         </table>
+                     </div>
+                     <div>
+                         <h4 class="font-bold text-gray-900 text-sm mb-2">Client Contacts</h4>
+                         <table class="w-full text-xs text-left border border-gray-200">
+                             <tr class="bg-gray-50"><th class="p-2 border">Role</th><th class="p-2 border">Details</th></tr>
+                             <tr><td class="p-2 border">Primary</td><td class="p-2 border">hello@natlaupa.fr</td></tr>
+                             <tr><td class="p-2 border">Phone</td><td class="p-2 border">+33 7 75 74 38 75</td></tr>
+                         </table>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Schedule B -->
+             <div class="mb-8 avoid-break">
+                <h3 class="font-serif text-lg font-bold text-gold-500 mb-4">Schedule B: Service Fees Summary</h3>
+                <table class="w-full text-sm text-left border border-gray-200">
+                    <thead class="bg-gray-900 text-white">
+                        <tr>
+                            <th class="p-3 border border-gray-700">Item</th>
+                            <th class="p-3 border border-gray-700">Description</th>
+                            <th class="p-3 border border-gray-700">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="p-3 border">Website</td><td class="p-3 border">Luxury hotel booking platform (Next.js 15)</td><td class="p-3 border">Included</td></tr>
+                        <tr><td class="p-3 border">Admin Dashboard</td><td class="p-3 border">Full business management dashboard</td><td class="p-3 border">Included</td></tr>
+                        <tr><td class="p-3 border">SEO</td><td class="p-3 border">Comprehensive SEO services</td><td class="p-3 border">Included</td></tr>
+                        <tr><td class="p-3 border">Support</td><td class="p-3 border">Extended support (Mon-Sat 9am-9pm)</td><td class="p-3 border">Included</td></tr>
+                        <tr class="bg-gold-50 font-bold"><td class="p-3 border" colspan="2">TOTAL MONTHLY</td><td class="p-3 border text-gold-600">150.00 EUR</td></tr>
+                        <tr class="bg-gold-50 font-bold"><td class="p-3 border" colspan="2">TOTAL ANNUAL</td><td class="p-3 border text-gold-600">1,800.00 EUR</td></tr>
+                    </tbody>
+                </table>
+             </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-12 text-center text-xs text-gray-400 border-t border-gray-100 pt-4">
+            <p>TES-NAT-2025-001 • The Elites Solutions & Natlaupa (Dec 2025)</p>
+        </footer>
+
+    </div>
+</body>
+</html>

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Instagram,
   Twitter,
@@ -64,9 +65,13 @@ const Footer: React.FC = () => {
               viewport={{ once: true }}
               className="text-center md:text-left"
             >
-              <h2 className="font-serif text-4xl text-white tracking-wide mb-2">
-                NATLAUPA
-              </h2>
+              <Image
+                src="/natlaupa-logo-white.svg"
+                alt="Natlaupa"
+                width={200}
+                height={80}
+                className="object-contain mx-auto md:mx-0 mb-4"
+              />
               <div className="w-16 h-px bg-gold mx-auto md:mx-0 mb-4" />
               <p className="text-slate-500 text-sm tracking-widest uppercase">
                 Redefining the Art of Stay

@@ -78,14 +78,14 @@ export default function Contact() {
                 <Mail className="text-gold mt-1" />
                 <div>
                   <h4 className="text-white font-semibold">Email Us</h4>
-                  <p className="text-slate-400">concierge@natlaupa.com</p>
+                  <p className="text-slate-400">Hello@natlaupa.com</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
                 <Phone className="text-gold mt-1" />
                 <div>
                   <h4 className="text-white font-semibold">Call Us</h4>
-                  <p className="text-slate-400">+1 (800) 555-0199</p>
+                  <p className="text-slate-400">+33 7 75 74 38 75</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
@@ -93,9 +93,9 @@ export default function Contact() {
                 <div>
                   <h4 className="text-white font-semibold">Visit Us</h4>
                   <p className="text-slate-400">
-                    101 Luxury Lane, Suite 500
+                    29 RUE DU PONT 92200
                     <br />
-                    Beverly Hills, CA 90210
+                    NEUILLY-SUR-SEINE
                   </p>
                 </div>
               </div>

@@ -49,8 +49,7 @@ const Hero: React.FC = () => {
           transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
           className="font-serif text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-white mb-6 tracking-tight leading-tight"
         >
-          WELCOME TO <br className="hidden md:block" />
-          <span className="italic font-light text-white/90 block md:inline mt-2 md:mt-0">NATLAUPA</span>
+          ELEVATE YOUR STAY
         </motion.h1>
 
         {/* Subtitle */}
@@ -58,9 +57,9 @@ const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="text-sm md:text-lg text-zinc-300 max-w-xs md:max-w-xl font-light tracking-wide mb-10 md:mb-12 leading-relaxed"
+          className="text-sm md:text-lg text-zinc-300 max-w-xs md:max-w-2xl font-light tracking-wide mb-10 md:mb-12 leading-relaxed"
         >
-          Luxury one step closer
+          Exclusive access. Preferential rates. Unforgettable experiences. This is luxury, redefined.
         </motion.p>
 
         {/* Button */}
@@ -73,7 +72,7 @@ const Hero: React.FC = () => {
           onClick={handleScrollDown}
           className="px-8 py-3 md:px-10 md:py-4 bg-white text-zinc-900 rounded-full font-sans text-xs md:text-sm font-semibold uppercase tracking-[0.15em] hover:bg-gold hover:text-black transition-all duration-300 shadow-2xl shadow-black/20"
         >
-          Begin Your Search
+          Explore Offers
         </motion.button>
       </div>
 

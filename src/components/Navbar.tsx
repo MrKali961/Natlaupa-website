@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { NAV_LINKS } from '@/lib/constants';
@@ -32,10 +33,15 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center relative">
           
           {/* Left: Logo */}
-          <Link href="/" className="z-50">
-            <span className="font-serif text-3xl text-white tracking-tight hover:text-gold transition-colors duration-300">
-              Natlaupa
-            </span>
+          <Link href="/" className="z-50 hover:opacity-80 transition-opacity duration-300">
+            <Image
+              src="/natlaupa-symbol-black.svg"
+              alt="Natlaupa"
+              width={50}
+              height={50}
+              className="object-contain"
+              priority
+            />
           </Link>
 
           {/* Center: Desktop Nav Links */}

@@ -53,14 +53,14 @@ const curators = [
     name: "SABINE FEREKH",
     role: "Business Development Manager",
     region: "Luxury Travel Expert",
-    image: "https://picsum.photos/400/500?random=301",
+    image: "/sabine-ferekh.jpg",
     bio: "Driving growth through strategic partnerships and innovative luxury hospitality solutions."
   },
   {
     name: "GAELLE KEHDI",
     role: "Project Manager",
     region: "Operations & Strategy",
-    image: "https://picsum.photos/400/500?random=302",
+    image: "/gaelle-kehdi.jpg",
     bio: "Orchestrating seamless experiences through meticulous planning and execution excellence."
   }
 ];
