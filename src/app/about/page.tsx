@@ -6,8 +6,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import dynamic from 'next/dynamic';
 import Footer from '@/components/Footer';
-import { Compass, MapPin, Shield, Heart, Sparkles, Quote, ChevronDown } from 'lucide-react';
-import { MAP_DESTINATIONS } from '@/lib/constants';
+import { Compass, MapPin, Shield, Heart, Sparkles, Quote, ChevronDown, MessageCircle } from 'lucide-react';
+import { MapDestination } from '@/lib/constants';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -85,9 +85,52 @@ const promises = [
 
 export default function About() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [mapDestinations, setMapDestinations] = useState<MapDestination[]>([]);
+  const [isLoadingDestinations, setIsLoadingDestinations] = useState(true);
   const heroRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const compassRef = useRef<SVGSVGElement>(null);
+
+  // Fetch hotels with coordinates for the map
+  useEffect(() => {
+    const fetchHotelsForMap = async () => {
+      try {
+        const response = await fetch('/api/hotels?limit=100');
+        if (!response.ok) throw new Error('Failed to fetch hotels');
+
+        const data = await response.json();
+        // Handle API response structure: { success, message, data: { hotels: [...] } }
+        const hotels = data.data?.hotels || data.hotels || data || [];
+
+        // Filter hotels with valid coordinates and transform to MapDestination format
+        // API returns latitude/longitude fields
+        const destinations: MapDestination[] = hotels
+          .filter((hotel: { latitude?: number; longitude?: number }) =>
+            hotel.latitude !== undefined && hotel.latitude !== null &&
+            hotel.longitude !== undefined && hotel.longitude !== null
+          )
+          .map((hotel: { id: string; name: string; country: string; latitude: number; longitude: number; slug?: string; category?: string; city?: string }) => ({
+            id: hotel.id,
+            name: hotel.name,
+            country: hotel.country,
+            lat: hotel.latitude,
+            lng: hotel.longitude,
+            slug: hotel.slug || hotel.id,
+            category: hotel.category,
+            location: hotel.city,
+          }));
+
+        setMapDestinations(destinations);
+      } catch (error) {
+        console.error('Error fetching hotels for map:', error);
+        setMapDestinations([]);
+      } finally {
+        setIsLoadingDestinations(false);
+      }
+    };
+
+    fetchHotelsForMap();
+  }, []);
 
   useEffect(() => {
     // Compass rotation animation
@@ -225,12 +268,28 @@ export default function About() {
                 Our Global Collection
               </h2>
               <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto px-4">
-                Click on any destination to discover its story
+                Click on any destination to explore our partner hotels
               </p>
             </motion.div>
 
             {/* Interactive Mapbox Globe */}
-            <InteractiveMap destinations={MAP_DESTINATIONS} />
+            {isLoadingDestinations ? (
+              <div className="aspect-[2/1] max-w-5xl mx-auto bg-midnight/50 rounded-lg flex items-center justify-center border border-gold/10">
+                <div className="text-center">
+                  <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                  <span className="text-gold">Loading destinations...</span>
+                </div>
+              </div>
+            ) : mapDestinations.length > 0 ? (
+              <InteractiveMap destinations={mapDestinations} />
+            ) : (
+              <div className="aspect-[2/1] max-w-5xl mx-auto bg-midnight/50 rounded-lg flex items-center justify-center border border-gold/10">
+                <div className="text-center p-8">
+                  <MapPin className="w-12 h-12 text-gold/50 mx-auto mb-4" />
+                  <p className="text-slate-400">No hotel destinations available at the moment.</p>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -389,7 +448,16 @@ export default function About() {
                   </div>
                   <h3 className="text-xl text-white font-serif mb-1">{curator.name}</h3>
                   <p className="text-gold text-sm mb-3">{curator.role}</p>
-                  <p className="text-slate-400 text-sm">{curator.bio}</p>
+                  <p className="text-slate-400 text-sm mb-4">{curator.bio}</p>
+                  <a
+                    href={`https://wa.me/33775743875?text=${encodeURIComponent(`Hello, I would like to connect with ${curator.name} from Natlaupa.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gold/10 border border-gold/30 rounded-full text-gold text-sm font-medium hover:bg-gold hover:text-deepBlue transition-all duration-300"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Contact Team Member
+                  </a>
                 </motion.div>
               ))}
             </div>

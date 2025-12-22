@@ -49,7 +49,7 @@ const Hero: React.FC = () => {
           transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
           className="font-serif text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-white mb-6 tracking-tight leading-tight"
         >
-          ELEVATE YOUR STAY
+          Luxury One Step Closer.
         </motion.h1>
 
         {/* Subtitle */}
@@ -59,7 +59,7 @@ const Hero: React.FC = () => {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="text-sm md:text-lg text-zinc-300 max-w-xs md:max-w-2xl font-light tracking-wide mb-10 md:mb-12 leading-relaxed"
         >
-          Exclusive access. Preferential rates. Unforgettable experiences. This is luxury, redefined.
+          From exclusive benefits to 24/7 personalized advice, we bridge the gap between you and the world&apos;s most prestigious hotel experiences.
         </motion.p>
 
         {/* Button */}

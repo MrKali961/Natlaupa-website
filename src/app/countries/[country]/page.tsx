@@ -96,9 +96,14 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
               <h1 className="font-serif text-5xl md:text-7xl text-white mb-4">
                 {matchedCountry}
               </h1>
-              <p className="text-slate-300 text-lg">
+              <p className="text-slate-300 text-lg mb-4">
                 {avgRating} avg. rating
               </p>
+              {hotels[0]?.description && (
+                <p className="text-slate-400 text-base font-light max-w-2xl leading-relaxed">
+                  {hotels[0].description}
+                </p>
+              )}
             </motion.div>
           </div>
         </div>

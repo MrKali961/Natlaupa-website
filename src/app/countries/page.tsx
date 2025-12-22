@@ -10,16 +10,18 @@ import Footer from '@/components/Footer';
 export default function CountriesPage() {
   const { hotels, countries, isLoading, error } = useHotels();
 
-  const countriesWithData = countries.map(country => {
-    const countryHotels = hotels.filter(h => h.country === country);
-    const featuredImage = countryHotels[0]?.imageUrl || 'https://picsum.photos/600/400?random=50';
-    return {
-      name: country,
-      slug: country.toLowerCase().replace(/\s+/g, '-'),
-      hotelCount: countryHotels.length,
-      imageUrl: featuredImage,
-    };
-  });
+  const countriesWithData = countries
+    .map(country => {
+      const countryHotels = hotels.filter(h => h.country === country);
+      const featuredImage = countryHotels[0]?.imageUrl || 'https://picsum.photos/600/400?random=50';
+      return {
+        name: country,
+        slug: country.toLowerCase().replace(/\s+/g, '-'),
+        hotelCount: countryHotels.length,
+        imageUrl: featuredImage,
+      };
+    })
+    .filter(country => country.hotelCount > 0);
 
   if (isLoading) {
     return (
@@ -58,7 +60,7 @@ export default function CountriesPage() {
                 Countries
               </h1>
               <p className="text-xl text-slate-300 font-light max-w-2xl mx-auto">
-                Discover extraordinary stays across {countries.length} destinations worldwide.
+                Discover extraordinary stays across {countriesWithData.length} destinations worldwide.
               </p>
             </motion.div>
           </div>

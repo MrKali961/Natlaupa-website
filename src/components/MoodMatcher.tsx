@@ -89,7 +89,6 @@ const MoodMatcher: React.FC = () => {
   const [hoveredMood, setHoveredMood] = useState<string | null>(null);
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [defaultHotels, setDefaultHotels] = useState<Hotel[]>([]);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   // Detect touch devices to prevent double-tap requirement on iOS
@@ -99,36 +98,66 @@ const MoodMatcher: React.FC = () => {
 
   const activeMood = MOODS.find((m) => m.id === selectedMood);
 
-  // Fetch default trending hotels on mount
-  useEffect(() => {
-    const fetchDefaultHotels = async () => {
-      try {
-        const response = await fetch(
-          "/api/recommendations?type=trending&limit=3"
-        );
-        const data = await response.json();
-        if (data.hotels) {
-          setDefaultHotels(data.hotels);
-        }
-      } catch (error) {
-        console.error("Error fetching default hotels:", error);
-      }
-    };
-
-    fetchDefaultHotels();
-  }, []);
-
-  // Fetch hotels when mood is selected
+  // Fetch hotels when mood is selected - filters from actual hotel list
   const fetchMoodHotels = useCallback(async (moodId: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `/api/recommendations?type=mood&mood=${moodId}&limit=3`
-      );
+      // Fetch all hotels from the database
+      const response = await fetch('/api/hotels?limit=50');
       const data = await response.json();
-      if (data.hotels) {
-        setHotels(data.hotels);
-      }
+      const allHotels = data.data?.hotels || data.hotels || [];
+
+      // Get mood keywords for matching
+      const mood = MOODS.find(m => m.id === moodId);
+      const moodKeywords = mood?.keywords || [];
+
+      // Score hotels based on mood matching
+      const scoredHotels = allHotels.map((hotel: { id: string; name: string; slug?: string; description?: string; category?: string; city?: string; country: string; thumbnailImage?: string; images?: { url: string }[] }) => {
+        let score = 0;
+        const hotelText = `${hotel.description || ''} ${hotel.category || ''} ${hotel.name}`.toLowerCase();
+
+        // Check for keyword matches
+        moodKeywords.forEach((keyword: string) => {
+          if (hotelText.includes(keyword.toLowerCase())) {
+            score += 10;
+          }
+        });
+
+        // Additional scoring based on mood-specific terms
+        if (moodId === 'romantic' && (hotelText.includes('spa') || hotelText.includes('intimate') || hotelText.includes('couple') || hotelText.includes('honeymoon'))) {
+          score += 5;
+        }
+        if (moodId === 'adventure' && (hotelText.includes('outdoor') || hotelText.includes('activities') || hotelText.includes('beach') || hotelText.includes('water sports'))) {
+          score += 5;
+        }
+        if (moodId === 'cultural' && (hotelText.includes('historic') || hotelText.includes('museum') || hotelText.includes('heritage') || hotelText.includes('art'))) {
+          score += 5;
+        }
+        if (moodId === 'wellness' && (hotelText.includes('spa') || hotelText.includes('wellness') || hotelText.includes('retreat') || hotelText.includes('relax'))) {
+          score += 5;
+        }
+
+        // Ensure score is between 1 and 100 (add base score of 50 for all hotels, then add match bonuses)
+        const baseScore = 50;
+        const finalScore = Math.min(100, Math.max(1, baseScore + score));
+
+        return {
+          id: hotel.id,
+          name: hotel.name,
+          slug: hotel.slug || hotel.id,
+          location: hotel.city || hotel.country,
+          imageUrl: hotel.thumbnailImage || hotel.images?.[0]?.url || '',
+          moodScore: finalScore / 100, // Normalize to 0-1 range for display
+          personalizedReason: mood ? `Perfect for your ${mood.name.toLowerCase()} experience` : undefined,
+        };
+      });
+
+      // Sort by score and take top 3
+      const topHotels = scoredHotels
+        .sort((a: { moodScore: number }, b: { moodScore: number }) => b.moodScore - a.moodScore)
+        .slice(0, 3);
+
+      setHotels(topHotels);
     } catch (error) {
       console.error("Error fetching mood hotels:", error);
       setHotels([]);
@@ -156,10 +185,6 @@ const MoodMatcher: React.FC = () => {
       await fetchMoodHotels(moodId);
     }
   };
-
-  // Get hotels to display
-  const displayHotels =
-    selectedMood && hotels.length > 0 ? hotels : defaultHotels;
 
   return (
     <section className="py-24 bg-deepBlue relative overflow-hidden">
@@ -318,72 +343,72 @@ const MoodMatcher: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Suggested Hotels Preview */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="font-serif text-2xl text-white">
-              {selectedMood ? "Matching Properties" : "Popular Picks"}
-            </h3>
-            <Link
-              href="/offers"
-              className="text-gold text-sm uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2"
-            >
-              View All <ArrowRight size={16} />
-            </Link>
-          </div>
-
-          {isLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="w-8 h-8 text-gold animate-spin" />
+        {/* Matching Properties - Only shown when a mood is selected */}
+        {selectedMood && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="font-serif text-2xl text-white">
+                Matching Properties
+              </h3>
+              <Link
+                href="/offers"
+                className="text-gold text-sm uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2"
+              >
+                View All <ArrowRight size={16} />
+              </Link>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {displayHotels.map((hotel, index) => (
-                <motion.div
-                  key={hotel.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Link href={`/hotel/${hotel.slug}`} className="group block">
-                    <div className="relative h-64 overflow-hidden rounded-sm mb-4">
-                      <img
-                        src={hotel.imageUrl}
-                        alt={hotel.name}
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-deepBlue to-transparent opacity-60" />
-                      {selectedMood && (
+
+            {isLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="w-8 h-8 text-gold animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {hotels.map((hotel, index) => (
+                  <motion.div
+                    key={hotel.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Link href={`/hotel/${hotel.slug || hotel.id}`} className="group block">
+                      <div className="relative h-64 overflow-hidden rounded-sm mb-4">
+                        <img
+                          src={hotel.imageUrl}
+                          alt={hotel.name}
+                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-deepBlue to-transparent opacity-60" />
                         <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full">
                           {activeMood?.name} Match
                         </div>
+                        {hotel.moodScore && hotel.moodScore > 0.8 && (
+                          <div className="absolute top-4 right-4 bg-white/90 text-deepBlue px-2 py-1 text-xs font-bold rounded-full">
+                            {Math.round(hotel.moodScore * 100)}% Match
+                          </div>
+                        )}
+                      </div>
+                      <h4 className="font-serif text-xl text-white group-hover:text-gold transition-colors mb-1">
+                        {hotel.name}
+                      </h4>
+                      <p className="text-slate-400 text-sm">{hotel.location}</p>
+                      {hotel.personalizedReason && (
+                        <p className="text-gold/80 text-xs mt-2 line-clamp-2">
+                          {hotel.personalizedReason}
+                        </p>
                       )}
-                      {hotel.moodScore && hotel.moodScore > 0.8 && (
-                        <div className="absolute top-4 right-4 bg-white/90 text-deepBlue px-2 py-1 text-xs font-bold rounded-full">
-                          {Math.round(hotel.moodScore * 100)}% Match
-                        </div>
-                      )}
-                    </div>
-                    <h4 className="font-serif text-xl text-white group-hover:text-gold transition-colors mb-1">
-                      {hotel.name}
-                    </h4>
-                    <p className="text-slate-400 text-sm">{hotel.location}</p>
-                    {hotel.personalizedReason && (
-                      <p className="text-gold/80 text-xs mt-2 line-clamp-2">
-                        {hotel.personalizedReason}
-                      </p>
-                    )}
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </motion.div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
       </div>
     </section>
   );

@@ -24,6 +24,7 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
     name: '',
     email: '',
     phone: '',
+    bookingDate: '',
     message: '',
   });
 
@@ -95,17 +96,30 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
     setFormError(null);
 
     try {
+      // Format date for display
+      const formattedDate = formData.bookingDate
+        ? new Date(formData.bookingDate).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        : '';
+
+      // Include booking date in the message
+      const messageWithDate = `[Requested Booking Date: ${formattedDate}]\n\n${formData.message}`;
+
       await submitHotelInquiry({
         hotelId: hotel.id,
         hotelName: hotel.name,
         name: formData.name,
         email: formData.email,
         phone: formData.phone || undefined,
-        message: formData.message,
+        message: messageWithDate,
       });
 
       setFormSubmitted(true);
-      setFormData({ name: '', email: '', phone: '', message: '' });
+      setFormData({ name: '', email: '', phone: '', bookingDate: '', message: '' });
 
       setTimeout(() => {
         setIsContactModalOpen(false);
@@ -126,6 +140,19 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
     setFormError(null);
 
     try {
+      // Format date for display
+      const formattedDate = formData.bookingDate
+        ? new Date(formData.bookingDate).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        : 'Not specified';
+
+      // Include booking date in the message
+      const messageWithDate = `[Requested Booking Date: ${formattedDate}]\n\n${formData.message}`;
+
       // First submit to backend
       await submitHotelInquiry({
         hotelId: hotel.id,
@@ -133,7 +160,7 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
         name: formData.name,
         email: formData.email,
         phone: formData.phone || undefined,
-        message: formData.message,
+        message: messageWithDate,
       });
 
       // Format WhatsApp message
@@ -142,6 +169,7 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
 *Guest Name:* ${formData.name}
 *Email:* ${formData.email}
 *Phone:* ${formData.phone || "Not provided"}
+*Requested Booking Date:* ${formattedDate}
 
 *Hotel:* ${hotel.name}
 *Location:* ${hotel.location}, ${hotel.country}
@@ -161,7 +189,7 @@ Submitted via Natlaupa Website`;
 
       // Reset form and close modal
       setFormSubmitted(true);
-      setFormData({ name: '', email: '', phone: '', message: '' });
+      setFormData({ name: '', email: '', phone: '', bookingDate: '', message: '' });
 
       setTimeout(() => {
         setIsContactModalOpen(false);
@@ -608,6 +636,18 @@ Submitted via Natlaupa Website`;
                         onChange={handleFormChange}
                         className="w-full bg-white/5 border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
                         placeholder="+1 (555) 000-0000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs uppercase tracking-widest text-gold mb-2">Booking Date *</label>
+                      <input
+                        type="date"
+                        name="bookingDate"
+                        value={formData.bookingDate}
+                        onChange={handleFormChange}
+                        required
+                        min={new Date().toISOString().split('T')[0]}
+                        className="w-full bg-white/5 border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors [color-scheme:dark]"
                       />
                     </div>
                     <div>

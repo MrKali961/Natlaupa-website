@@ -12,6 +12,7 @@ import {
   Plus,
   Sparkles,
   Moon,
+  Sun,
   ChevronDown,
   ChevronUp,
   Loader2,
@@ -58,6 +59,17 @@ const PulsingMarker: React.FC<{ active?: boolean; delay?: number }> = ({
   </div>
 );
 
+// Location info interface
+interface LocationInfo {
+  location: string;
+  city: string;
+  country: string;
+  time: string;
+  hour: number;
+  sunMoonStatus: string;
+  imageUrl: string;
+}
+
 const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
   onSelection,
 }) => {
@@ -73,6 +85,10 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
   const [showToast, setShowToast] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Location state for real-time user location
+  const [userLocation, setUserLocation] = useState<LocationInfo | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
 
   // Fetch dynamic data from API
   const { hotels, categories, isLoading } = useHotels();
@@ -117,39 +133,107 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
 
       // Auto-dismiss toast after 3 seconds
       setTimeout(() => setShowToast(false), 3000);
-    }, 300);
 
-    setTimeout(() => {
-      setMode(selected);
+      // Set pending mode to trigger location fetch
+      // The actual mode will be set after location is loaded
+      setPendingMode(selected);
       if (onSelection) onSelection();
 
       setTimeout(() => {
-        setIsTransitioning(false);
         setClickedButton(null);
       }, 800);
-    }, 800);
+    }, 300);
   };
 
-  // Golden Hour Mock Data
-  const goldenHourData = useMemo(() => {
-    if (mode === "destination") {
-      return {
-        location: "Santorini, Greece",
-        time: "19:42",
-        status: "The sun has just set.",
-        image:
-          "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=2940&auto=format&fit=crop",
-      };
+  // Track pending mode selection (before location is loaded)
+  const [pendingMode, setPendingMode] = useState<ExperienceMode>(null);
+
+  // Fetch user's real location data
+  useEffect(() => {
+    if (!pendingMode) return; // Only fetch when mode is selected
+
+    const fetchLocationData = async (lat: number, lng: number) => {
+      setLocationLoading(true);
+      try {
+        const response = await fetch(`/api/location-info?lat=${lat}&lng=${lng}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setUserLocation(data);
+            // Now that location is loaded, set the actual mode
+            setMode(pendingMode);
+            setIsTransitioning(false);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching location info:', error);
+        // Still show the section even if location fails
+        setMode(pendingMode);
+        setIsTransitioning(false);
+      } finally {
+        setLocationLoading(false);
+      }
+    };
+
+    // Try to get user's geolocation
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          fetchLocationData(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          // Fallback: use default location (will be handled by API)
+          fetchLocationData(0, 0);
+        },
+        { timeout: 10000, enableHighAccuracy: false }
+      );
     } else {
+      // Fallback for browsers without geolocation
+      fetchLocationData(0, 0);
+    }
+
+    // Update time every minute
+    const interval = setInterval(() => {
+      if (userLocation) {
+        const now = new Date();
+        setUserLocation(prev => prev ? {
+          ...prev,
+          time: now.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          })
+        } : null);
+      }
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [pendingMode]);
+
+  // Fallback data if location isn't loaded yet
+  const goldenHourData = useMemo(() => {
+    if (userLocation) {
       return {
-        location: "Milan, Italy",
-        time: "20:15",
-        status: "The city is waking up.",
-        image:
-          "https://images.unsplash.com/photo-1476900164809-ff19b8ae5968?q=80&w=2940&auto=format&fit=crop",
+        location: userLocation.location,
+        time: userLocation.time,
+        status: userLocation.sunMoonStatus,
+        image: userLocation.imageUrl,
       };
     }
-  }, [mode]);
+    // Default fallback while loading
+    const now = new Date();
+    return {
+      location: "Your Location",
+      time: now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }),
+      status: "Discovering your world...",
+      image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=2940&auto=format&fit=crop",
+    };
+  }, [userLocation]);
 
   // Fetch Live Weather
   useEffect(() => {
@@ -248,7 +332,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
             >
               <Loader2 className="w-8 h-8 text-gold animate-spin" />
               <span className="text-gold text-sm uppercase tracking-[0.3em]">
-                Preparing your journey...
+                {locationLoading ? "Locating you..." : "Preparing your journey..."}
               </span>
             </motion.div>
           </motion.div>
@@ -271,7 +355,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
               <span className="text-white text-sm">
                 You selected{" "}
                 <span className="text-gold font-semibold">
-                  {clickedButton === "destination" ? "Destination" : "Style"}
+                  {clickedButton === "destination" ? "Destination" : "Mood"}
                 </span>
               </span>
             </div>
@@ -465,7 +549,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                   transition={{ duration: 0.5 }}
                   className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight text-center"
                 >
-                  STYLE
+                  MOOD
                 </motion.h2>
                 <motion.div
                   initial={{ width: 0 }}
@@ -526,14 +610,15 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
         >
           {/* Background with Slow Zoom */}
           <motion.div
-            initial={{ scale: 1.2 }}
-            animate={{ scale: 1 }}
+            key={goldenHourData.image}
+            initial={{ scale: 1.2, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 3, ease: "easeOut" }}
             className="absolute inset-0 z-0"
           >
             <img
               src={goldenHourData.image}
-              alt="Golden Hour"
+              alt={userLocation?.country || "Your Location"}
               className="w-full h-full object-cover grayscale-[30%] contrast-110"
             />
             <div className="absolute inset-0 bg-black/40" />
@@ -543,7 +628,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1, duration: 1 }}
+              transition={{ delay: 0.5, duration: 1 }}
             >
               <div className="flex items-center justify-center space-x-3 text-gold mb-6">
                 <Clock size={18} />
@@ -559,7 +644,11 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                 .
               </h2>
               <div className="flex items-center justify-center space-x-3 text-slate-300">
-                <Moon size={18} />
+                {userLocation && userLocation.hour >= 6 && userLocation.hour < 19 ? (
+                  <Sun size={18} className="text-gold" />
+                ) : (
+                  <Moon size={18} className="text-gold" />
+                )}
                 <p className="text-lg font-light tracking-wide">
                   {goldenHourData.status}
                 </p>
@@ -715,8 +804,10 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                                 <h3 className="font-serif text-4xl md:text-7xl text-white mb-4 group-hover:text-gold transition-colors">
                                   {dest.name}
                                 </h3>
-                                <p className="text-slate-300 text-lg font-light max-w-xl border-l-2 border-gold pl-6 mb-6">
-                                  {dest.description}
+                                <p className="text-slate-300 text-lg font-light max-w-xl border-l-2 border-gold pl-6 mb-6 line-clamp-2">
+                                  {dest.description && dest.description.length > 120
+                                    ? `${dest.description.substring(0, 120)}...`
+                                    : dest.description}
                                 </p>
                                 <div className="flex items-center gap-4">
                                   <span className="text-gold text-sm uppercase tracking-widest group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">

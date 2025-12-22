@@ -18,6 +18,7 @@ interface SeasonData {
 interface Hotel {
   id: string;
   name: string;
+  slug?: string;
   location: string;
   country: string;
   category: string;
@@ -33,6 +34,7 @@ interface Destination {
   country: string;
   imageUrl: string;
   temp: number;
+  slug?: string;
 }
 
 const SEASONS: Record<string, SeasonData> = {
@@ -103,28 +105,22 @@ const ConciergeRecommendations: React.FC = () => {
         setOffers(data.offers.slice(0, 2));
       }
 
-      // Fetch destinations separately (from database)
-      const destResponse = await fetch('/api/recommendations?type=trending&limit=2');
+      // Fetch destinations (hotels) from database
+      const destResponse = await fetch('/api/hotels?limit=2');
       const destData = await destResponse.json();
-      if (destData.hotels) {
-        // Create destination-like objects from hotel countries
-        const uniqueDestinations: Destination[] = [];
-        const seenCountries = new Set<string>();
+      const hotelsData = destData.data?.hotels || destData.hotels || [];
+      if (hotelsData.length > 0) {
+        // Create destination objects from hotels
+        const trendingDestinations: Destination[] = hotelsData.slice(0, 2).map((hotel: { id: string; name: string; slug?: string; country: string; thumbnailImage?: string; imageUrl?: string }) => ({
+          id: hotel.id,
+          name: hotel.name,
+          country: hotel.country,
+          imageUrl: hotel.thumbnailImage || hotel.imageUrl || '',
+          temp: Math.floor(Math.random() * 20) + 15, // Random temp 15-35
+          slug: hotel.slug || hotel.id
+        }));
 
-        destData.hotels.forEach((hotel: Hotel) => {
-          if (!seenCountries.has(hotel.country) && uniqueDestinations.length < 2) {
-            seenCountries.add(hotel.country);
-            uniqueDestinations.push({
-              id: hotel.id,
-              name: hotel.location ? hotel.location.split(',')[0] : hotel.name,
-              country: hotel.country,
-              imageUrl: hotel.imageUrl,
-              temp: Math.floor(Math.random() * 20) + 15 // Random temp 15-35
-            });
-          }
-        });
-
-        setDestinations(uniqueDestinations);
+        setDestinations(trendingDestinations);
       }
     } catch (error) {
       console.error('Error fetching recommendations:', error);
@@ -379,7 +375,7 @@ const ConciergeRecommendations: React.FC = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.15 }}
                       >
-                        <Link href={`/countries/${dest.country.toLowerCase().replace(/\s+/g, '-')}`} className="group/dest block">
+                        <Link href={`/hotel/${dest.slug}`} className="group/dest block">
                           <div className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-sm hover-capable:hover:border-gold/30 transition-all">
                             <div className="w-20 h-20 flex-shrink-0 overflow-hidden rounded-sm">
                               <img

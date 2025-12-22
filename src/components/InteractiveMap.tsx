@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import Link from 'next/link';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import { MapPin, ArrowRight } from 'lucide-react';
 import { MapDestination } from '@/lib/constants';
 
 interface InteractiveMapProps {
@@ -212,16 +213,27 @@ export default function InteractiveMap({ destinations }: InteractiveMapProps) {
             </button>
             <div className="flex items-start gap-4">
               <MapPin className="w-6 h-6 text-gold flex-shrink-0 mt-1" />
-              <div>
+              <div className="flex-1">
                 <h3 className="text-xl text-white font-serif">
                   {selectedDestination.name}
                 </h3>
-                <p className="text-gold text-sm mb-2">
-                  {selectedDestination.country}
+                <p className="text-gold text-sm mb-1">
+                  {selectedDestination.location && `${selectedDestination.location}, `}{selectedDestination.country}
                 </p>
-                <p className="text-slate-400 text-sm italic">
-                  &ldquo;{selectedDestination.story}&rdquo;
-                </p>
+                {selectedDestination.category && (
+                  <p className="text-slate-500 text-xs uppercase tracking-wider mb-3">
+                    {selectedDestination.category}
+                  </p>
+                )}
+                {selectedDestination.slug && (
+                  <Link
+                    href={`/hotel/${selectedDestination.slug}`}
+                    className="inline-flex items-center gap-2 text-gold hover:text-white transition-colors text-sm font-medium group"
+                  >
+                    Learn More
+                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                )}
               </div>
             </div>
           </motion.div>

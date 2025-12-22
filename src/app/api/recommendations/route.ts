@@ -55,11 +55,12 @@ export async function GET(request: NextRequest) {
       hotels: hotels.map(hotel => ({
         id: hotel.id,
         name: hotel.name,
+        slug: hotel.slug || hotel.id,
         location: hotel.location,
         country: hotel.country,
         category: hotel.category,
         rating: hotel.rating,
-        imageUrl: hotel.imageUrl,
+        imageUrl: hotel.thumbnailImage || hotel.imageUrl,
         description: hotel.description,
         ctaPhrase: hotel.ctaPhrase,
         amenities: hotel.amenities,

@@ -105,6 +105,21 @@ export default function OfferDetailPage({
     setFormError(null);
 
     try {
+      // Format date for display
+      const formattedDate = formData.travelDates
+        ? new Date(formData.travelDates).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        : '';
+
+      // Include travel date in the message
+      const messageWithDate = formData.message
+        ? `[Requested Travel Date: ${formattedDate}]\n[Number of Guests: ${formData.guests || 'Not specified'}]\n\n${formData.message}`
+        : `[Requested Travel Date: ${formattedDate}]\n[Number of Guests: ${formData.guests || 'Not specified'}]`;
+
       const response = await fetch("/api/inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,8 +128,8 @@ export default function OfferDetailPage({
           name: formData.name,
           email: formData.email,
           phone: formData.phone || undefined,
-          message: formData.message,
-          travelDates: formData.travelDates || undefined,
+          message: messageWithDate,
+          travelDates: formattedDate || undefined,
           guests: formData.guests || undefined,
         }),
       });
@@ -165,6 +180,21 @@ export default function OfferDetailPage({
     setFormError(null);
 
     try {
+      // Format date for display
+      const formattedDate = formData.travelDates
+        ? new Date(formData.travelDates).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        : 'Not specified';
+
+      // Include travel date in the message
+      const messageWithDate = formData.message
+        ? `[Requested Travel Date: ${formattedDate}]\n[Number of Guests: ${formData.guests || 'Not specified'}]\n\n${formData.message}`
+        : `[Requested Travel Date: ${formattedDate}]\n[Number of Guests: ${formData.guests || 'Not specified'}]`;
+
       // First submit to backend
       const response = await fetch("/api/inquiry", {
         method: "POST",
@@ -174,8 +204,8 @@ export default function OfferDetailPage({
           name: formData.name,
           email: formData.email,
           phone: formData.phone || undefined,
-          message: formData.message,
-          travelDates: formData.travelDates || undefined,
+          message: messageWithDate,
+          travelDates: formattedDate || undefined,
           guests: formData.guests || undefined,
         }),
       });
@@ -199,7 +229,7 @@ export default function OfferDetailPage({
 *Guest Name:* ${formData.name}
 *Email:* ${formData.email}
 *Phone:* ${formData.phone || "Not provided"}
-*Travel Dates:* ${formData.travelDates || "Not specified"}
+*Travel Date:* ${formattedDate}
 *Number of Guests:* ${formData.guests || "Not specified"}
 
 *Offer:* ${offer.title}
@@ -835,15 +865,16 @@ Submitted via Natlaupa Website`;
 
                   <div>
                     <label className="block text-white text-sm mb-2">
-                      Preferred Travel Dates
+                      Preferred Travel Date *
                     </label>
                     <input
-                      type="text"
+                      type="date"
                       name="travelDates"
                       value={formData.travelDates}
                       onChange={handleFormChange}
-                      placeholder="e.g., June 2025"
-                      className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-white focus:border-gold focus:outline-none"
+                      required
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-white focus:border-gold focus:outline-none [color-scheme:dark]"
                     />
                   </div>
 
