@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin } from 'lucide-react';
+import { ArrowLeft, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { useHotels } from '@/hooks/useHotels';
 import HotelCard from '@/components/HotelCard';
 import Footer from '@/components/Footer';
@@ -11,6 +11,7 @@ import Footer from '@/components/Footer';
 export default function CountryPage({ params }: { params: Promise<{ country: string }> }) {
   const { country } = React.use(params);
   const decodedCountry = decodeURIComponent(country).replace(/-/g, ' ');
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const { hotels: allHotels, countries, isLoading, error } = useHotels();
 
@@ -65,7 +66,7 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
     <>
       <main className="bg-deepBlue min-h-screen">
         {/* Hero Section */}
-        <div className="relative h-[60vh] w-full">
+        <div className="relative h-[50vh] sm:h-[55vh] md:h-[60vh] w-full">
           <div className="absolute inset-0">
             <img
               src={heroImage}
@@ -83,44 +84,61 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
             </Link>
           </div>
 
-          <div className="absolute bottom-0 left-0 w-full p-6 md:p-16 z-10">
+          <div className="absolute bottom-0 left-0 w-full p-4 sm:p-6 md:p-12 lg:p-16 z-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               className="max-w-4xl"
             >
-              <div className="flex items-center text-gold text-sm uppercase tracking-widest mb-4">
-                <MapPin size={16} className="mr-2" />
+              <div className="flex items-center text-gold text-xs sm:text-sm uppercase tracking-widest mb-2 sm:mb-4">
+                <MapPin size={14} className="mr-1.5 sm:mr-2 flex-shrink-0" />
                 <span>{hotels.length} {hotels.length === 1 ? 'Property' : 'Properties'}</span>
               </div>
-              <h1 className="font-serif text-5xl md:text-7xl text-white mb-4">
+              <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-white mb-2 sm:mb-4">
                 {matchedCountry}
               </h1>
-              <p className="text-slate-300 text-lg mb-4">
+              <p className="text-slate-300 text-sm sm:text-base md:text-lg mb-2 sm:mb-4">
                 {avgRating} avg. rating
               </p>
               {hotels[0]?.description && (
-                <p className="text-slate-400 text-base font-light max-w-2xl leading-relaxed">
-                  {hotels[0].description}
-                </p>
+                <div className="max-w-2xl">
+                  <p className={`text-slate-400 text-xs sm:text-sm md:text-base font-light leading-relaxed ${
+                    !isDescriptionExpanded ? 'line-clamp-2 sm:line-clamp-3' : ''
+                  }`}>
+                    {hotels[0].description}
+                  </p>
+                  {hotels[0].description.length > 100 && (
+                    <button
+                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                      className="flex items-center gap-1 text-gold text-xs sm:text-sm mt-2 hover:underline transition-all group"
+                    >
+                      <span>{isDescriptionExpanded ? 'See less' : 'See more'}</span>
+                      {isDescriptionExpanded ? (
+                        <ChevronUp size={14} className="group-hover:-translate-y-0.5 transition-transform" />
+                      ) : (
+                        <ChevronDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
+                      )}
+                    </button>
+                  )}
+                </div>
               )}
             </motion.div>
           </div>
         </div>
 
         {/* Hotels Grid */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="font-serif text-2xl text-white">
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
+              <h2 className="font-serif text-xl sm:text-2xl text-white">
                 Properties in {matchedCountry}
               </h2>
-              <Link href="/offers" className="text-gold text-sm hover:underline">
+              <Link href="/offers" className="text-gold text-xs sm:text-sm hover:underline">
                 View All Offers
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {hotels.map((hotel, index) => (
                 <HotelCard key={hotel.id} hotel={hotel} index={index} />
               ))}
@@ -129,15 +147,15 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
         </section>
 
         {/* Other Countries */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+        <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 border-t border-white/10">
           <div className="max-w-7xl mx-auto">
-            <h2 className="font-serif text-2xl text-white mb-8">Explore Other Countries</h2>
-            <div className="flex flex-wrap gap-3">
+            <h2 className="font-serif text-xl sm:text-2xl text-white mb-4 sm:mb-8">Explore Other Countries</h2>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {countries.filter(c => c !== matchedCountry).map(c => (
                 <Link
                   key={c}
                   href={`/countries/${c.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="px-4 py-2 border border-white/20 text-white hover:border-gold hover:text-gold transition-colors text-sm uppercase tracking-widest"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 border border-white/20 text-white hover:border-gold hover:text-gold transition-colors text-xs sm:text-sm uppercase tracking-wider sm:tracking-widest"
                 >
                   {c}
                 </Link>
