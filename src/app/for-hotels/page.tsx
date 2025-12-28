@@ -59,6 +59,9 @@ const additionalFeatures = [
   "Global network across 10 countries",
 ];
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+
 interface ValidationError {
   field: string;
   message: string;
@@ -99,14 +102,11 @@ export default function ForHotels() {
     setFormError(null);
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/v1/partnership-applications",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${API_URL}/partnership-applications`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
       if (!response.ok) {
         const data = await response.json();
@@ -152,14 +152,11 @@ export default function ForHotels() {
 
     try {
       // First submit to backend
-      const response = await fetch(
-        "http://localhost:5000/api/v1/partnership-applications",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${API_URL}/partnership-applications`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
       if (!response.ok) {
         const data = await response.json();
@@ -248,8 +245,8 @@ Submitted via Natlaupa Website`;
     const handleScroll = () => {
       setShowStickyButton(window.scrollY > 600);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -275,7 +272,8 @@ Submitted via Natlaupa Website`;
               transition={{ delay: 0.1 }}
               className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-8"
             >
-              Elevate your hotel's potential with precision pricing & exclusive reach
+              Elevate your hotel's potential with precision pricing & exclusive
+              reach
             </motion.h1>
 
             <motion.p
@@ -284,7 +282,10 @@ Submitted via Natlaupa Website`;
               transition={{ delay: 0.2 }}
               className="text-xl text-slate-300 font-light leading-relaxed mb-12 max-w-2xl mx-auto"
             >
-              Unleash the full value of every room night with Natlaupa's luxury-grade revenue management. We marry advanced analytics and white-glove service to drive profit and prestige in perfect harmony.
+              Unleash the full value of every room night with Natlaupa's
+              luxury-grade revenue management. We marry advanced analytics and
+              white-glove service to drive profit and prestige in perfect
+              harmony.
             </motion.p>
 
             <motion.div
@@ -330,7 +331,11 @@ Submitted via Natlaupa Website`;
                       download
                       initial={{ x: 50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+                      transition={{
+                        delay: 0.1,
+                        type: "spring",
+                        stiffness: 200,
+                      }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-gold text-gold px-6 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-deepBlue transition-colors"
@@ -343,7 +348,11 @@ Submitted via Natlaupa Website`;
                       download
                       initial={{ x: -50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+                      transition={{
+                        delay: 0.1,
+                        type: "spring",
+                        stiffness: 200,
+                      }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-gold text-gold px-6 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-deepBlue transition-colors"
@@ -597,7 +606,10 @@ Submitted via Natlaupa Website`;
                           <ul className="space-y-1 pl-4">
                             {formError.details.map((detail, idx) => (
                               <li key={idx} className="text-xs list-disc">
-                                <span className="font-medium capitalize">{detail.field}:</span> {detail.message}
+                                <span className="font-medium capitalize">
+                                  {detail.field}:
+                                </span>{" "}
+                                {detail.message}
                               </li>
                             ))}
                           </ul>
