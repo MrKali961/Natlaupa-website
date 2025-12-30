@@ -298,7 +298,7 @@ Submitted via Natlaupa Website`;
                 onClick={() => setIsModalOpen(true)}
                 className="inline-flex items-center justify-center gap-3 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
               >
-                Apply for Partnership
+                Contact Us
                 <ArrowRight size={18} />
               </button>
 
