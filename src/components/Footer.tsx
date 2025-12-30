@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   Instagram,
-  Twitter,
+  Linkedin,
   Facebook,
   ArrowRight,
   Check,
@@ -95,13 +95,15 @@ const Footer: React.FC = () => {
               className="flex items-center gap-6"
             >
               {[
-                { icon: Instagram, href: "#", label: "Instagram" },
-                { icon: Twitter, href: "#", label: "Twitter" },
-                { icon: Facebook, href: "#", label: "Facebook" },
+                { icon: Instagram, href: "https://www.instagram.com/natlaupaa", label: "Instagram" },
+                { icon: Linkedin, href: "https://www.linkedin.com/company/natlaupa/", label: "LinkedIn" },
+                { icon: Facebook, href: "https://www.facebook.com/share/1BwjBfNUpp/?mibextid=wwXIfr", label: "Facebook" },
               ].map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
                   className="text-slate-500 hover:text-gold transition-colors duration-300"
                 >
