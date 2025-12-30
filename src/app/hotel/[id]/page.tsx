@@ -315,7 +315,7 @@ Submitted via Natlaupa Website`;
                   <img
                     src={img}
                     alt={`Gallery ${idx + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300" />
                 </motion.div>
