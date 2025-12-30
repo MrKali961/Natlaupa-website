@@ -75,33 +75,51 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
     };
   }, [isContactModalOpen]);
 
-  // Drag to scroll state
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  // Drag to scroll - using refs to avoid re-renders
+  const dragState = useRef({ isDragging: false, startX: 0, scrollLeft: 0 });
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!scrollRef.current) return;
-    setIsDragging(true);
-    setStartX(e.pageX - scrollRef.current.offsetLeft);
-    setScrollLeft(scrollRef.current.scrollLeft);
-  };
+  // Set up drag handlers with native events for better performance
+  useEffect(() => {
+    const slider = scrollRef.current;
+    if (!slider) return;
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+    const handleMouseDown = (e: MouseEvent) => {
+      dragState.current.isDragging = true;
+      dragState.current.startX = e.pageX - slider.offsetLeft;
+      dragState.current.scrollLeft = slider.scrollLeft;
+      slider.style.cursor = 'grabbing';
+    };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !scrollRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    scrollRef.current.scrollLeft = scrollLeft - walk;
-  };
+    const handleMouseUp = () => {
+      dragState.current.isDragging = false;
+      slider.style.cursor = 'grab';
+    };
 
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!dragState.current.isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - dragState.current.startX) * 1.5;
+      slider.scrollLeft = dragState.current.scrollLeft - walk;
+    };
+
+    const handleMouseLeave = () => {
+      dragState.current.isDragging = false;
+      slider.style.cursor = 'grab';
+    };
+
+    slider.addEventListener('mousedown', handleMouseDown);
+    slider.addEventListener('mouseup', handleMouseUp);
+    slider.addEventListener('mousemove', handleMouseMove);
+    slider.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      slider.removeEventListener('mousedown', handleMouseDown);
+      slider.removeEventListener('mouseup', handleMouseUp);
+      slider.removeEventListener('mousemove', handleMouseMove);
+      slider.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [hotel]);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -310,21 +328,14 @@ Submitted via Natlaupa Website`;
 
             <div
               ref={scrollRef}
-              className={`flex gap-6 overflow-x-auto pb-8 snap-x select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+              className="flex gap-6 overflow-x-auto pb-8 snap-x select-none cursor-grab touch-pan-x"
               data-lenis-prevent
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              onMouseDown={handleMouseDown}
-              onMouseUp={handleMouseUp}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
             >
               {hotel.galleryImages.map((img, idx) => (
-                <motion.div
+                <div
                   key={idx}
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  className={`min-w-[300px] md:min-w-[400px] h-[250px] md:h-[300px] flex-shrink-0 snap-center relative group overflow-hidden rounded-sm border border-white/10 ${isDragging ? 'pointer-events-none' : ''}`}
+                  className="min-w-[300px] md:min-w-[400px] h-[250px] md:h-[300px] flex-shrink-0 snap-center relative group overflow-hidden rounded-sm border border-white/10"
                 >
                   <img
                     src={img}
@@ -333,7 +344,7 @@ Submitted via Natlaupa Website`;
                     draggable={false}
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 pointer-events-none" />
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>

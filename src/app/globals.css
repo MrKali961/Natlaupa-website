@@ -68,6 +68,50 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
+/* Performance optimizations for scrollable containers */
+[data-lenis-prevent] {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  will-change: scroll-position;
+}
+
+/* GPU acceleration for animated elements */
+.group-hover\:scale-110,
+.hover\:scale-105,
+.transition-transform {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimize images for scrolling */
+img {
+  content-visibility: auto;
+}
+
+/* Reduce paint on scroll for sections */
+section {
+  contain: layout style;
+}
+
+/* Smooth scrolling containers */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Touch-friendly horizontal scroll */
+.touch-pan-x {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Snap scroll performance */
+.snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-scroll-snap-type: x mandatory;
+}
+
 /* Mapbox Interactive Map Styles */
 .mapboxgl-ctrl-logo,
 .mapboxgl-ctrl-attrib {

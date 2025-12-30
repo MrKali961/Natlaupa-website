@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Lenis from 'lenis';
 import gsap from 'gsap';
@@ -24,6 +24,7 @@ export default function SmoothScrollProvider({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const rafId = useRef<number>(0);
 
   // Scroll to top on route change
   useEffect(() => {
@@ -41,57 +42,62 @@ export default function SmoothScrollProvider({
     // Set stable viewport height to prevent iOS Safari address bar jumps
     setStableViewportHeight();
 
-    // Detect iOS devices
+    // Detect mobile/touch devices
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 
-    // Initialize Lenis for smooth momentum scrolling with iOS optimizations
+    // Initialize Lenis with optimized settings
     const lenis = new Lenis({
-      duration: isIOS ? 1.0 : 1.2,
+      duration: isTouchDevice ? 0.8 : 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: isIOS ? 1.5 : 2,
+      wheelMultiplier: 0.8,
+      touchMultiplier: isTouchDevice ? 1.2 : 1.5,
       infinite: false,
+      syncTouch: false, // Let native touch scrolling handle momentum on touch devices
+      syncTouchLerp: 0.1,
     });
 
     // Expose lenis to window for global access
     (window as any).lenis = lenis;
 
-    // Sync Lenis scroll with GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
+    // Use requestAnimationFrame for smoother updates
+    const raf = (time: number) => {
+      lenis.raf(time);
+      rafId.current = requestAnimationFrame(raf);
+    };
+    rafId.current = requestAnimationFrame(raf);
 
-    // Add Lenis update to GSAP ticker
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-
-    // Disable GSAP lag smoothing
-    gsap.ticker.lagSmoothing(0);
-
-    // Add ResizeObserver to ensure Lenis recalculates when DOM changes
-    // Debounce for iOS to prevent excessive refreshes during address bar transitions
-    let resizeTimeout: NodeJS.Timeout;
-    const resizeObserver = new ResizeObserver(() => {
-      if (isIOS) {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-          lenis.resize();
-          ScrollTrigger.refresh();
-        }, 150);
-      } else {
-        lenis.resize();
-        ScrollTrigger.refresh();
+    // Sync with ScrollTrigger less frequently
+    let lastScrollTime = 0;
+    lenis.on('scroll', () => {
+      const now = performance.now();
+      if (now - lastScrollTime > 16) { // ~60fps throttle
+        ScrollTrigger.update();
+        lastScrollTime = now;
       }
     });
-    resizeObserver.observe(document.body);
+
+    // Debounced resize handler
+    let resizeTimeout: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        lenis.resize();
+        ScrollTrigger.refresh();
+      }, isIOS ? 200 : 100);
+    };
+
+    // Use passive resize listener
+    window.addEventListener('resize', handleResize, { passive: true });
 
     return () => {
       clearTimeout(resizeTimeout);
-      resizeObserver.disconnect();
+      cancelAnimationFrame(rafId.current);
+      window.removeEventListener('resize', handleResize);
       lenis.destroy();
-      gsap.ticker.remove(lenis.raf);
       (window as any).lenis = null;
     };
   }, []);
