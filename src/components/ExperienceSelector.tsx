@@ -13,8 +13,6 @@ import {
   Sparkles,
   Moon,
   Sun,
-  ChevronDown,
-  ChevronUp,
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
@@ -503,20 +501,19 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                 }
                 transition={{ duration: 0.6 }}
               >
-                {/* Flickering arrow indicator */}
+                {/* "Pick your" text indicator */}
                 <motion.div
-                  className="absolute -top-6 sm:-top-8 md:-top-10 lg:-top-12 flex flex-col items-center w-full"
+                  className="absolute -top-8 sm:-top-10 md:-top-12 lg:-top-14 flex flex-col items-center w-full"
                   animate={{
-                    y: [0, 6, 0],
-                    opacity: [0.4, 1, 0.4],
+                    opacity: [0.5, 1, 0.5],
                   }}
                   transition={{
-                    duration: 1.5,
+                    duration: 2,
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
                 >
-                  <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-gold mx-auto" />
+                  <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">pick your</span>
                 </motion.div>
                 {/* Pulse ring effect */}
                 <AnimatePresence>
@@ -591,6 +588,21 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                 }
                 transition={{ duration: 0.6 }}
               >
+                {/* "Pick your" text indicator */}
+                <motion.div
+                  className="absolute -top-8 sm:-top-10 md:-top-12 lg:-top-14 flex flex-col items-center w-full"
+                  animate={{
+                    opacity: [0.5, 1, 0.5],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.5,
+                  }}
+                >
+                  <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">pick your</span>
+                </motion.div>
                 {/* Pulse ring effect */}
                 <AnimatePresence>
                   {clickedButton === "category" && (
@@ -635,22 +647,6 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                 >
                   How
                 </motion.p>
-                {/* Flickering arrow indicator - below text */}
-                <motion.div
-                  className="absolute -bottom-6 sm:-bottom-8 md:-bottom-10 lg:-bottom-12 flex flex-col items-center w-full"
-                  animate={{
-                    y: [0, -6, 0],
-                    opacity: [0.4, 1, 0.4],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.3,
-                  }}
-                >
-                  <ChevronUp className="w-5 h-5 sm:w-6 sm:h-6 text-gold mx-auto" />
-                </motion.div>
               </motion.div>
             </div>
           </div>
