@@ -216,7 +216,7 @@ Submitted via Natlaupa Website`;
         <div className="text-center">
           <h2 className="text-4xl font-serif mb-4">Hotel Not Found</h2>
           <p className="text-slate-400 mb-8">This property may no longer be available.</p>
-          <Link href="/offers" className="text-gold hover:underline">Browse All Hotels</Link>
+          <Link href="/countries" className="text-gold hover:underline">Browse All Destinations</Link>
         </div>
       </div>
     );
@@ -239,11 +239,14 @@ Submitted via Natlaupa Website`;
           <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/50 to-transparent" />
         </div>
 
-        {/* Back Button */}
+        {/* Back Button - Link to hotel's country */}
         <div className="absolute top-28 left-4 md:top-32 md:left-8 z-20">
-          <Link href="/offers" className="flex items-center text-white/70 hover:text-gold transition-colors group">
+          <Link
+            href={`/countries/${hotel.country.toLowerCase().replace(/\s+/g, '-').trim()}`}
+            className="flex items-center text-white/70 hover:text-gold transition-colors group"
+          >
             <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-            <span className="uppercase tracking-widest text-xs font-bold">All Hotels</span>
+            <span className="uppercase tracking-widest text-xs font-bold">{hotel.country}</span>
           </Link>
         </div>
 
