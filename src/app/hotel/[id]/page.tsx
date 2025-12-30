@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Star, MapPin, ShieldCheck, Wifi, Coffee, Globe, ChevronLeft, ChevronRight, MessageSquare, Send, X, ExternalLink, Navigation, Loader2, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, ShieldCheck, Wifi, Coffee, Globe, MessageSquare, Send, X, ExternalLink, Navigation, Loader2, MessageCircle } from 'lucide-react';
 import Footer from '@/components/Footer';
 import type { Hotel } from '@/lib/types';
 import { isCuid } from '@/lib/slugify';
@@ -75,12 +75,32 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
     };
   }, [isContactModalOpen]);
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const { current } = scrollRef;
-      const scrollAmount = direction === 'left' ? -400 : 400;
-      current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
+  // Drag to scroll state
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -286,23 +306,17 @@ Submitted via Natlaupa Website`;
       {hotel.galleryImages && hotel.galleryImages.length > 0 && (
         <div className="bg-deepBlue border-b border-white/5 relative z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="flex justify-between items-end mb-8">
-              <h3 className="font-serif text-2xl text-white">Visual Narrative</h3>
-              <div className="flex gap-2">
-                <button onClick={() => scroll('left')} className="p-2 border border-white/20 rounded-full hover:bg-gold hover:text-deepBlue hover:border-gold transition-colors">
-                  <ChevronLeft size={20} />
-                </button>
-                <button onClick={() => scroll('right')} className="p-2 border border-white/20 rounded-full hover:bg-gold hover:text-deepBlue hover:border-gold transition-colors">
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-            </div>
+            <h3 className="font-serif text-2xl text-white mb-8">Visual Narrative</h3>
 
             <div
               ref={scrollRef}
-              className="flex gap-6 overflow-x-auto pb-8 snap-x"
+              className={`flex gap-6 overflow-x-auto pb-8 snap-x select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
               data-lenis-prevent
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
             >
               {hotel.galleryImages.map((img, idx) => (
                 <motion.div
@@ -310,14 +324,15 @@ Submitted via Natlaupa Website`;
                   initial={{ opacity: 0, x: 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.1 }}
-                  className="min-w-[300px] md:min-w-[400px] h-[250px] md:h-[300px] flex-shrink-0 snap-center relative group overflow-hidden rounded-sm border border-white/10"
+                  className={`min-w-[300px] md:min-w-[400px] h-[250px] md:h-[300px] flex-shrink-0 snap-center relative group overflow-hidden rounded-sm border border-white/10 ${isDragging ? 'pointer-events-none' : ''}`}
                 >
                   <img
                     src={img}
                     alt={`Gallery ${idx + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none"
+                    draggable={false}
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 pointer-events-none" />
                 </motion.div>
               ))}
             </div>
