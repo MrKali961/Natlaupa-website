@@ -470,14 +470,14 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="absolute top-20 sm:top-24 md:top-28 lg:top-32 left-0 right-0 flex flex-col items-center justify-center text-center z-10 px-4"
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="absolute top-24 sm:top-28 md:top-32 lg:top-36 left-0 right-0 flex flex-col items-center justify-center text-center z-20 px-4"
           >
-            <p className="text-gold/80 text-xs sm:text-sm md:text-base uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-1 sm:mb-2">
+            <h2 className="text-gold text-sm sm:text-base md:text-lg lg:text-xl font-semibold uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-2 sm:mb-3 drop-shadow-lg">
               Pick Your Experience
-            </p>
-            <p className="text-white/40 text-[10px] sm:text-xs md:text-sm tracking-wide max-w-xs sm:max-w-sm">
-              Choose how you'd like to explore our collection
+            </h2>
+            <p className="text-white/60 text-xs sm:text-sm md:text-base tracking-wide max-w-sm sm:max-w-md drop-shadow-md">
+              Choose how you&apos;d like to explore our collection
             </p>
           </motion.div>
 
