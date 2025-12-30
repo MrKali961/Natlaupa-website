@@ -1,10 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, Leaf, Building2, Castle, Waves } from 'lucide-react';
-import { useHotels } from '@/hooks/useHotels';
 import Footer from '@/components/Footer';
 import { LucideIcon } from 'lucide-react';
 
@@ -15,33 +14,53 @@ const categoryIcons: Record<string, LucideIcon> = {
   'Overwater Villas': Waves,
 };
 
-const categoryDescriptions: Record<string, string> = {
-  'Eco-Lodges': 'Sustainable sanctuaries that harmonize luxury with nature. Experience eco-conscious hospitality without compromising on comfort.',
-  'Urban Suites': 'Sophisticated city retreats offering the finest in metropolitan living. Prime locations, stunning views, and world-class amenities.',
-  'Historic Castles': 'Step into centuries of heritage and aristocratic elegance. These restored fortresses offer a timeless escape.',
-  'Overwater Villas': 'Float above crystal-clear waters in these iconic overwater retreats. The ultimate in tropical luxury and seclusion.',
-};
+interface StyleData {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  imageUrl: string | null;
+  hotelCount: number;
+}
+
+interface StyleWithUI extends StyleData {
+  featuredImage: string;
+  Icon: LucideIcon;
+}
 
 export default function StylesPage() {
-  const { hotels, categories, isLoading, error } = useHotels();
+  const [stylesWithData, setStylesWithData] = useState<StyleWithUI[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const stylesWithData = categories.map(category => {
-    const categoryHotels = hotels.filter(h => h.category === category.name);
-    const featuredImage = categoryHotels[0]?.imageUrl || category.imageUrl;
-    const avgRating = categoryHotels.length > 0
-      ? (categoryHotels.reduce((sum, h) => sum + h.rating, 0) / categoryHotels.length).toFixed(1)
-      : '0';
+  useEffect(() => {
+    const fetchStyles = async () => {
+      try {
+        const response = await fetch('/api/styles');
+        const data = await response.json();
 
-    return {
-      ...category,
-      slug: category.name.toLowerCase().replace(/\s+/g, '-'),
-      hotelCount: categoryHotels.length,
-      featuredImage,
-      avgRating,
-      description: categoryDescriptions[category.name] || 'Discover unique properties in this category.',
-      Icon: categoryIcons[category.name] || Building2,
+        if (response.ok && data.data?.items) {
+          const styles = data.data.items as StyleData[];
+          setStylesWithData(
+            styles.map((style: StyleData) => ({
+              ...style,
+              featuredImage: style.imageUrl || 'https://picsum.photos/600/400',
+              Icon: categoryIcons[style.name] || Building2,
+            }))
+          );
+        } else {
+          setError(data.error || 'Failed to fetch styles');
+        }
+      } catch (err) {
+        console.error('Error fetching styles:', err);
+        setError('Failed to fetch styles');
+      } finally {
+        setIsLoading(false);
+      }
     };
-  });
+
+    fetchStyles();
+  }, []);
 
   if (isLoading) {
     return (
@@ -121,19 +140,13 @@ export default function StylesPage() {
                           </h3>
 
                           <p className="text-slate-400 text-sm mb-6 line-clamp-3">
-                            {style.description}
+                            {style.description || 'Discover unique properties in this style.'}
                           </p>
 
                           <div className="flex items-center justify-between text-sm">
-                            <div className="flex gap-6">
-                              <div>
-                                <span className="text-gold font-bold">{style.hotelCount}</span>
-                                <span className="text-slate-500 ml-1">Properties</span>
-                              </div>
-                              <div>
-                                <span className="text-gold font-bold">{style.avgRating}</span>
-                                <span className="text-slate-500 ml-1">Avg. Rating</span>
-                              </div>
+                            <div>
+                              <span className="text-gold font-bold">{style.hotelCount}</span>
+                              <span className="text-slate-500 ml-1">{style.hotelCount === 1 ? 'Property' : 'Properties'}</span>
                             </div>
                             <div className="flex items-center text-white group-hover:text-gold transition-colors">
                               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

@@ -1,27 +1,58 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { MapPin, ArrowRight, Building2 } from 'lucide-react';
-import { useHotels } from '@/hooks/useHotels';
 import Footer from '@/components/Footer';
 
-export default function CountriesPage() {
-  const { hotels, countries, isLoading, error } = useHotels();
+interface CountryData {
+  country: string;
+  hotelCount: number;
+  sampleImage?: string;
+}
 
-  const countriesWithData = countries
-    .map(country => {
-      const countryHotels = hotels.filter(h => h.country === country);
-      const featuredImage = countryHotels[0]?.imageUrl || 'https://picsum.photos/600/400?random=50';
-      return {
-        name: country,
-        slug: country.toLowerCase().replace(/\s+/g, '-'),
-        hotelCount: countryHotels.length,
-        imageUrl: featuredImage,
-      };
-    })
-    .filter(country => country.hotelCount > 0);
+export default function CountriesPage() {
+  const [countriesWithData, setCountriesWithData] = useState<Array<{
+    name: string;
+    slug: string;
+    hotelCount: number;
+    imageUrl: string;
+  }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch('/api/hotels/countries');
+        const data = await response.json();
+
+        if (response.ok && data.data) {
+          const countries = (Array.isArray(data.data) ? data.data : []) as CountryData[];
+          setCountriesWithData(
+            countries
+              .filter((c: CountryData) => c.hotelCount > 0)
+              .map((c: CountryData) => ({
+                name: c.country,
+                slug: c.country.toLowerCase().replace(/\s+/g, '-'),
+                hotelCount: c.hotelCount,
+                imageUrl: c.sampleImage || 'https://picsum.photos/600/400?random=50',
+              }))
+          );
+        } else {
+          setError(data.error || 'Failed to fetch countries');
+        }
+      } catch (err) {
+        console.error('Error fetching countries:', err);
+        setError('Failed to fetch countries');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
 
   if (isLoading) {
     return (

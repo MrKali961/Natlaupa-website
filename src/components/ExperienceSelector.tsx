@@ -18,7 +18,6 @@ import {
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import { useHotels } from "@/hooks/useHotels";
 
 // Interface for Destination
 interface Destination {
@@ -68,6 +67,7 @@ interface LocationInfo {
   hour: number;
   sunMoonStatus: string;
   imageUrl: string;
+  isDefault?: boolean;
 }
 
 const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
@@ -89,32 +89,69 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
   // Location state for real-time user location
   const [userLocation, setUserLocation] = useState<LocationInfo | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
+  const [isDefaultLocation, setIsDefaultLocation] = useState(false);
 
-  // Fetch dynamic data from API
-  const { hotels, categories, isLoading } = useHotels();
+  // Fetch featured destinations (countries) and styles directly from API
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string; imageUrl: string; count: number }[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Create destinations from unique countries
-  const DESTINATIONS = useMemo(() => {
-    const countryMap: { [key: string]: Destination } = {};
+  useEffect(() => {
+    const fetchFeaturedData = async () => {
+      try {
+        // Fetch countries and styles in parallel
+        const [countriesRes, stylesRes] = await Promise.all([
+          fetch('/api/hotels/countries'),
+          fetch('/api/styles')
+        ]);
 
-    hotels.forEach((hotel) => {
-      if (!countryMap[hotel.country] && hotel.lat && hotel.lng) {
-        countryMap[hotel.country] = {
-          id: hotel.country.toLowerCase().replace(/\s+/g, '-'),
-          name: hotel.location ? hotel.location.split(',')[0] : hotel.country,
-          country: hotel.country,
-          imageUrl: hotel.imageUrl,
-          temp: 20, // Default temp, will be fetched from API
-          lat: hotel.lat,
-          lng: hotel.lng,
-          description: hotel.description || `Discover luxury stays in ${hotel.country}`,
-        };
+        const countriesData = await countriesRes.json();
+        const stylesData = await stylesRes.json();
+
+        // Process featured destinations (top 4 by hotel count)
+        if (countriesRes.ok && countriesData.data) {
+          const countries = Array.isArray(countriesData.data) ? countriesData.data : [];
+          // Take top 4 countries by hotel count (already sorted by API)
+          const featuredDestinations = countries.slice(0, 4).map((c: { country: string; hotelCount: number; sampleImage?: string }) => ({
+            id: c.country.toLowerCase().replace(/\s+/g, '-'),
+            name: c.country,
+            country: c.country,
+            imageUrl: c.sampleImage || 'https://picsum.photos/600/400',
+            temp: 20,
+            lat: 0,
+            lng: 0,
+            description: `Discover ${c.hotelCount} luxury ${c.hotelCount === 1 ? 'property' : 'properties'} in ${c.country}`,
+          }));
+          setDestinations(featuredDestinations);
+        }
+
+        // Process featured styles (top 4 by hotel count)
+        if (stylesRes.ok && stylesData.data?.items) {
+          const styles = stylesData.data.items as Array<{ id: string; name: string; imageUrl?: string; hotelCount: number; isActive: boolean }>;
+          // Filter active styles, sort by hotel count, take top 4
+          const featuredStyles = styles
+            .filter(s => s.isActive)
+            .sort((a, b) => b.hotelCount - a.hotelCount)
+            .slice(0, 4)
+            .map(s => ({
+              id: s.id,
+              name: s.name,
+              imageUrl: s.imageUrl || 'https://picsum.photos/600/400',
+              count: s.hotelCount,
+            }));
+          setCategories(featuredStyles);
+        }
+      } catch (error) {
+        console.error('Error fetching featured data:', error);
+      } finally {
+        setIsLoading(false);
       }
-    });
+    };
 
-    return Object.values(countryMap).slice(0, 4) as Destination[]; // Limit to 4 featured destinations
-  }, [hotels]);
+    fetchFeaturedData();
+  }, []);
 
+  const DESTINATIONS = destinations;
   const CATEGORIES = categories;
 
   // Detect touch devices to prevent double-tap requirement on iOS
@@ -126,13 +163,13 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
     // Immediate visual feedback - pulse effect
     setClickedButton(selected);
 
-    // Short delay before transition starts (snappier response)
+    // Very short delay before transition starts (snappy response)
     setTimeout(() => {
       setIsTransitioning(true);
       setShowToast(true);
 
-      // Auto-dismiss toast after 3 seconds
-      setTimeout(() => setShowToast(false), 3000);
+      // Auto-dismiss toast after 2 seconds
+      setTimeout(() => setShowToast(false), 2000);
 
       // Set pending mode to trigger location fetch
       // The actual mode will be set after location is loaded
@@ -141,8 +178,8 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
 
       setTimeout(() => {
         setClickedButton(null);
-      }, 800);
-    }, 300);
+      }, 400);
+    }, 150); // Reduced from 300ms to 150ms
   };
 
   // Track pending mode selection (before location is loaded)
@@ -160,10 +197,15 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
           const data = await response.json();
           if (data.success) {
             setUserLocation(data);
+            setIsDefaultLocation(data.isDefault || false);
             // Now that location is loaded, set the actual mode
             setMode(pendingMode);
             setIsTransitioning(false);
           }
+        } else {
+          // API error - still show with default
+          setMode(pendingMode);
+          setIsTransitioning(false);
         }
       } catch (error) {
         console.error('Error fetching location info:', error);
@@ -175,21 +217,42 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
       }
     };
 
+    // Immediately start with default location for instant response
+    // Then update if geolocation succeeds
+    let geolocationCompleted = false;
+
+    // Set a very short timeout - if geolocation doesn't respond quickly, use default
+    const quickTimeout = setTimeout(() => {
+      if (!geolocationCompleted) {
+        geolocationCompleted = true;
+        fetchLocationData(0, 0); // Use default (Paris)
+      }
+    }, 2000); // 2 second timeout for quick response
+
     // Try to get user's geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          fetchLocationData(position.coords.latitude, position.coords.longitude);
+          if (!geolocationCompleted) {
+            geolocationCompleted = true;
+            clearTimeout(quickTimeout);
+            fetchLocationData(position.coords.latitude, position.coords.longitude);
+          }
         },
         (error) => {
           console.error('Geolocation error:', error);
-          // Fallback: use default location (will be handled by API)
-          fetchLocationData(0, 0);
+          if (!geolocationCompleted) {
+            geolocationCompleted = true;
+            clearTimeout(quickTimeout);
+            fetchLocationData(0, 0); // Use default (Paris)
+          }
         },
-        { timeout: 10000, enableHighAccuracy: false }
+        { timeout: 3000, enableHighAccuracy: false, maximumAge: 300000 } // 3s timeout, cache for 5 min
       );
     } else {
       // Fallback for browsers without geolocation
+      geolocationCompleted = true;
+      clearTimeout(quickTimeout);
       fetchLocationData(0, 0);
     }
 
@@ -208,7 +271,10 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
       }
     }, 60000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(quickTimeout);
+      clearInterval(interval);
+    };
   }, [pendingMode]);
 
   // Fallback data if location isn't loaded yet
@@ -321,13 +387,13 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
             className="fixed inset-0 bg-deepBlue z-[100] flex items-center justify-center"
           >
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
               className="flex flex-col items-center gap-4"
             >
               <Loader2 className="w-8 h-8 text-gold animate-spin" />

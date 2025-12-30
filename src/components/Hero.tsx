@@ -30,18 +30,6 @@ const Hero: React.FC = () => {
       {/* Content */}
       <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4 md:px-0">
         
-        {/* Tagline Pill */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="mb-6 md:mb-8"
-        >
-            <span className="px-4 py-2 md:px-5 md:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] md:text-sm font-medium uppercase tracking-[0.2em] text-white/90">
-                Curated Collection 2025
-            </span>
-        </motion.div>
-
         {/* Main Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
@@ -12,16 +12,27 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
   const { country } = React.use(params);
   const decodedCountry = decodeURIComponent(country).replace(/-/g, ' ');
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [matchedCountry, setMatchedCountry] = useState<string | null>(null);
 
-  const { hotels: allHotels, countries, isLoading, error } = useHotels();
+  // First, fetch just countries to find the exact match
+  const { countries, isLoading: isLoadingCountries } = useHotels();
 
-  const matchedCountry = countries.find(
-    c => c.toLowerCase() === decodedCountry.toLowerCase()
+  // Find the matched country name (case-insensitive)
+  useEffect(() => {
+    if (countries.length > 0) {
+      const found = countries.find(
+        c => c.toLowerCase() === decodedCountry.toLowerCase()
+      );
+      setMatchedCountry(found || null);
+    }
+  }, [countries, decodedCountry]);
+
+  // Then fetch hotels filtered by the matched country (server-side filtering)
+  const { hotels, isLoading: isLoadingHotels, error } = useHotels(
+    matchedCountry ? { country: matchedCountry } : undefined
   );
 
-  const hotels = matchedCountry
-    ? allHotels.filter(h => h.country.toLowerCase() === matchedCountry.toLowerCase())
-    : [];
+  const isLoading = isLoadingCountries || (matchedCountry && isLoadingHotels);
 
   if (isLoading) {
     return (
@@ -45,7 +56,8 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
     );
   }
 
-  if (!matchedCountry || hotels.length === 0) {
+  // Wait for countries to load before showing "not found"
+  if (!isLoadingCountries && !matchedCountry) {
     return (
       <div className="min-h-screen bg-deepBlue flex items-center justify-center text-white">
         <div className="text-center">
@@ -55,6 +67,29 @@ export default function CountryPage({ params }: { params: Promise<{ country: str
             Browse All Countries
           </Link>
         </div>
+      </div>
+    );
+  }
+
+  if (!isLoading && matchedCountry && hotels.length === 0) {
+    return (
+      <div className="min-h-screen bg-deepBlue flex items-center justify-center text-white">
+        <div className="text-center">
+          <h2 className="text-4xl font-serif mb-4">{matchedCountry}</h2>
+          <p className="text-slate-400 mb-8">No properties available in this country yet.</p>
+          <Link href="/countries" className="text-gold hover:underline">
+            Browse All Countries
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Still loading or no matched country yet
+  if (!matchedCountry) {
+    return (
+      <div className="min-h-screen bg-deepBlue flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
       </div>
     );
   }

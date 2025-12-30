@@ -159,94 +159,121 @@ function getScenicImageUrl(city: string, country: string): string {
   return 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80';
 }
 
+// Default location data (Paris - an iconic, universally appealing default)
+const DEFAULT_LOCATION = {
+  city: 'Paris',
+  country: 'France',
+  lat: 48.8566,
+  lng: 2.3522,
+  timezone: 'Europe/Paris',
+  imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1920&q=80'
+};
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const lat = parseFloat(searchParams.get('lat') || '0');
-    const lng = parseFloat(searchParams.get('lng') || '0');
+    let lat = parseFloat(searchParams.get('lat') || '0');
+    let lng = parseFloat(searchParams.get('lng') || '0');
 
-    if (!lat || !lng) {
-      return NextResponse.json({
-        success: false,
-        error: 'Latitude and longitude are required'
-      }, { status: 400 });
+    // Use default location if coordinates are 0,0 (fallback/denied permission)
+    const useDefault = !lat && !lng;
+    if (useDefault) {
+      lat = DEFAULT_LOCATION.lat;
+      lng = DEFAULT_LOCATION.lng;
     }
 
-    // Get the current time in the user's timezone
+    // Get the current time - use location's timezone if default
     const now = new Date();
-    const localTime = now.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-    const hour = now.getHours();
+    let localTime: string;
+    let hour: number;
+
+    if (useDefault) {
+      // Use Paris timezone for default location
+      localTime = now.toLocaleTimeString('en-US', {
+        timeZone: DEFAULT_LOCATION.timezone,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      hour = parseInt(localTime.split(':')[0]);
+    } else {
+      localTime = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      hour = now.getHours();
+    }
 
     // Try to get city/country using reverse geocoding
-    let city = 'Your Location';
-    let country = 'Earth';
-    let imageUrl = 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80';
+    let city = useDefault ? DEFAULT_LOCATION.city : 'Your Location';
+    let country = useDefault ? DEFAULT_LOCATION.country : 'Earth';
+    let imageUrl = useDefault ? DEFAULT_LOCATION.imageUrl : 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80';
     let sunMoonStatus = getSunMoonStatement(hour);
 
-    try {
-      // Use OpenStreetMap Nominatim for reverse geocoding with English names
-      const geoResponse = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1&accept-language=en`,
-        {
-          headers: {
-            'User-Agent': 'Natlaupa/1.0',
-            'Accept-Language': 'en'
+    // Only do geocoding if not using default location
+    if (!useDefault) {
+      try {
+        // Use OpenStreetMap Nominatim for reverse geocoding with English names
+        const geoResponse = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1&accept-language=en`,
+          {
+            headers: {
+              'User-Agent': 'Natlaupa/1.0',
+              'Accept-Language': 'en'
+            }
           }
+        );
+
+        if (geoResponse.ok) {
+          const geoData = await geoResponse.json();
+          city = geoData.address?.city ||
+                 geoData.address?.town ||
+                 geoData.address?.village ||
+                 geoData.address?.municipality ||
+                 geoData.address?.county ||
+                 geoData.address?.state ||
+                 'Your Location';
+          country = geoData.address?.country || 'Earth';
+
+          // Ensure English names (some locations may still return local names)
+          // Common translations for major cities
+          const cityTranslations: Record<string, string> = {
+            'Moskva': 'Moscow',
+            'Roma': 'Rome',
+            'Milano': 'Milan',
+            'Firenze': 'Florence',
+            'Venezia': 'Venice',
+            'Napoli': 'Naples',
+            'München': 'Munich',
+            'Köln': 'Cologne',
+            'Wien': 'Vienna',
+            'Zürich': 'Zurich',
+            'Genève': 'Geneva',
+            'Bruxelles': 'Brussels',
+            'Athina': 'Athens',
+            'Praha': 'Prague',
+            'Warszawa': 'Warsaw',
+            'Lisboa': 'Lisbon',
+            'Bucuresti': 'Bucharest',
+            'Moskau': 'Moscow',
+            'Pékin': 'Beijing',
+            'Le Caire': 'Cairo',
+          };
+
+          if (cityTranslations[city]) {
+            city = cityTranslations[city];
+          }
+
+          imageUrl = getScenicImageUrl(city, country);
         }
-      );
-
-      if (geoResponse.ok) {
-        const geoData = await geoResponse.json();
-        city = geoData.address?.city ||
-               geoData.address?.town ||
-               geoData.address?.village ||
-               geoData.address?.municipality ||
-               geoData.address?.county ||
-               geoData.address?.state ||
-               'Your Location';
-        country = geoData.address?.country || 'Earth';
-
-        // Ensure English names (some locations may still return local names)
-        // Common translations for major cities
-        const cityTranslations: Record<string, string> = {
-          'Moskva': 'Moscow',
-          'Roma': 'Rome',
-          'Milano': 'Milan',
-          'Firenze': 'Florence',
-          'Venezia': 'Venice',
-          'Napoli': 'Naples',
-          'München': 'Munich',
-          'Köln': 'Cologne',
-          'Wien': 'Vienna',
-          'Zürich': 'Zurich',
-          'Genève': 'Geneva',
-          'Bruxelles': 'Brussels',
-          'Athina': 'Athens',
-          'Praha': 'Prague',
-          'Warszawa': 'Warsaw',
-          'Lisboa': 'Lisbon',
-          'Bucuresti': 'Bucharest',
-          'Moskau': 'Moscow',
-          'Pékin': 'Beijing',
-          'Le Caire': 'Cairo',
-        };
-
-        if (cityTranslations[city]) {
-          city = cityTranslations[city];
-        }
-
-        imageUrl = getScenicImageUrl(city, country);
+      } catch (geoError) {
+        console.error('Geocoding error:', geoError);
       }
-    } catch (geoError) {
-      console.error('Geocoding error:', geoError);
     }
 
-    // Try to enhance with AI if available
-    if (genAI) {
+    // Try to enhance with AI if available (skip for default location - already have good data)
+    if (genAI && !useDefault) {
       try {
         const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
@@ -379,29 +406,33 @@ Just return the statement, nothing else.`;
       time: localTime,
       hour,
       sunMoonStatus,
-      imageUrl
+      imageUrl,
+      isDefault: useDefault
     });
 
   } catch (error) {
     console.error('Error in location-info API:', error);
 
-    // Return fallback data
+    // Return Paris as fallback (same as default)
     const now = new Date();
-    const hour = now.getHours();
+    const localTime = now.toLocaleTimeString('en-US', {
+      timeZone: DEFAULT_LOCATION.timezone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    const hour = parseInt(localTime.split(':')[0]);
 
     return NextResponse.json({
       success: true,
-      location: 'Your Location',
-      city: 'Your City',
-      country: 'Earth',
-      time: now.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      }),
+      location: `${DEFAULT_LOCATION.city}, ${DEFAULT_LOCATION.country}`,
+      city: DEFAULT_LOCATION.city,
+      country: DEFAULT_LOCATION.country,
+      time: localTime,
       hour,
       sunMoonStatus: getSunMoonStatement(hour),
-      imageUrl: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80'
+      imageUrl: DEFAULT_LOCATION.imageUrl,
+      isDefault: true
     });
   }
 }
