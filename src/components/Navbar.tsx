@@ -138,7 +138,7 @@ const Navbar: React.FC = () => {
           </Link>
 
           {/* Center: Desktop Nav Links */}
-          <div className="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 space-x-12">
+          <div className="hidden lg:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 space-x-8 xl:space-x-12">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.name}
@@ -153,7 +153,7 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Right: Special Links (Desktop) */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
             <Link
               href="/for-hotels"
               className={`text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 ${
@@ -171,7 +171,7 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden z-50">
+          <div className="lg:hidden z-50">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-white hover:text-gold transition-colors"
