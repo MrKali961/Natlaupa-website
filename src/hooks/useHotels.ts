@@ -91,7 +91,8 @@ export function useHotels(filters?: HotelsFilter): UseHotelsResult {
         const hotelsList = hotelsData.data.items || hotelsData.data.hotels || [];
         const transformedHotels = hotelsList.map(transformServerHotel);
         setHotels(transformedHotels);
-        setTotal(hotelsData.data.pagination?.total || transformedHotels.length);
+        // Handle both total and pagination.total
+        setTotal(hotelsData.data.total || hotelsData.data.pagination?.total || transformedHotels.length);
       } else {
         setHotels([]);
         setTotal(0);
