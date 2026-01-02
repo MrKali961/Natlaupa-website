@@ -437,236 +437,421 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
       {!mode && (
         <section
           id="experience-selector"
-          className="w-full relative flex flex-col md:flex-row items-center justify-center bg-black overflow-hidden"
+          className="w-full relative bg-black overflow-hidden"
           style={{ height: "calc(var(--vh, 1vh) * 100)" }}
         >
-          {/* Background Layer: DESTINATION (WHERE) */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: hoveredChoice === "destination" ? 0.6 : 0 }}
-            transition={{ duration: 0.6 }}
-            className="absolute inset-0 pointer-events-none z-0"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=3506&auto=format&fit=crop"
-              alt="Nature Background"
-              className="w-full h-full object-cover grayscale-[20%]"
-            />
-            {/* Vignette */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
-          </motion.div>
+          {/* ═══════════════════════════════════════════════════════════════
+              MOBILE/TABLET PORTRAIT LAYOUT - Minimal Centered Design (< 768px)
+              ═══════════════════════════════════════════════════════════════ */}
+          <div className="md:hidden absolute inset-0 flex flex-col px-6 pt-24 pb-16">
+            {/* Background Images - appear on hover/tap */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: hoveredChoice === "destination" || clickedButton === "destination" ? 0.4 : 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0 pointer-events-none z-0"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=3506&auto=format&fit=crop"
+                alt="Nature Background"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70" />
+            </motion.div>
 
-          {/* Background Layer: STYLE (HOW) */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: hoveredChoice === "category" ? 0.6 : 0 }}
-            transition={{ duration: 0.6 }}
-            className="absolute inset-0 pointer-events-none z-0"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=3456&auto=format&fit=crop"
-              alt="Interior Background"
-              className="w-full h-full object-cover grayscale-[20%]"
-            />
-            {/* Vignette */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: hoveredChoice === "category" || clickedButton === "category" ? 0.4 : 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0 pointer-events-none z-0"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=3456&auto=format&fit=crop"
+                alt="Interior Background"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70" />
+            </motion.div>
 
-          {/* Hint Text - Top Section */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="absolute top-24 sm:top-28 md:top-32 lg:top-36 left-0 right-0 flex flex-col items-center justify-center text-center z-20 px-4"
-          >
-            <h2 className="text-gold text-sm sm:text-base md:text-lg lg:text-xl font-semibold uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-2 sm:mb-3 drop-shadow-lg">
-              Pick Your Experience
-            </h2>
-            <p className="text-white/60 text-xs sm:text-sm md:text-base tracking-wide max-w-sm sm:max-w-md drop-shadow-md">
-              Choose how you&apos;d like to explore our collection
-            </p>
-          </motion.div>
+            {/* Default gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-black/95 -z-10" />
 
-          {/* Content Layer */}
-          <div className="relative z-10 flex flex-col md:flex-row w-full h-full px-4">
-            {/* CHOICE 1: DESTINATION */}
-            <div className="flex-1 flex justify-center items-center py-6 md:py-0">
+            {/* Header - Fixed at top */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="relative z-10 text-center"
+            >
+              <h2 className="text-gold text-[11px] font-medium uppercase tracking-[0.35em] mb-3">
+                Pick Your Experience
+              </h2>
               <motion.div
-                className="group relative cursor-pointer flex flex-col items-center w-full max-w-lg"
-                onMouseEnter={() =>
-                  !isTouchDevice && setHoveredChoice("destination")
-                }
-                onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
-                onClick={() => handleSelectionClick("destination")}
-                animate={
-                  clickedButton === "destination"
-                    ? {
-                        scale: [1, 1.05, 1],
-                      }
-                    : {}
-                }
-                transition={{ duration: 0.6 }}
-              >
-                {/* "Pick your" text indicator */}
-                <motion.div
-                  className="absolute -top-8 sm:-top-10 md:-top-12 lg:-top-14 flex flex-col items-center w-full"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="w-8 h-[1px] bg-gold/40 mx-auto"
+              />
+            </motion.div>
+
+            {/* Main Content - Fills remaining space */}
+            <div className="relative z-10 flex-1 flex flex-col w-full max-w-xs mx-auto">
+
+              {/* DESTINATION Section - Top Half */}
+              <div className="flex-1 flex items-center justify-center">
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{
-                    opacity: [0.5, 1, 0.5],
+                    opacity: hoveredChoice === "category" ? 0.3 : 1,
+                    y: 0,
+                    scale: hoveredChoice === "destination" ? 1.05 : 1
                   }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
+                  transition={{ duration: 0.4 }}
+                  onMouseEnter={() => !isTouchDevice && setHoveredChoice("destination")}
+                  onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
+                  onTouchStart={() => setHoveredChoice("destination")}
+                  onTouchEnd={() => setTimeout(() => setHoveredChoice(null), 150)}
+                  onClick={() => handleSelectionClick("destination")}
+                  className="group relative w-full text-center py-4 focus:outline-none cursor-pointer"
                 >
-                  <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">pick your</span>
-                </motion.div>
-                {/* Pulse ring effect */}
-                <AnimatePresence>
-                  {clickedButton === "destination" && (
-                    <motion.div
-                      initial={{ opacity: 0.8, scale: 1 }}
-                      animate={{ opacity: 0, scale: 1.5 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.8 }}
-                      className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
-                      style={{ boxShadow: "0 0 30px rgba(212, 175, 55, 0.5)" }}
-                    />
-                  )}
-                </AnimatePresence>
-                <motion.h2
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  {/* Hover/Active underline */}
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: hoveredChoice === "destination" ? 1 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-[2px] bg-gold origin-center"
+                  />
+                  {/* Glow effect on tap */}
+                  <AnimatePresence>
+                    {clickedButton === "destination" && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.2 }}
+                        transition={{ duration: 0.4 }}
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/15 to-transparent rounded-sm"
+                      />
+                    )}
+                  </AnimatePresence>
+
+                  {/* "Pick your" label */}
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{
+                      opacity: hoveredChoice === "destination" ? 1 : 0.6
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className="text-gold text-[10px] uppercase tracking-[0.4em] mb-2 block"
+                  >
+                    pick your
+                  </motion.span>
+                  <motion.span
+                    className="font-serif text-[2.5rem] sm:text-[2.75rem] leading-none text-white font-medium tracking-tight block"
+                    animate={{
+                      color: hoveredChoice === "destination" || clickedButton === "destination" ? "#D4AF37" : "#ffffff",
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    Destination
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{
+                      opacity: hoveredChoice === "destination" ? 0.8 : 0.4,
+                      y: 0
+                    }}
+                    transition={{ delay: 0.5, duration: 0.3 }}
+                    className="text-white/40 text-[10px] uppercase tracking-[0.4em] mt-3 block"
+                  >
+                    where to go
+                  </motion.span>
+                </motion.button>
+              </div>
+
+              {/* Center Divider */}
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.8, delay: 0.4, ease: "easeInOut" }}
+                className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              />
+
+              {/* MOOD Section - Bottom Half */}
+              <div className="flex-1 flex items-center justify-center">
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{
-                    opacity:
-                      hoveredChoice && hoveredChoice !== "destination"
-                        ? 0.2
-                        : 1,
-                    scale: hoveredChoice === "destination" ? 1.1 : 1,
+                    opacity: hoveredChoice === "destination" ? 0.3 : 1,
+                    y: 0,
+                    scale: hoveredChoice === "category" ? 1.05 : 1
                   }}
-                  transition={{ duration: 0.5 }}
-                  className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight text-center"
+                  transition={{ duration: 0.4 }}
+                  onMouseEnter={() => !isTouchDevice && setHoveredChoice("category")}
+                  onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
+                  onTouchStart={() => setHoveredChoice("category")}
+                  onTouchEnd={() => setTimeout(() => setHoveredChoice(null), 150)}
+                  onClick={() => handleSelectionClick("category")}
+                  className="group relative w-full text-center py-4 focus:outline-none cursor-pointer"
                 >
-                  DESTINATION
-                </motion.h2>
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{
-                    width: hoveredChoice === "destination" ? "100%" : "0%",
-                  }}
-                  className="h-1 bg-gold mt-2 md:mt-4"
-                />
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{
-                    opacity: hoveredChoice === "destination" ? 1 : 0,
-                    y: hoveredChoice === "destination" ? 0 : 10,
-                  }}
-                  className="absolute -bottom-8 md:-bottom-12 left-0 w-full text-center text-xs md:text-sm text-gold uppercase tracking-[0.3em]"
-                  style={{ marginRight: "-0.3em" }}
-                >
-                  Where
-                </motion.p>
-              </motion.div>
+                  {/* Hover/Active underline */}
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: hoveredChoice === "category" ? 1 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-[2px] bg-gold origin-center"
+                  />
+                  {/* Glow effect on tap */}
+                  <AnimatePresence>
+                    {clickedButton === "category" && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.2 }}
+                        transition={{ duration: 0.4 }}
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/15 to-transparent rounded-sm"
+                      />
+                    )}
+                  </AnimatePresence>
+
+                  {/* "Pick your" label */}
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{
+                      opacity: hoveredChoice === "category" ? 1 : 0.6
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className="text-gold text-[10px] uppercase tracking-[0.4em] mb-2 block"
+                  >
+                    pick your
+                  </motion.span>
+                  <motion.span
+                    className="font-serif text-[2.5rem] sm:text-[2.75rem] leading-none text-white font-medium tracking-tight block"
+                    animate={{
+                      color: hoveredChoice === "category" || clickedButton === "category" ? "#D4AF37" : "#ffffff",
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    Mood
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{
+                      opacity: hoveredChoice === "category" ? 0.8 : 0.4,
+                      y: 0
+                    }}
+                    transition={{ delay: 0.6, duration: 0.3 }}
+                    className="text-white/40 text-[10px] uppercase tracking-[0.4em] mt-3 block"
+                  >
+                    how to feel
+                  </motion.span>
+                </motion.button>
+              </div>
             </div>
 
-            {/* DIVIDER (Visual Only) - Absolutely centered */}
-            <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[1px] h-32 bg-white/20" />
-
-            {/* Mobile divider */}
-            <div className="block md:hidden w-[90%] h-[1px] bg-white/20 self-center" />
-
-            {/* CHOICE 2: STYLE */}
-            <div className="flex-1 flex justify-center items-center py-6 md:py-0">
-              <motion.div
-                className="group relative cursor-pointer flex flex-col items-center w-full max-w-lg"
-                onMouseEnter={() =>
-                  !isTouchDevice && setHoveredChoice("category")
-                }
-                onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
-                onClick={() => handleSelectionClick("category")}
-                animate={
-                  clickedButton === "category"
-                    ? {
-                        scale: [1, 1.05, 1],
-                      }
-                    : {}
-                }
-                transition={{ duration: 0.6 }}
-              >
-                {/* "Pick your" text indicator */}
-                <motion.div
-                  className="absolute -top-8 sm:-top-10 md:-top-12 lg:-top-14 flex flex-col items-center w-full"
-                  animate={{
-                    opacity: [0.5, 1, 0.5],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.5,
-                  }}
-                >
-                  <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">pick your</span>
-                </motion.div>
-                {/* Pulse ring effect */}
-                <AnimatePresence>
-                  {clickedButton === "category" && (
-                    <motion.div
-                      initial={{ opacity: 0.8, scale: 1 }}
-                      animate={{ opacity: 0, scale: 1.5 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.8 }}
-                      className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
-                      style={{ boxShadow: "0 0 30px rgba(212, 175, 55, 0.5)" }}
-                    />
-                  )}
-                </AnimatePresence>
-                <motion.h2
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  animate={{
-                    opacity:
-                      hoveredChoice && hoveredChoice !== "category" ? 0.2 : 1,
-                    scale: hoveredChoice === "category" ? 1.1 : 1,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight text-center"
-                >
-                  MOOD
-                </motion.h2>
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{
-                    width: hoveredChoice === "category" ? "100%" : "0%",
-                  }}
-                  className="h-1 bg-gold mt-2 md:mt-4"
-                />
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{
-                    opacity: hoveredChoice === "category" ? 1 : 0,
-                    y: hoveredChoice === "category" ? 0 : 10,
-                  }}
-                  className="absolute -bottom-8 md:-bottom-12 left-0 w-full text-center text-xs md:text-sm text-gold uppercase tracking-[0.3em]"
-                  style={{ marginRight: "-0.3em" }}
-                >
-                  How
-                </motion.p>
-              </motion.div>
-            </div>
+            {/* Footer Text - Fixed at bottom */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.25 }}
+              transition={{ delay: 1.2, duration: 0.8 }}
+              className="relative z-10 text-white/25 text-[9px] uppercase tracking-[0.5em] text-center"
+            >
+              Define Your Journey
+            </motion.p>
           </div>
 
-          {/* Instruction Text */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: hoveredChoice ? 0 : 0.5 }}
-            transition={{ delay: 1, duration: 1 }}
-            className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/30 text-[10px] uppercase tracking-[0.4em]"
-            style={{ marginRight: "-0.4em" }}
-          >
-            Define Your Journey
-          </motion.div>
+          {/* ═══════════════════════════════════════════════════════════════
+              DESKTOP/TABLET LANDSCAPE LAYOUT (>= 768px)
+              ═══════════════════════════════════════════════════════════════ */}
+          <div className="hidden md:flex flex-row items-center justify-center absolute inset-0">
+            {/* Background Layer: DESTINATION (WHERE) */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: hoveredChoice === "destination" ? 0.6 : 0 }}
+              transition={{ duration: 0.6 }}
+              className="absolute inset-0 pointer-events-none z-0"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=3506&auto=format&fit=crop"
+                alt="Nature Background"
+                className="w-full h-full object-cover grayscale-[20%]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
+            </motion.div>
+
+            {/* Background Layer: STYLE (HOW) */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: hoveredChoice === "category" ? 0.6 : 0 }}
+              transition={{ duration: 0.6 }}
+              className="absolute inset-0 pointer-events-none z-0"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=3456&auto=format&fit=crop"
+                alt="Interior Background"
+                className="w-full h-full object-cover grayscale-[20%]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
+            </motion.div>
+
+            {/* Hint Text - Top Section */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="absolute top-28 md:top-32 lg:top-36 left-0 right-0 flex flex-col items-center justify-center text-center z-20 px-4"
+            >
+              <h2 className="text-gold text-base md:text-lg lg:text-xl font-semibold uppercase tracking-[0.3em] mb-3 drop-shadow-lg">
+                Pick Your Experience
+              </h2>
+              <p className="text-white/60 text-sm md:text-base tracking-wide max-w-md drop-shadow-md">
+                Choose how you&apos;d like to explore our collection
+              </p>
+            </motion.div>
+
+            {/* Content Layer */}
+            <div className="relative z-10 flex flex-row w-full h-full px-4">
+              {/* CHOICE 1: DESTINATION */}
+              <div className="flex-1 flex justify-center items-center">
+                <motion.div
+                  className="group relative cursor-pointer flex flex-col items-center w-full max-w-lg"
+                  onMouseEnter={() => !isTouchDevice && setHoveredChoice("destination")}
+                  onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
+                  onClick={() => handleSelectionClick("destination")}
+                  animate={clickedButton === "destination" ? { scale: [1, 1.05, 1] } : {}}
+                  transition={{ duration: 0.6 }}
+                >
+                  {/* "Pick your" text indicator */}
+                  <motion.div
+                    className="absolute -top-10 md:-top-12 lg:-top-14 flex flex-col items-center w-full"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">pick your</span>
+                  </motion.div>
+
+                  <AnimatePresence>
+                    {clickedButton === "destination" && (
+                      <motion.div
+                        initial={{ opacity: 0.8, scale: 1 }}
+                        animate={{ opacity: 0, scale: 1.5 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
+                        style={{ boxShadow: "0 0 30px rgba(212, 175, 55, 0.5)" }}
+                      />
+                    )}
+                  </AnimatePresence>
+
+                  <motion.h2
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    animate={{
+                      opacity: hoveredChoice && hoveredChoice !== "destination" ? 0.2 : 1,
+                      scale: hoveredChoice === "destination" ? 1.1 : 1,
+                    }}
+                    transition={{ duration: 0.5 }}
+                    className="font-serif text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight text-center"
+                  >
+                    DESTINATION
+                  </motion.h2>
+
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: hoveredChoice === "destination" ? "100%" : "0%" }}
+                    className="h-1 bg-gold mt-4"
+                  />
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{
+                      opacity: hoveredChoice === "destination" ? 1 : 0,
+                      y: hoveredChoice === "destination" ? 0 : 10,
+                    }}
+                    className="absolute -bottom-12 left-0 w-full text-center text-sm text-gold uppercase tracking-[0.3em]"
+                  >
+                    Where
+                  </motion.p>
+                </motion.div>
+              </div>
+
+              {/* DIVIDER - Desktop only */}
+              <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[1px] h-32 bg-white/20" />
+
+              {/* CHOICE 2: MOOD */}
+              <div className="flex-1 flex justify-center items-center">
+                <motion.div
+                  className="group relative cursor-pointer flex flex-col items-center w-full max-w-lg"
+                  onMouseEnter={() => !isTouchDevice && setHoveredChoice("category")}
+                  onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
+                  onClick={() => handleSelectionClick("category")}
+                  animate={clickedButton === "category" ? { scale: [1, 1.05, 1] } : {}}
+                  transition={{ duration: 0.6 }}
+                >
+                  {/* "Pick your" text indicator */}
+                  <motion.div
+                    className="absolute -top-10 md:-top-12 lg:-top-14 flex flex-col items-center w-full"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                  >
+                    <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">pick your</span>
+                  </motion.div>
+
+                  <AnimatePresence>
+                    {clickedButton === "category" && (
+                      <motion.div
+                        initial={{ opacity: 0.8, scale: 1 }}
+                        animate={{ opacity: 0, scale: 1.5 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="absolute inset-0 border-2 border-gold rounded-sm pointer-events-none"
+                        style={{ boxShadow: "0 0 30px rgba(212, 175, 55, 0.5)" }}
+                      />
+                    )}
+                  </AnimatePresence>
+
+                  <motion.h2
+                    initial={{ opacity: 0, x: 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    animate={{
+                      opacity: hoveredChoice && hoveredChoice !== "category" ? 0.2 : 1,
+                      scale: hoveredChoice === "category" ? 1.1 : 1,
+                    }}
+                    transition={{ duration: 0.5 }}
+                    className="font-serif text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight text-center"
+                  >
+                    MOOD
+                  </motion.h2>
+
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: hoveredChoice === "category" ? "100%" : "0%" }}
+                    className="h-1 bg-gold mt-4"
+                  />
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{
+                      opacity: hoveredChoice === "category" ? 1 : 0,
+                      y: hoveredChoice === "category" ? 0 : 10,
+                    }}
+                    className="absolute -bottom-12 left-0 w-full text-center text-sm text-gold uppercase tracking-[0.3em]"
+                  >
+                    How
+                  </motion.p>
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Instruction Text */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: hoveredChoice ? 0 : 0.5 }}
+              transition={{ delay: 1, duration: 1 }}
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/30 text-[10px] uppercase tracking-[0.4em]"
+            >
+              Define Your Journey
+            </motion.div>
+          </div>
         </section>
       )}
 
