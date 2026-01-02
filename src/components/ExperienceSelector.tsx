@@ -21,6 +21,7 @@ import Link from "next/link";
 interface Destination {
   id: string;
   name: string;
+  slug: string;
   country: string;
   imageUrl: string;
   temp: number;
@@ -97,29 +98,34 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
   useEffect(() => {
     const fetchFeaturedData = async () => {
       try {
-        // Fetch countries and styles in parallel
-        const [countriesRes, stylesRes] = await Promise.all([
-          fetch('/api/hotels/countries'),
+        // Fetch destinations and styles in parallel
+        const [destinationsRes, stylesRes] = await Promise.all([
+          fetch('/api/destinations'),
           fetch('/api/styles')
         ]);
 
-        const countriesData = await countriesRes.json();
+        const destinationsData = await destinationsRes.json();
         const stylesData = await stylesRes.json();
 
         // Process featured destinations (top 4 by hotel count)
-        if (countriesRes.ok && countriesData.data) {
-          const countries = Array.isArray(countriesData.data) ? countriesData.data : [];
-          // Take top 4 countries by hotel count (already sorted by API)
-          const featuredDestinations = countries.slice(0, 4).map((c: { country: string; hotelCount: number; sampleImage?: string }) => ({
-            id: c.country.toLowerCase().replace(/\s+/g, '-'),
-            name: c.country,
-            country: c.country,
-            imageUrl: c.sampleImage || 'https://picsum.photos/600/400',
-            temp: 20,
-            lat: 0,
-            lng: 0,
-            description: `Discover ${c.hotelCount} luxury ${c.hotelCount === 1 ? 'property' : 'properties'} in ${c.country}`,
-          }));
+        if (destinationsRes.ok && destinationsData.data?.items) {
+          const destinations = destinationsData.data.items as Array<{ id: string; name: string; slug: string; imageUrl?: string; hotelCount: number; isActive: boolean }>;
+          // Filter active destinations, sort by hotel count, take top 4
+          const featuredDestinations = destinations
+            .filter(d => d.isActive && d.hotelCount > 0)
+            .sort((a, b) => b.hotelCount - a.hotelCount)
+            .slice(0, 4)
+            .map(d => ({
+              id: d.id,
+              name: d.name,
+              slug: d.slug,
+              country: d.name, // Use destination name as country for consistency
+              imageUrl: d.imageUrl || 'https://picsum.photos/600/400',
+              temp: 20,
+              lat: 0,
+              lng: 0,
+              description: `Discover ${d.hotelCount} luxury ${d.hotelCount === 1 ? 'property' : 'properties'} in ${d.name}`,
+            }));
           setDestinations(featuredDestinations);
         }
 
@@ -817,9 +823,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                           }`}
                         >
                           <Link
-                            href={`/countries/${dest.country
-                              .toLowerCase()
-                              .replace(/\s+/g, "-")}`}
+                            href={`/destinations/${dest.slug}`}
                             className="block group"
                           >
                             <div className="relative overflow-hidden rounded-sm border border-white/10 hover:border-gold/30 transition-all duration-500">
@@ -941,7 +945,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     className="relative"
                   >
                     <Link
-                      href={mode === "destination" ? "/countries" : "/styles"}
+                      href={mode === "destination" ? "/destinations" : "/styles"}
                       className="block group"
                     >
                       <div className="relative h-[40vh] overflow-hidden rounded-sm border border-dashed border-white/20 hover:border-gold/50 transition-all duration-500 bg-gradient-to-br from-midnight to-deepBlue flex items-center justify-center">

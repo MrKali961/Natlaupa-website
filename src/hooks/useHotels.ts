@@ -6,6 +6,7 @@ import { Hotel, Category } from '@/types';
 interface HotelsFilter {
   search?: string;
   country?: string;
+  destinationId?: string;
   category?: string;
   style?: string;
   isTrending?: boolean;
@@ -69,6 +70,7 @@ export function useHotels(filters?: HotelsFilter): UseHotelsResult {
           const params = new URLSearchParams();
           if (filters?.search) params.append('search', filters.search);
           if (filters?.country) params.append('country', filters.country);
+          if (filters?.destinationId) params.append('destinationId', filters.destinationId);
           if (filters?.category) params.append('category', filters.category);
           if (filters?.style) params.append('style', filters.style);
           if (filters?.isTrending !== undefined) params.append('isTrending', String(filters.isTrending));
