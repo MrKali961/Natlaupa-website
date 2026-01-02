@@ -86,8 +86,10 @@ export function useHotels(filters?: HotelsFilter): UseHotelsResult {
 
       // Process hotels
       const hotelsData = await hotelsResponse.json();
-      if (hotelsResponse.ok && hotelsData.data?.hotels) {
-        const transformedHotels = hotelsData.data.hotels.map(transformServerHotel);
+      if (hotelsResponse.ok && hotelsData.data) {
+        // Handle both response formats: { data: { items: [...] } } or { data: { hotels: [...] } }
+        const hotelsList = hotelsData.data.items || hotelsData.data.hotels || [];
+        const transformedHotels = hotelsList.map(transformServerHotel);
         setHotels(transformedHotels);
         setTotal(hotelsData.data.pagination?.total || transformedHotels.length);
       } else {
