@@ -74,10 +74,12 @@ export default function StylePage({ params }: { params: Promise<{ style: string 
     fetchStyle();
   }, [styleSlug]);
 
-  // Fetch hotels filtered by style slug
-  const { hotels, isLoading: isLoadingHotels, error: hotelsError } = useHotels({ style: styleSlug });
+  // Fetch hotels filtered by style ID
+  const { hotels, isLoading: isLoadingHotels, error: hotelsError } = useHotels(
+    style ? { styleId: style.id } : undefined
+  );
 
-  const isLoading = isLoadingStyle || isLoadingHotels;
+  const isLoading = isLoadingStyle || (style && isLoadingHotels);
   const error = styleError || hotelsError;
 
   if (isLoading) {

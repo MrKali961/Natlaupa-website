@@ -8,7 +8,7 @@ interface HotelsFilter {
   country?: string;
   destinationId?: string;
   category?: string;
-  style?: string;
+  styleId?: string;
   isTrending?: boolean;
   limit?: number;
   page?: number;
@@ -72,7 +72,7 @@ export function useHotels(filters?: HotelsFilter): UseHotelsResult {
           if (filters?.country) params.append('country', filters.country);
           if (filters?.destinationId) params.append('destinationId', filters.destinationId);
           if (filters?.category) params.append('category', filters.category);
-          if (filters?.style) params.append('style', filters.style);
+          if (filters?.styleId) params.append('styleId', filters.styleId);
           if (filters?.isTrending !== undefined) params.append('isTrending', String(filters.isTrending));
           if (filters?.limit) params.append('limit', String(filters.limit));
           if (filters?.page) params.append('page', String(filters.page));
@@ -134,7 +134,7 @@ export function useHotels(filters?: HotelsFilter): UseHotelsResult {
     } finally {
       setIsLoading(false);
     }
-  }, [filters?.search, filters?.country, filters?.category, filters?.style, filters?.isTrending, filters?.limit, filters?.page]);
+  }, [filters?.search, filters?.country, filters?.destinationId, filters?.category, filters?.styleId, filters?.isTrending, filters?.limit, filters?.page]);
 
   useEffect(() => {
     fetchHotels();
