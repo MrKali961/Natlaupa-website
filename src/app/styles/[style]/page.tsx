@@ -74,9 +74,9 @@ export default function StylePage({ params }: { params: Promise<{ style: string 
     fetchStyle();
   }, [styleSlug]);
 
-  // Fetch hotels filtered by style ID
+  // Fetch hotels filtered by style ID (with high limit to fetch all)
   const { hotels, isLoading: isLoadingHotels, error: hotelsError } = useHotels(
-    style ? { styleId: style.id } : undefined
+    style ? { styleId: style.id, limit: 1000 } : undefined
   );
 
   const isLoading = isLoadingStyle || (style && isLoadingHotels);

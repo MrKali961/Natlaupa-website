@@ -49,9 +49,9 @@ export default function DestinationPage({ params }: { params: Promise<{ slug: st
     fetchDestination();
   }, [slug]);
 
-  // Fetch hotels filtered by destination
+  // Fetch hotels filtered by destination (with high limit to fetch all)
   const { hotels, isLoading: isLoadingHotels, error: hotelsError } = useHotels(
-    destination ? { destinationId: destination.id } : undefined
+    destination ? { destinationId: destination.id, limit: 1000 } : undefined
   );
 
   const isLoading = isLoadingDestination || (destination && isLoadingHotels);
