@@ -277,15 +277,15 @@ Submitted via Natlaupa Website`;
           <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/50 to-transparent" />
         </div>
 
-        {/* Back Button - Link to hotel's country */}
+        {/* Back Button - Navigate to previous page */}
         <div className="absolute top-28 left-4 md:top-32 md:left-8 z-20">
-          <Link
-            href={`/countries/${hotel.country.toLowerCase().replace(/\s+/g, '-').trim()}`}
+          <button
+            onClick={() => router.back()}
             className="flex items-center text-white/70 hover:text-gold transition-colors group"
           >
             <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-            <span className="uppercase tracking-widest text-xs font-bold">{hotel.country}</span>
-          </Link>
+            <span className="uppercase tracking-widest text-xs font-bold">Back</span>
+          </button>
         </div>
 
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-16 z-10">
@@ -314,7 +314,11 @@ Submitted via Natlaupa Website`;
             </h1>
             <div className="flex items-center text-lg md:text-xl text-slate-300 font-light">
               <MapPin size={20} className="mr-2 text-gold" />
-              <span>{hotel.location}</span>
+              <span>
+                {hotel.location}
+                {hotel.city && hotel.city !== hotel.location && `, ${hotel.city}`}
+                {hotel.country && `, ${hotel.country}`}
+              </span>
             </div>
           </motion.div>
         </div>

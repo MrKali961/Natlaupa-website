@@ -66,8 +66,118 @@ interface LocationInfo {
   hour: number;
   sunMoonStatus: string;
   imageUrl: string;
+  timezone: string;
   isDefault?: boolean;
 }
+
+// Array of beautiful travel destinations for random selection
+const RANDOM_LOCATIONS = [
+  {
+    city: "Santorini",
+    country: "Greece",
+    timezone: "Europe/Athens",
+    imageUrl: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=2940&auto=format&fit=crop",
+  },
+  {
+    city: "Kyoto",
+    country: "Japan",
+    timezone: "Asia/Tokyo",
+    imageUrl: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2940&auto=format&fit=crop",
+  },
+  {
+    city: "Amalfi Coast",
+    country: "Italy",
+    timezone: "Europe/Rome",
+    imageUrl: "https://images.unsplash.com/photo-1633321702518-7feccafb94d5?q=80&w=2940&auto=format&fit=crop",
+  },
+  {
+    city: "Maldives",
+    country: "Maldives",
+    timezone: "Indian/Maldives",
+    imageUrl: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=2940&auto=format&fit=crop",
+  },
+  {
+    city: "Bora Bora",
+    country: "French Polynesia",
+    timezone: "Pacific/Tahiti",
+    imageUrl: "https://images.unsplash.com/photo-1589197331516-4d84b72ebde3?q=80&w=2940&auto=format&fit=crop",
+  },
+  {
+    city: "Swiss Alps",
+    country: "Switzerland",
+    timezone: "Europe/Zurich",
+    imageUrl: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2940&auto=format&fit=crop",
+  },
+  {
+    city: "Marrakech",
+    country: "Morocco",
+    timezone: "Africa/Casablanca",
+    imageUrl: "https://images.unsplash.com/photo-1597212618440-806262de4f6b?q=80&w=2940&auto=format&fit=crop",
+  },
+  {
+    city: "Bali",
+    country: "Indonesia",
+    timezone: "Asia/Makassar",
+    imageUrl: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=2940&auto=format&fit=crop",
+  },
+  {
+    city: "Paris",
+    country: "France",
+    timezone: "Europe/Paris",
+    imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2940&auto=format&fit=crop",
+  },
+  {
+    city: "Dubai",
+    country: "UAE",
+    timezone: "Asia/Dubai",
+    imageUrl: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2940&auto=format&fit=crop",
+  },
+];
+
+// Helper function to get sun/moon status based on hour
+const getSunMoonStatus = (hour: number): string => {
+  if (hour >= 5 && hour < 7) return "Golden hour begins...";
+  if (hour >= 7 && hour < 12) return "Morning light bathes the city";
+  if (hour >= 12 && hour < 17) return "The sun shines bright";
+  if (hour >= 17 && hour < 19) return "Golden hour magic";
+  if (hour >= 19 && hour < 21) return "Twilight descends";
+  if (hour >= 21 || hour < 5) return "Stars illuminate the night";
+  return "A beautiful moment";
+};
+
+// Helper function to get random location with current time
+const getRandomLocation = (): LocationInfo => {
+  const randomIndex = Math.floor(Math.random() * RANDOM_LOCATIONS.length);
+  const location = RANDOM_LOCATIONS[randomIndex];
+
+  const now = new Date();
+  const timeString = now.toLocaleTimeString("en-US", {
+    timeZone: location.timezone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  const hour = parseInt(
+    now.toLocaleTimeString("en-US", {
+      timeZone: location.timezone,
+      hour: "2-digit",
+      hour12: false,
+    })
+  );
+
+  return {
+    location: `${location.city}, ${location.country}`,
+    city: location.city,
+    country: location.country,
+    time: timeString,
+    hour: hour,
+    sunMoonStatus: getSunMoonStatus(hour),
+    imageUrl: location.imageUrl,
+    timezone: location.timezone,
+    isDefault: false,
+  };
+};
 
 const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
   onSelection,
@@ -85,10 +195,9 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Location state for real-time user location
+  // Location state for displaying random beautiful location
   const [userLocation, setUserLocation] = useState<LocationInfo | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
-  const [isDefaultLocation, setIsDefaultLocation] = useState(false);
 
   // Fetch featured destinations (countries) and styles directly from API
   const [destinations, setDestinations] = useState<Destination[]>([]);
@@ -189,96 +298,49 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
   // Track pending mode selection (before location is loaded)
   const [pendingMode, setPendingMode] = useState<ExperienceMode>(null);
 
-  // Fetch user's real location data
+  // Set random location when user selects experience
   useEffect(() => {
-    if (!pendingMode) return; // Only fetch when mode is selected
+    if (!pendingMode) return;
 
-    const fetchLocationData = async (lat: number, lng: number) => {
-      setLocationLoading(true);
-      try {
-        const response = await fetch(`/api/location-info?lat=${lat}&lng=${lng}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            setUserLocation(data);
-            setIsDefaultLocation(data.isDefault || false);
-            // Now that location is loaded, set the actual mode
-            setMode(pendingMode);
-            setIsTransitioning(false);
-          }
-        } else {
-          // API error - still show with default
-          setMode(pendingMode);
-          setIsTransitioning(false);
-        }
-      } catch (error) {
-        console.error('Error fetching location info:', error);
-        // Still show the section even if location fails
-        setMode(pendingMode);
-        setIsTransitioning(false);
-      } finally {
-        setLocationLoading(false);
-      }
-    };
+    // Immediately set a random beautiful location - no geolocation needed!
+    const randomLocation = getRandomLocation();
+    setUserLocation(randomLocation);
 
-    // Immediately start with default location for instant response
-    // Then update if geolocation succeeds
-    let geolocationCompleted = false;
+    // Quick transition (just for visual effect)
+    setTimeout(() => {
+      setMode(pendingMode);
+      setIsTransitioning(false);
+      setLocationLoading(false);
+    }, 400);
 
-    // Set a very short timeout - if geolocation doesn't respond quickly, use default
-    const quickTimeout = setTimeout(() => {
-      if (!geolocationCompleted) {
-        geolocationCompleted = true;
-        fetchLocationData(0, 0); // Use default (Paris)
-      }
-    }, 2000); // 2 second timeout for quick response
-
-    // Try to get user's geolocation
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          if (!geolocationCompleted) {
-            geolocationCompleted = true;
-            clearTimeout(quickTimeout);
-            fetchLocationData(position.coords.latitude, position.coords.longitude);
-          }
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-          if (!geolocationCompleted) {
-            geolocationCompleted = true;
-            clearTimeout(quickTimeout);
-            fetchLocationData(0, 0); // Use default (Paris)
-          }
-        },
-        { timeout: 3000, enableHighAccuracy: false, maximumAge: 300000 } // 3s timeout, cache for 5 min
-      );
-    } else {
-      // Fallback for browsers without geolocation
-      geolocationCompleted = true;
-      clearTimeout(quickTimeout);
-      fetchLocationData(0, 0);
-    }
-
-    // Update time every minute
+    // Update time every minute to keep it current
     const interval = setInterval(() => {
-      if (userLocation) {
+      setUserLocation(prev => {
+        if (!prev) return null;
         const now = new Date();
-        setUserLocation(prev => prev ? {
-          ...prev,
-          time: now.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
+        const newTime = now.toLocaleTimeString("en-US", {
+          timeZone: prev.timezone,
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+        const newHour = parseInt(
+          now.toLocaleTimeString("en-US", {
+            timeZone: prev.timezone,
+            hour: "2-digit",
+            hour12: false,
           })
-        } : null);
-      }
+        );
+        return {
+          ...prev,
+          time: newTime,
+          hour: newHour,
+          sunMoonStatus: getSunMoonStatus(newHour),
+        };
+      });
     }, 60000);
 
-    return () => {
-      clearTimeout(quickTimeout);
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [pendingMode]);
 
   // Fallback data if location isn't loaded yet
@@ -402,7 +464,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
             >
               <Loader2 className="w-8 h-8 text-gold animate-spin" />
               <span className="text-gold text-sm uppercase tracking-[0.3em]">
-                {locationLoading ? "Locating you..." : "Preparing your journey..."}
+                Preparing your journey...
               </span>
             </motion.div>
           </motion.div>

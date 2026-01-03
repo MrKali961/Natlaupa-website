@@ -52,7 +52,7 @@ export default function HotelCard({ hotel, index = 0 }: HotelCardProps) {
 
             <div className="flex items-center text-slate-400 text-sm mb-4">
               <MapPin size={14} className="mr-1 text-gold" />
-              <span>{hotel.location}</span>
+              <span>{hotel.city}, {hotel.country}</span>
             </div>
 
             <div className="flex items-center justify-end pt-4 border-t border-white/10">
