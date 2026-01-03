@@ -10,6 +10,7 @@ export interface Hotel {
   id: string;
   name: string;
   slug?: string;
+  city: string;
   location: string;
   country: string;
   rating: number;
