@@ -449,7 +449,7 @@ const MoodMatcher: React.FC = () => {
                     experience.
                   </p>
                   <Link
-                    href="/offers"
+                    href={`/styles/${activeMood.slug}`}
                     className="inline-flex items-center gap-3 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
                   >
                     View Curated Selection
@@ -468,16 +468,10 @@ const MoodMatcher: React.FC = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
           >
-            <div className="flex items-center justify-between mb-8">
+            <div className="mb-8">
               <h3 className="font-serif text-2xl text-white">
                 Matching Properties
               </h3>
-              <Link
-                href="/offers"
-                className="text-gold text-sm uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2"
-              >
-                View All <ArrowRight size={16} />
-              </Link>
             </div>
 
             {isLoading ? (
