@@ -10,53 +10,66 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
 
   try {
-    const response = await fetch(`${API_URL}/hotels/${id}`, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
+    const response = await fetch(`${API_URL}/offers/slug/${id}`, {
+      next: { revalidate: 300 },
     });
 
     if (!response.ok) {
       return {
-        title: 'Offer Not Found',
+        title: 'Offer Not Found | Natlaupa',
         description: 'The requested offer could not be found.',
       };
     }
 
     const data = await response.json();
-    const hotel = data.data;
+    const offer = data.data;
 
-    if (!hotel) {
+    if (!offer) {
       return {
-        title: 'Offer Not Found',
+        title: 'Offer Not Found | Natlaupa',
         description: 'The requested offer could not be found.',
       };
     }
 
+    const title = offer.metaTitle || `${offer.title} | Natlaupa Experiences`;
+    const description = offer.metaDescription || offer.tagline || offer.description || `Experience ${offer.title} - an exclusive offer curated by Natlaupa.`;
+    const imageUrl = offer.imageUrl || offer.coverImage;
+    const canonicalUrl = `https://www.natlaupa.com/offer/${offer.slug || offer.id}`;
+
     return {
-      title: hotel.name,
-      description: hotel.description || `Experience luxury at ${hotel.name} in ${hotel.location || hotel.address}. Book your exclusive stay with Natlaupa.`,
+      title,
+      description,
       openGraph: {
-        title: `${hotel.name} | Natlaupa`,
-        description: hotel.description || `Experience luxury at ${hotel.name} in ${hotel.location || hotel.address}.`,
-        url: `https://www.natlaupa.com/offer/${id}`,
-        images: hotel.imageUrl || hotel.mainImage ? [{ url: hotel.imageUrl || hotel.mainImage, alt: hotel.name }] : [],
+        title,
+        description,
+        url: canonicalUrl,
+        siteName: 'Natlaupa',
+        images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: offer.title }] : [],
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: imageUrl ? [imageUrl] : [],
       },
       alternates: {
-        canonical: `https://www.natlaupa.com/offer/${id}`,
+        canonical: canonicalUrl,
+      },
+      robots: {
+        index: true,
+        follow: true,
       },
     };
   } catch (error) {
-    console.error('Error fetching hotel for metadata:', error);
+    console.error('Error fetching offer for metadata:', error);
     return {
-      title: 'Offer Not Found',
+      title: 'Offer Not Found | Natlaupa',
       description: 'The requested offer could not be found.',
     };
   }
 }
 
-export default function OfferLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OfferLayout({ children }: { children: React.ReactNode }) {
   return children;
 }
