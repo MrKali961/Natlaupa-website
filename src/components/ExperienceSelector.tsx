@@ -913,62 +913,6 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
         </section>
       )}
 
-      {/* GOLDEN HOUR PREVIEW */}
-      {mode && (
-        <section
-          className="w-full relative overflow-hidden flex items-center justify-center"
-          style={{ height: "calc(var(--vh, 1vh) * 100)" }}
-        >
-          {/* Background with Slow Zoom */}
-          <motion.div
-            key={goldenHourData.image}
-            initial={{ scale: 1.2, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 3, ease: "easeOut" }}
-            className="absolute inset-0 z-0"
-          >
-            <img
-              src={goldenHourData.image}
-              alt={userLocation?.country || "Your Location"}
-              className="w-full h-full object-cover grayscale-[30%] contrast-110"
-            />
-            <div className="absolute inset-0 bg-black/40" />
-          </motion.div>
-
-          <div className="relative z-10 text-center px-4 max-w-4xl">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 1 }}
-            >
-              <div className="flex items-center justify-center space-x-3 text-gold mb-6">
-                <Clock size={18} />
-                <span className="text-sm uppercase tracking-widest font-bold">
-                  Local Time
-                </span>
-              </div>
-              <h2 className="font-serif text-4xl md:text-7xl text-white mb-6 leading-tight">
-                It is currently {goldenHourData.time} in <br />
-                <span className="italic text-gold">
-                  {goldenHourData.location.split(",")[0]}
-                </span>
-                .
-              </h2>
-              <div className="flex items-center justify-center space-x-3 text-slate-300">
-                {userLocation && userLocation.hour >= 6 && userLocation.hour < 19 ? (
-                  <Sun size={18} className="text-gold" />
-                ) : (
-                  <Moon size={18} className="text-gold" />
-                )}
-                <p className="text-lg font-light tracking-wide">
-                  {goldenHourData.status}
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      )}
-
       {/* THE LIVING MAP - VERTICAL EXPERIENCE */}
       <AnimatePresence>
         {mode && (
