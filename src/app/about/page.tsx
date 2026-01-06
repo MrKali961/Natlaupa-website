@@ -99,8 +99,8 @@ export default function About() {
         if (!response.ok) throw new Error('Failed to fetch hotels');
 
         const data = await response.json();
-        // Handle API response structure: { success, message, data: { hotels: [...] } }
-        const hotels = data.data?.hotels || data.hotels || data || [];
+        // Handle API response structure: { success, message, data: { items: [...] } }
+        const hotels = data.data?.items || data.data?.hotels || data.hotels || data || [];
 
         // Filter hotels with valid coordinates and transform to MapDestination format
         // API returns latitude/longitude fields

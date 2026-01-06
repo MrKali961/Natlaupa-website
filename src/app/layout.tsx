@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
+import WhatsAppButton from '@/components/WhatsAppButton';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -100,6 +101,7 @@ export default function RootLayout({
             {children}
           </div>
           <CookieConsentBanner />
+          <WhatsAppButton />
         </SmoothScrollProvider>
       </body>
     </html>

@@ -545,7 +545,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="relative z-10 text-center"
             >
-              <h2 className="text-gold text-[11px] font-medium uppercase tracking-[0.35em] mb-3">
+              <h2 className="text-gold text-[17px] sm:text-[11px] font-medium uppercase tracking-[0.35em] mb-3">
                 Pick Your Experience
               </h2>
               <motion.div
@@ -571,10 +571,8 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                   transition={{ duration: 0.4 }}
                   onMouseEnter={() => !isTouchDevice && setHoveredChoice("destination")}
                   onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
-                  onTouchStart={() => setHoveredChoice("destination")}
-                  onTouchEnd={() => setTimeout(() => setHoveredChoice(null), 150)}
                   onClick={() => handleSelectionClick("destination")}
-                  className="group relative w-full text-center py-4 focus:outline-none cursor-pointer"
+                  className="group relative w-full text-center py-4 focus:outline-none cursor-pointer touch-manipulation"
                 >
                   {/* Hover/Active underline */}
                   <motion.div
@@ -603,7 +601,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       opacity: hoveredChoice === "destination" ? 1 : 0.6
                     }}
                     transition={{ duration: 0.3 }}
-                    className="text-gold text-[10px] uppercase tracking-[0.4em] mb-2 block"
+                    className="text-gold text-[15px] sm:text-[10px] uppercase tracking-[0.4em] mb-2 block"
                   >
                     pick your
                   </motion.span>
@@ -623,7 +621,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       y: 0
                     }}
                     transition={{ delay: 0.5, duration: 0.3 }}
-                    className="text-white/40 text-[10px] uppercase tracking-[0.4em] mt-3 block"
+                    className="text-white/40 text-[15px] sm:text-[10px] uppercase tracking-[0.4em] mt-3 block"
                   >
                     where to go
                   </motion.span>
@@ -650,10 +648,8 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                   transition={{ duration: 0.4 }}
                   onMouseEnter={() => !isTouchDevice && setHoveredChoice("category")}
                   onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
-                  onTouchStart={() => setHoveredChoice("category")}
-                  onTouchEnd={() => setTimeout(() => setHoveredChoice(null), 150)}
                   onClick={() => handleSelectionClick("category")}
-                  className="group relative w-full text-center py-4 focus:outline-none cursor-pointer"
+                  className="group relative w-full text-center py-4 focus:outline-none cursor-pointer touch-manipulation"
                 >
                   {/* Hover/Active underline */}
                   <motion.div
@@ -682,7 +678,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       opacity: hoveredChoice === "category" ? 1 : 0.6
                     }}
                     transition={{ duration: 0.3 }}
-                    className="text-gold text-[10px] uppercase tracking-[0.4em] mb-2 block"
+                    className="text-gold text-[15px] sm:text-[10px] uppercase tracking-[0.4em] mb-2 block"
                   >
                     pick your
                   </motion.span>
@@ -702,7 +698,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       y: 0
                     }}
                     transition={{ delay: 0.6, duration: 0.3 }}
-                    className="text-white/40 text-[10px] uppercase tracking-[0.4em] mt-3 block"
+                    className="text-white/40 text-[15px] sm:text-[10px] uppercase tracking-[0.4em] mt-3 block"
                   >
                     how to feel
                   </motion.span>
