@@ -189,7 +189,7 @@ const MoodMatcher: React.FC = () => {
       // Fetch all hotels from the database
       const response = await fetch('/api/hotels?limit=50');
       const data = await response.json();
-      const allHotels = data.data?.hotels || data.hotels || [];
+      const allHotels = data.data?.items || data.data?.hotels || data.hotels || [];
 
       // Get mood keywords for matching from dynamic moods
       const mood = moods.find(m => m.id === moodId);
