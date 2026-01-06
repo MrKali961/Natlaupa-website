@@ -96,6 +96,36 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head>
+        {/* Google Consent Mode v2 - Must be set BEFORE any Google tags load */}
+        <Script id="google-consent-default" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+
+            // Set default consent to denied
+            gtag('consent', 'default', {
+              'ad_storage': 'denied',
+              'ad_user_data': 'denied',
+              'ad_personalization': 'denied',
+              'analytics_storage': 'denied'
+            });
+
+            // Check for existing consent and update if granted
+            try {
+              var stored = localStorage.getItem('natlaupa_cookie_consent');
+              if (stored) {
+                var consent = JSON.parse(stored);
+                gtag('consent', 'update', {
+                  'analytics_storage': consent.analytics ? 'granted' : 'denied',
+                  'ad_storage': consent.personalization ? 'granted' : 'denied',
+                  'ad_user_data': consent.personalization ? 'granted' : 'denied',
+                  'ad_personalization': consent.personalization ? 'granted' : 'denied'
+                });
+              }
+            } catch (e) {}
+          `}
+        </Script>
+
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-ESC050HLP4"
