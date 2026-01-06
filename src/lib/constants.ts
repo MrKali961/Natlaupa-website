@@ -14,23 +14,24 @@ export interface MapDestination {
 export const MAP_DESTINATIONS: MapDestination[] = [];
 
 export const NAV_LINKS = [
-  { name: 'Home', path: '/' },
-  { name: 'About Us', path: '/about' },
-  { name: 'Contact', path: '/contact' },
+  { name: "Home", path: "/" },
+  { name: "About Us", path: "/about" },
+  { name: "Contact", path: "/contact" },
 ];
 
 export const FOOTER_LINKS = {
   explore: [
-    { name: 'All Offers', path: '/offers' },
-    { name: 'Countries', path: '/countries' },
-    { name: 'Styles', path: '/styles' },
+    { name: "All Offers", path: "/offers" },
+    { name: "Countries", path: "/countries" },
+    { name: "Styles", path: "/styles" },
+    { name: "Blogs", path: "/blog" },
   ],
   company: [
-    { name: 'About Us', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: "About Us", path: "/about" },
+    { name: "Contact", path: "/contact" },
   ],
   programs: [
-    { name: 'For Hotels', path: '/for-hotels' },
-    { name: 'Become an Angel', path: '/become-angel' },
+    { name: "For Hotels", path: "/for-hotels" },
+    { name: "Become an Angel", path: "/become-angel" },
   ],
 };

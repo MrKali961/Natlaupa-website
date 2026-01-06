@@ -14,16 +14,25 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { trackMoodSelection, hasConsent } from "@/services/trackingService";
+import { getIconForStyle, getColorForStyle, getDefaultImageUrl } from "@/utils/moodHelpers";
 
 interface Mood {
   id: string;
   name: string;
+  slug: string;
   tagline: string;
   icon: React.ElementType;
   color: string;
   keywords: string[];
   description: string;
   imageUrl: string;
+  hotelCount?: number;
+  aiContent?: {
+    tagline: string;
+    description: string;
+    keywords: string[];
+    hotelMatchingReason: string;
+  };
 }
 
 interface Hotel {
@@ -36,10 +45,11 @@ interface Hotel {
   personalizedReason?: string;
 }
 
-const MOODS: Mood[] = [
+const FALLBACK_MOODS: Mood[] = [
   {
     id: "romantic",
     name: "Romantic Escape",
+    slug: "romantic-escape",
     tagline: "For two hearts seeking solitude",
     icon: Heart,
     color: "from-rose-500/20 to-pink-500/20",
@@ -48,10 +58,17 @@ const MOODS: Mood[] = [
       "Secluded villas, candlelit dinners, and sunsets designed for two.",
     imageUrl:
       "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+    aiContent: {
+      tagline: "For two hearts seeking solitude",
+      description: "Secluded villas, candlelit dinners, and sunsets designed for two.",
+      keywords: ["intimate", "couple", "honeymoon", "private"],
+      hotelMatchingReason: "Perfect romantic escape at {hotelName}",
+    },
   },
   {
     id: "adventure",
     name: "Adventure Seeker",
+    slug: "adventure-seeker",
     tagline: "For the bold and curious",
     icon: Compass,
     color: "from-orange-500/20 to-amber-500/20",
@@ -59,10 +76,17 @@ const MOODS: Mood[] = [
     description: "Wake up to mountains, dive into oceans, and chase horizons.",
     imageUrl:
       "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800",
+    aiContent: {
+      tagline: "For the bold and curious",
+      description: "Wake up to mountains, dive into oceans, and chase horizons.",
+      keywords: ["active", "nature", "exploration", "outdoor"],
+      hotelMatchingReason: "Perfect adventure experience at {hotelName}",
+    },
   },
   {
     id: "cultural",
     name: "Cultural Immersion",
+    slug: "cultural-immersion",
     tagline: "For the curious soul",
     icon: Palette,
     color: "from-purple-500/20 to-indigo-500/20",
@@ -70,10 +94,17 @@ const MOODS: Mood[] = [
     description: "Stay where history whispers and art speaks volumes.",
     imageUrl:
       "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800",
+    aiContent: {
+      tagline: "For the curious soul",
+      description: "Stay where history whispers and art speaks volumes.",
+      keywords: ["historic", "art", "heritage", "local"],
+      hotelMatchingReason: "Perfect cultural experience at {hotelName}",
+    },
   },
   {
     id: "wellness",
     name: "Pure Relaxation",
+    slug: "wellness-retreat",
     tagline: "For body and mind renewal",
     icon: Leaf,
     color: "from-emerald-500/20 to-teal-500/20",
@@ -81,10 +112,19 @@ const MOODS: Mood[] = [
     description: "Spas, meditation gardens, and the sound of silence.",
     imageUrl:
       "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800",
+    aiContent: {
+      tagline: "For body and mind renewal",
+      description: "Spas, meditation gardens, and the sound of silence.",
+      keywords: ["spa", "wellness", "retreat", "peaceful"],
+      hotelMatchingReason: "Perfect wellness retreat at {hotelName}",
+    },
   },
 ];
 
 const MoodMatcher: React.FC = () => {
+  const [moods, setMoods] = useState<Mood[]>(FALLBACK_MOODS);
+  const [moodsLoading, setMoodsLoading] = useState(true);
+  const [moodsError, setMoodsError] = useState<string | null>(null);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [hoveredMood, setHoveredMood] = useState<string | null>(null);
   const [hotels, setHotels] = useState<Hotel[]>([]);
@@ -96,7 +136,51 @@ const MoodMatcher: React.FC = () => {
     setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
   }, []);
 
-  const activeMood = MOODS.find((m) => m.id === selectedMood);
+  // Fetch dynamic moods from backend
+  useEffect(() => {
+    const fetchMoods = async () => {
+      setMoodsLoading(true);
+      setMoodsError(null);
+
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/hotel-styles/mood-matcher`);
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch moods');
+        }
+
+        const data = await response.json();
+        const styles = data.data?.styles || [];
+
+        // Transform backend styles to Mood format
+        const transformedMoods: Mood[] = styles.map((style: any, index: number) => ({
+          id: style.id,
+          name: style.name,
+          slug: style.slug,
+          tagline: style.aiContent.tagline,
+          icon: getIconForStyle(style.name),
+          color: getColorForStyle(style.name, index),
+          keywords: style.aiContent.keywords,
+          description: style.aiContent.description,
+          imageUrl: style.imageUrl || getDefaultImageUrl(style.name),
+          hotelCount: style.hotelCount,
+          aiContent: style.aiContent, // Include full AI content for hotel matching
+        }));
+
+        setMoods(transformedMoods);
+      } catch (error) {
+        console.error('Error fetching moods:', error);
+        setMoodsError('Unable to load mood options');
+        // Keep FALLBACK_MOODS as fallback (already set in initial state)
+      } finally {
+        setMoodsLoading(false);
+      }
+    };
+
+    fetchMoods();
+  }, []);
+
+  const activeMood = moods.find((m) => m.id === selectedMood);
 
   // Fetch hotels when mood is selected - filters from actual hotel list
   const fetchMoodHotels = useCallback(async (moodId: string) => {
@@ -107,39 +191,50 @@ const MoodMatcher: React.FC = () => {
       const data = await response.json();
       const allHotels = data.data?.hotels || data.hotels || [];
 
-      // Get mood keywords for matching
-      const mood = MOODS.find(m => m.id === moodId);
-      const moodKeywords = mood?.keywords || [];
+      // Get mood keywords for matching from dynamic moods
+      const mood = moods.find(m => m.id === moodId);
+      if (!mood) {
+        setHotels([]);
+        return;
+      }
+
+      const moodKeywords = mood.keywords || [];
 
       // Score hotels based on mood matching
-      const scoredHotels = allHotels.map((hotel: { id: string; name: string; slug?: string; description?: string; category?: string; city?: string; country: string; thumbnailImage?: string; images?: { url: string }[] }) => {
+      const scoredHotels = allHotels.map((hotel: any) => {
         let score = 0;
-        const hotelText = `${hotel.description || ''} ${hotel.category || ''} ${hotel.name}`.toLowerCase();
 
-        // Check for keyword matches
+        // HIGHEST PRIORITY: Hotels that match the mood's style ID (exact match)
+        if (hotel.styleId === mood.id) {
+          score += 100; // Perfect match - same style
+        }
+
+        // SECONDARY: Keyword matching in hotel content
+        const hotelText = `${hotel.description || ''} ${hotel.shortDescription || ''} ${hotel.name || ''} ${hotel.style?.name || ''}`.toLowerCase();
+
+        // Check for keyword matches from AI-generated keywords
+        let keywordMatchCount = 0;
         moodKeywords.forEach((keyword: string) => {
           if (hotelText.includes(keyword.toLowerCase())) {
-            score += 10;
+            score += 15; // Each keyword match adds points
+            keywordMatchCount++;
           }
         });
 
-        // Additional scoring based on mood-specific terms
-        if (moodId === 'romantic' && (hotelText.includes('spa') || hotelText.includes('intimate') || hotelText.includes('couple') || hotelText.includes('honeymoon'))) {
-          score += 5;
-        }
-        if (moodId === 'adventure' && (hotelText.includes('outdoor') || hotelText.includes('activities') || hotelText.includes('beach') || hotelText.includes('water sports'))) {
-          score += 5;
-        }
-        if (moodId === 'cultural' && (hotelText.includes('historic') || hotelText.includes('museum') || hotelText.includes('heritage') || hotelText.includes('art'))) {
-          score += 5;
-        }
-        if (moodId === 'wellness' && (hotelText.includes('spa') || hotelText.includes('wellness') || hotelText.includes('retreat') || hotelText.includes('relax'))) {
-          score += 5;
+        // Bonus for multiple keyword matches
+        if (keywordMatchCount >= 3) {
+          score += 20; // Strong keyword alignment
+        } else if (keywordMatchCount >= 2) {
+          score += 10; // Moderate keyword alignment
         }
 
-        // Ensure score is between 1 and 100 (add base score of 50 for all hotels, then add match bonuses)
-        const baseScore = 50;
-        const finalScore = Math.min(100, Math.max(1, baseScore + score));
+        // Ensure score is between 0 and 100
+        const finalScore = Math.min(100, Math.max(0, score));
+
+        // Use AI-generated personalized reason with hotel name
+        const personalizedReason = mood.aiContent?.hotelMatchingReason
+          ? mood.aiContent.hotelMatchingReason.replace('{hotelName}', hotel.name)
+          : `Perfect ${mood.name.toLowerCase()} experience at ${hotel.name}`;
 
         return {
           id: hotel.id,
@@ -148,7 +243,7 @@ const MoodMatcher: React.FC = () => {
           location: hotel.city || hotel.country,
           imageUrl: hotel.thumbnailImage || hotel.images?.[0]?.url || '',
           moodScore: finalScore / 100, // Normalize to 0-1 range for display
-          personalizedReason: mood ? `Perfect for your ${mood.name.toLowerCase()} experience` : undefined,
+          personalizedReason,
         };
       });
 
@@ -164,7 +259,7 @@ const MoodMatcher: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [moods]);
 
   // Handle mood selection
   const handleMoodSelect = async (moodId: string) => {
@@ -223,9 +318,31 @@ const MoodMatcher: React.FC = () => {
           </p>
         </motion.div>
 
+        {/* Loading State */}
+        {moodsLoading && (
+          <div className="flex items-center justify-center py-16 mb-16">
+            <Loader2 className="w-8 h-8 text-gold animate-spin" />
+            <span className="ml-3 text-slate-400">Loading mood options...</span>
+          </div>
+        )}
+
+        {/* Error State */}
+        {moodsError && !moodsLoading && (
+          <div className="text-center py-16 mb-16">
+            <p className="text-red-400 mb-4">{moodsError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-gold hover:text-white transition-colors underline"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
         {/* Mood Selection Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
-          {MOODS.map((mood, index) => {
+        {!moodsLoading && !moodsError && moods.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
+            {moods.map((mood, index) => {
             const Icon = mood.icon;
             const isSelected = selectedMood === mood.id;
             const isHovered = hoveredMood === mood.id;
@@ -286,6 +403,7 @@ const MoodMatcher: React.FC = () => {
             );
           })}
         </div>
+        )}
 
         {/* Selected Mood Details */}
         <AnimatePresence mode="wait">

@@ -14,6 +14,8 @@ interface Destination {
   slug: string;
   description: string | null;
   imageUrl: string | null;
+  address?: string | null;
+  country?: string | null;
 }
 
 export default function DestinationPage({ params }: { params: Promise<{ slug: string }> }) {

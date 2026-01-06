@@ -13,6 +13,7 @@ interface DestinationData {
   imageUrl: string | null;
   hotelCount: number;
   isActive: boolean;
+  country?: string | null;
 }
 
 export default function DestinationsPage() {
