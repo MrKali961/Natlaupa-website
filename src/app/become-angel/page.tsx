@@ -89,6 +89,21 @@ const benefits = [
   "Personalized travel recommendations",
 ];
 
+const seniorAngels = [
+  {
+    name: "Anne Debard",
+    title: "Senior Angel · Luxury Service Expert",
+    image: "/angels/anne-debard.jpg",
+    bio: "Founder of AD Excellence, Anne is a renowned international expert in luxury service, business etiquette, and intercultural coaching. With over 25 years of experience, she has trained top hospitality teams at 5-star and Palace hotels, luxury retail executives, and UHNWI clientele. Anne is dedicated to promoting excellence in service through refined hospitality standards, etiquette, and the art of the table."
+  },
+  {
+    name: "William Latour",
+    title: "Senior Angel · Global Hospitality Visionary",
+    image: "/angels/william-latour.jpg",
+    bio: "With a career spanning Paris to Beijing, Geneva to Dubai, William has led some of the world's most iconic hotels and turned struggling properties into award-winning destinations. Founder of Plastic.Monkey and the mind behind CHAO Beijing's cult success, he redefined modern luxury. As Natlaupa's Senior Angel, William brings decades of bold leadership and a passion for mentoring the next generation of hospitality disruptors."
+  }
+];
+
 export default function BecomeAngel() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -429,6 +444,59 @@ Submitted via Natlaupa Website`;
                 ))}
               </div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* Senior Angels Section */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-midnight/30">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <span className="text-gold text-xs uppercase tracking-[0.3em] mb-4 block">
+                Leadership
+              </span>
+              <h2 className="font-serif text-4xl md:text-5xl text-white mb-4">
+                Meet Our Senior Angels
+              </h2>
+              <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                The visionaries shaping the future of luxury travel
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
+              {seniorAngels.map((angel, index) => (
+                <motion.div
+                  key={angel.name}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2 }}
+                  className="group"
+                >
+                  <div className="relative overflow-hidden rounded-sm mb-6">
+                    <img
+                      src={angel.image}
+                      alt={angel.name}
+                      className="w-full aspect-[4/5] object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-deepBlue/80 via-transparent to-transparent" />
+                  </div>
+                  <h3 className="font-serif text-2xl text-white mb-2">
+                    {angel.name}
+                  </h3>
+                  <p className="text-gold text-sm uppercase tracking-widest mb-4">
+                    {angel.title}
+                  </p>
+                  <p className="text-slate-400 leading-relaxed">
+                    {angel.bio}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
