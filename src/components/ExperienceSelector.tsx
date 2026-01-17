@@ -505,7 +505,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
           {/* ═══════════════════════════════════════════════════════════════
               MOBILE/TABLET PORTRAIT LAYOUT - Minimal Centered Design (< 768px)
               ═══════════════════════════════════════════════════════════════ */}
-          <div className="md:hidden absolute inset-0 flex flex-col px-6 pt-24 pb-16">
+          <div className="md:hidden absolute inset-0 flex flex-col px-4 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-12 overflow-y-auto overflow-x-hidden">
             {/* Background Images - appear on hover/tap */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -543,24 +543,24 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative z-10 text-center"
+              className="relative z-10 text-center flex-shrink-0"
             >
-              <h2 className="text-gold text-[17px] sm:text-[11px] font-medium uppercase tracking-[0.35em] mb-3">
+              <h2 className="text-gold text-[11px] xs:text-[13px] sm:text-[15px] font-medium uppercase tracking-[0.25em] sm:tracking-[0.35em] mb-2 sm:mb-3">
                 Pick Your Experience
               </h2>
               <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="w-8 h-[1px] bg-gold/40 mx-auto"
+                className="w-6 sm:w-8 h-[1px] bg-gold/40 mx-auto"
               />
             </motion.div>
 
             {/* Main Content - Fills remaining space */}
-            <div className="relative z-10 flex-1 flex flex-col w-full max-w-xs mx-auto">
+            <div className="relative z-10 flex-1 flex flex-col w-full max-w-[280px] sm:max-w-xs mx-auto min-h-0">
 
               {/* DESTINATION Section - Top Half */}
-              <div className="flex-1 flex items-center justify-center">
+              <div className="flex-1 flex items-center justify-center min-h-0">
                 <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   animate={{
@@ -572,14 +572,14 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                   onMouseEnter={() => !isTouchDevice && setHoveredChoice("destination")}
                   onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
                   onClick={() => handleSelectionClick("destination")}
-                  className="group relative w-full text-center py-4 focus:outline-none cursor-pointer touch-manipulation"
+                  className="group relative w-full text-center py-2 sm:py-4 focus:outline-none cursor-pointer touch-manipulation"
                 >
                   {/* Hover/Active underline */}
                   <motion.div
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: hoveredChoice === "destination" ? 1 : 0 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-[2px] bg-gold origin-center"
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 sm:w-32 h-[2px] bg-gold origin-center"
                   />
                   {/* Glow effect on tap */}
                   <AnimatePresence>
@@ -601,12 +601,12 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       opacity: hoveredChoice === "destination" ? 1 : 0.6
                     }}
                     transition={{ duration: 0.3 }}
-                    className="text-gold text-[15px] sm:text-[10px] uppercase tracking-[0.4em] mb-2 block"
+                    className="text-gold text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-1 sm:mb-2 block"
                   >
                     pick your
                   </motion.span>
                   <motion.span
-                    className="font-serif text-[2.5rem] sm:text-[2.75rem] leading-none text-white font-medium tracking-tight block"
+                    className="font-serif text-[2rem] portrait:text-[2.6rem] sm:text-[2.5rem] sm:portrait:text-[3.25rem] leading-none text-white font-medium tracking-tight block"
                     animate={{
                       color: hoveredChoice === "destination" || clickedButton === "destination" ? "#D4AF37" : "#ffffff",
                     }}
@@ -621,7 +621,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       y: 0
                     }}
                     transition={{ delay: 0.5, duration: 0.3 }}
-                    className="text-white/40 text-[15px] sm:text-[10px] uppercase tracking-[0.4em] mt-3 block"
+                    className="text-white/40 text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3 block"
                   >
                     where to go
                   </motion.span>
@@ -637,7 +637,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
               />
 
               {/* MOOD Section - Bottom Half */}
-              <div className="flex-1 flex items-center justify-center">
+              <div className="flex-1 flex items-center justify-center min-h-0">
                 <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   animate={{
@@ -649,14 +649,14 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                   onMouseEnter={() => !isTouchDevice && setHoveredChoice("category")}
                   onMouseLeave={() => !isTouchDevice && setHoveredChoice(null)}
                   onClick={() => handleSelectionClick("category")}
-                  className="group relative w-full text-center py-4 focus:outline-none cursor-pointer touch-manipulation"
+                  className="group relative w-full text-center py-2 sm:py-4 focus:outline-none cursor-pointer touch-manipulation"
                 >
                   {/* Hover/Active underline */}
                   <motion.div
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: hoveredChoice === "category" ? 1 : 0 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-[2px] bg-gold origin-center"
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 sm:w-24 h-[2px] bg-gold origin-center"
                   />
                   {/* Glow effect on tap */}
                   <AnimatePresence>
@@ -678,12 +678,12 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       opacity: hoveredChoice === "category" ? 1 : 0.6
                     }}
                     transition={{ duration: 0.3 }}
-                    className="text-gold text-[15px] sm:text-[10px] uppercase tracking-[0.4em] mb-2 block"
+                    className="text-gold text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-1 sm:mb-2 block"
                   >
                     pick your
                   </motion.span>
                   <motion.span
-                    className="font-serif text-[2.5rem] sm:text-[2.75rem] leading-none text-white font-medium tracking-tight block"
+                    className="font-serif text-[2rem] portrait:text-[2.6rem] sm:text-[2.5rem] sm:portrait:text-[3.25rem] leading-none text-white font-medium tracking-tight block"
                     animate={{
                       color: hoveredChoice === "category" || clickedButton === "category" ? "#D4AF37" : "#ffffff",
                     }}
@@ -698,7 +698,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       y: 0
                     }}
                     transition={{ delay: 0.6, duration: 0.3 }}
-                    className="text-white/40 text-[15px] sm:text-[10px] uppercase tracking-[0.4em] mt-3 block"
+                    className="text-white/40 text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3 block"
                   >
                     how to feel
                   </motion.span>
@@ -711,7 +711,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.25 }}
               transition={{ delay: 1.2, duration: 0.8 }}
-              className="relative z-10 text-white/25 text-[9px] uppercase tracking-[0.5em] text-center"
+              className="relative z-10 text-white/25 text-[8px] sm:text-[9px] uppercase tracking-[0.4em] sm:tracking-[0.5em] text-center flex-shrink-0 mt-2"
             >
               Define Your Journey
             </motion.p>

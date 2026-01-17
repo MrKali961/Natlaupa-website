@@ -91,11 +91,9 @@ export default function Contact() {
               <div className="flex items-start space-x-4">
                 <MapPin className="text-gold mt-1" />
                 <div>
-                  <h4 className="text-white font-semibold">Visit Us</h4>
+                  <h4 className="text-white font-semibold">Headquarters</h4>
                   <p className="text-slate-400">
-                    29 RUE DU PONT 92200
-                    <br />
-                    NEUILLY-SUR-SEINE
+                    Paris · Barcelona · Beirut
                   </p>
                 </div>
               </div>

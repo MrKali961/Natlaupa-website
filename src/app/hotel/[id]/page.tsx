@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Star, MapPin, ShieldCheck, Wifi, Coffee, Globe, MessageSquare, Send, X, ExternalLink, Navigation, Loader2, MessageCircle } from 'lucide-react';
 import Footer from '@/components/Footer';
+import MasonryGallery from '@/components/MasonryGallery';
 import type { Hotel } from '@/lib/types';
 import { isCuid } from '@/lib/slugify';
 import { getHotelById, submitHotelInquiry } from '@/lib/api-client';
@@ -15,7 +16,6 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
   const router = useRouter();
   const [hotel, setHotel] = useState<Hotel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -74,52 +74,6 @@ export default function OfferDetails({ params }: { params: Promise<{ id: string 
       }
     };
   }, [isContactModalOpen]);
-
-  // Drag to scroll - using refs to avoid re-renders
-  const dragState = useRef({ isDragging: false, startX: 0, scrollLeft: 0 });
-
-  // Set up drag handlers with native events for better performance
-  useEffect(() => {
-    const slider = scrollRef.current;
-    if (!slider) return;
-
-    const handleMouseDown = (e: MouseEvent) => {
-      dragState.current.isDragging = true;
-      dragState.current.startX = e.pageX - slider.offsetLeft;
-      dragState.current.scrollLeft = slider.scrollLeft;
-      slider.style.cursor = 'grabbing';
-    };
-
-    const handleMouseUp = () => {
-      dragState.current.isDragging = false;
-      slider.style.cursor = 'grab';
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!dragState.current.isDragging) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - dragState.current.startX) * 1.5;
-      slider.scrollLeft = dragState.current.scrollLeft - walk;
-    };
-
-    const handleMouseLeave = () => {
-      dragState.current.isDragging = false;
-      slider.style.cursor = 'grab';
-    };
-
-    slider.addEventListener('mousedown', handleMouseDown);
-    slider.addEventListener('mouseup', handleMouseUp);
-    slider.addEventListener('mousemove', handleMouseMove);
-    slider.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      slider.removeEventListener('mousedown', handleMouseDown);
-      slider.removeEventListener('mouseup', handleMouseUp);
-      slider.removeEventListener('mousemove', handleMouseMove);
-      slider.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [hotel]);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -327,30 +281,12 @@ Submitted via Natlaupa Website`;
       {/* Gallery Section */}
       {hotel.galleryImages && hotel.galleryImages.length > 0 && (
         <div className="bg-deepBlue border-b border-white/5 relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
             <h3 className="font-serif text-2xl text-white mb-8">Visual Narrative</h3>
-
-            <div
-              ref={scrollRef}
-              className="flex gap-6 overflow-x-auto pb-8 snap-x select-none cursor-grab touch-pan-x"
-              data-lenis-prevent
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
-            >
-              {hotel.galleryImages.map((img, idx) => (
-                <div
-                  key={idx}
-                  className="min-w-[300px] md:min-w-[400px] h-[250px] md:h-[300px] flex-shrink-0 snap-center relative group overflow-hidden rounded-sm border border-white/10"
-                >
-                  <img
-                    src={img}
-                    alt={`Gallery ${idx + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none"
-                    draggable={false}
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300 pointer-events-none" />
-                </div>
-              ))}
-            </div>
+            <MasonryGallery
+              images={hotel.galleryImages}
+              hotelName={hotel.name}
+            />
           </div>
         </div>
       )}

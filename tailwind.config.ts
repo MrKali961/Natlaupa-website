@@ -6,6 +6,14 @@ const config: Config = {
     './src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      'xs': '475px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         midnight: '#121212',
@@ -23,6 +31,7 @@ const config: Config = {
     require('@tailwindcss/typography'),
     plugin(function({ addVariant }) {
       addVariant('hover-capable', '@media (hover: hover) and (pointer: fine)')
+      addVariant('portrait', '@media (orientation: portrait)')
     })
   ],
 }

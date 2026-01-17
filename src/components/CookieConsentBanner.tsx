@@ -48,6 +48,9 @@ const CookieConsentBanner: React.FC = () => {
     setShowBanner(false);
     setShowCustomize(false);
 
+    // Update Google Consent Mode v2
+    updateGoogleConsent(newConsent);
+
     // Save to database (fire and forget)
     try {
       const sessionId = getOrCreateSessionId();
@@ -289,6 +292,18 @@ function getOrCreateSessionId(): string {
   }
 
   return sessionId;
+}
+
+// Helper function to update Google Consent Mode v2
+function updateGoogleConsent(consent: ConsentState): void {
+  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    window.gtag('consent', 'update', {
+      'analytics_storage': consent.analytics ? 'granted' : 'denied',
+      'ad_storage': consent.personalization ? 'granted' : 'denied',
+      'ad_user_data': consent.personalization ? 'granted' : 'denied',
+      'ad_personalization': consent.personalization ? 'granted' : 'denied'
+    });
+  }
 }
 
 // Export helper for other components to check consent
