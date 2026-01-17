@@ -174,6 +174,8 @@ export interface Hotel {
   isTrending: boolean;
   lat?: number;
   lng?: number;
+  metaTitle?: string;
+  metaDescription?: string;
   destination?: {
     id: string;
     name: string;
@@ -253,6 +255,8 @@ export async function getHotelById(idOrSlug: string): Promise<Hotel> {
     isTrending: serverHotel.isFeatured || false,
     lat: serverHotel.latitude,
     lng: serverHotel.longitude,
+    metaTitle: serverHotel.metaTitle,
+    metaDescription: serverHotel.metaDescription,
     destination: serverHotel.destination ? {
       id: serverHotel.destination.id,
       name: serverHotel.destination.name,

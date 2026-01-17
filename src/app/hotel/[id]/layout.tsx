@@ -6,11 +6,22 @@ type Props = {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
+// Check if a string is a CUID (database ID)
+function isCuid(str: string): boolean {
+  return /^c[a-z0-9]{24}$/.test(str) || /^h\d+$/.test(str);
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
 
   try {
-    const response = await fetch(`${API_URL}/hotels/${id}`, {
+    // Determine if it's an ID or slug and use the appropriate endpoint
+    const isId = isCuid(id);
+    const endpoint = isId
+      ? `${API_URL}/hotels/${id}`
+      : `${API_URL}/hotels/slug/${id}`;
+
+    const response = await fetch(endpoint, {
       next: { revalidate: 300 },
     });
 

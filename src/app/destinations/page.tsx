@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { MapPin, ArrowRight, Building2 } from 'lucide-react';
+import { MapPin, ArrowRight, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
 import Footer from '@/components/Footer';
 
 interface DestinationData {
@@ -16,6 +16,15 @@ interface DestinationData {
   country?: string | null;
 }
 
+interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+const ITEMS_PER_PAGE = 12;
+
 export default function DestinationsPage() {
   const [destinationsWithData, setDestinationsWithData] = useState<Array<{
     id: string;
@@ -26,40 +35,51 @@ export default function DestinationsPage() {
   }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationMeta | null>(null);
+
+  const fetchDestinations = useCallback(async (page: number) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/destinations?page=${page}&limit=${ITEMS_PER_PAGE}`);
+      const data = await response.json();
+
+      if (response.ok && data.data?.items) {
+        const destinations = data.data.items as DestinationData[];
+        setDestinationsWithData(
+          destinations
+            .filter((d: DestinationData) => d.isActive && d.hotelCount > 0)
+            .sort((a, b) => b.hotelCount - a.hotelCount)
+            .map((d: DestinationData) => ({
+              id: d.id,
+              name: d.name,
+              slug: d.slug,
+              hotelCount: d.hotelCount,
+              imageUrl: d.imageUrl || 'https://picsum.photos/600/400?random=50',
+            }))
+        );
+        if (data.data.meta) {
+          setPagination(data.data.meta);
+        }
+      } else {
+        setError(data.error || 'Failed to fetch destinations');
+      }
+    } catch (err) {
+      console.error('Error fetching destinations:', err);
+      setError('Failed to fetch destinations');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchDestinations = async () => {
-      try {
-        const response = await fetch('/api/destinations');
-        const data = await response.json();
+    fetchDestinations(currentPage);
+  }, [currentPage, fetchDestinations]);
 
-        if (response.ok && data.data?.items) {
-          const destinations = data.data.items as DestinationData[];
-          setDestinationsWithData(
-            destinations
-              .filter((d: DestinationData) => d.isActive && d.hotelCount > 0)
-              .sort((a, b) => b.hotelCount - a.hotelCount)
-              .map((d: DestinationData) => ({
-                id: d.id,
-                name: d.name,
-                slug: d.slug,
-                hotelCount: d.hotelCount,
-                imageUrl: d.imageUrl || 'https://picsum.photos/600/400?random=50',
-              }))
-          );
-        } else {
-          setError(data.error || 'Failed to fetch destinations');
-        }
-      } catch (err) {
-        console.error('Error fetching destinations:', err);
-        setError('Failed to fetch destinations');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDestinations();
-  }, []);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (isLoading) {
     return (
@@ -149,6 +169,72 @@ export default function DestinationsPage() {
                 </motion.div>
               ))}
             </div>
+
+            {/* Pagination */}
+            {pagination && pagination.totalPages > 1 && (
+              <div className="mt-12 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="p-2 border border-white/10 rounded-sm text-white hover:border-gold hover:text-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:text-white"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => {
+                    // Show first page, last page, current page, and pages around current
+                    const showPage =
+                      page === 1 ||
+                      page === pagination.totalPages ||
+                      Math.abs(page - currentPage) <= 1;
+
+                    const showEllipsis =
+                      (page === 2 && currentPage > 3) ||
+                      (page === pagination.totalPages - 1 && currentPage < pagination.totalPages - 2);
+
+                    if (showEllipsis && !showPage) {
+                      return (
+                        <span key={page} className="px-2 text-slate-500">
+                          ...
+                        </span>
+                      );
+                    }
+
+                    if (!showPage) return null;
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`w-10 h-10 border rounded-sm text-sm font-medium transition-colors ${
+                          currentPage === page
+                            ? 'bg-gold border-gold text-deepBlue'
+                            : 'border-white/10 text-white hover:border-gold hover:text-gold'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === pagination.totalPages}
+                  className="p-2 border border-white/10 rounded-sm text-white hover:border-gold hover:text-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:text-white"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            )}
+
+            {/* Page info */}
+            {pagination && (
+              <div className="mt-4 text-center text-sm text-slate-400">
+                Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, pagination.total)} of {pagination.total} destinations
+              </div>
+            )}
           </div>
         </section>
 
