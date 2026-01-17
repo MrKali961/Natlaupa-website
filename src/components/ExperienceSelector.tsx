@@ -601,12 +601,12 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       opacity: hoveredChoice === "destination" ? 1 : 0.6
                     }}
                     transition={{ duration: 0.3 }}
-                    className="text-gold text-[10px] sm:text-[12px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-1 sm:mb-2 block"
+                    className="text-gold text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-1 sm:mb-2 block"
                   >
                     pick your
                   </motion.span>
                   <motion.span
-                    className="font-serif text-[2rem] sm:text-[2.5rem] leading-none text-white font-medium tracking-tight block"
+                    className="font-serif text-[2rem] portrait:text-[2.6rem] sm:text-[2.5rem] sm:portrait:text-[3.25rem] leading-none text-white font-medium tracking-tight block"
                     animate={{
                       color: hoveredChoice === "destination" || clickedButton === "destination" ? "#D4AF37" : "#ffffff",
                     }}
@@ -621,7 +621,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       y: 0
                     }}
                     transition={{ delay: 0.5, duration: 0.3 }}
-                    className="text-white/40 text-[10px] sm:text-[12px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3 block"
+                    className="text-white/40 text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3 block"
                   >
                     where to go
                   </motion.span>
@@ -678,12 +678,12 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       opacity: hoveredChoice === "category" ? 1 : 0.6
                     }}
                     transition={{ duration: 0.3 }}
-                    className="text-gold text-[10px] sm:text-[12px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-1 sm:mb-2 block"
+                    className="text-gold text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-1 sm:mb-2 block"
                   >
                     pick your
                   </motion.span>
                   <motion.span
-                    className="font-serif text-[2rem] sm:text-[2.5rem] leading-none text-white font-medium tracking-tight block"
+                    className="font-serif text-[2rem] portrait:text-[2.6rem] sm:text-[2.5rem] sm:portrait:text-[3.25rem] leading-none text-white font-medium tracking-tight block"
                     animate={{
                       color: hoveredChoice === "category" || clickedButton === "category" ? "#D4AF37" : "#ffffff",
                     }}
@@ -698,7 +698,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       y: 0
                     }}
                     transition={{ delay: 0.6, duration: 0.3 }}
-                    className="text-white/40 text-[10px] sm:text-[12px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3 block"
+                    className="text-white/40 text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3 block"
                   >
                     how to feel
                   </motion.span>

@@ -31,6 +31,7 @@ const config: Config = {
     require('@tailwindcss/typography'),
     plugin(function({ addVariant }) {
       addVariant('hover-capable', '@media (hover: hover) and (pointer: fine)')
+      addVariant('portrait', '@media (orientation: portrait)')
     })
   ],
 }
