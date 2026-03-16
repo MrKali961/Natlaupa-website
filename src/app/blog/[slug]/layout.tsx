@@ -46,6 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         siteName: 'Natlaupa',
         images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: blog.title }] : [],
         type: 'article',
+        locale: 'en_US',
         publishedTime: blog.publishedAt,
         modifiedTime: blog.updatedAt,
         authors: blog.author ? [blog.author] : [],

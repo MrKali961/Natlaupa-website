@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import StructuredData from '@/components/StructuredData';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
     description: 'Experience luxury accommodations worldwide with personalized AI-powered travel concierge.',
     images: [
       {
-        url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=630&fit=crop',
+        url: 'https://www.natlaupa.com/opengraph-image',
         width: 1200,
         height: 630,
         alt: 'Natlaupa - Luxury Travel & Accommodations',
@@ -65,7 +66,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Natlaupa | Redefining the Art of Stay',
     description: 'Experience luxury accommodations worldwide with personalized AI-powered travel concierge.',
-    images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=630&fit=crop'],
+    images: ['https://www.natlaupa.com/opengraph-image'],
   },
   alternates: {
     canonical: BASE_URL,
@@ -75,10 +76,13 @@ export const metadata: Metadata = {
       { url: '/icon.svg', type: 'image/svg+xml' },
     ],
     apple: [
-      { url: '/apple-touch-icon.svg', type: 'image/svg+xml' },
+      { url: '/apple-icon', type: 'image/png', sizes: '180x180' },
     ],
   },
   manifest: '/manifest.json',
+  verification: {
+    google: '31c5c05c91e4aa2c',
+  },
 };
 
 export const viewport: Viewport = {
@@ -141,6 +145,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="flex flex-col min-h-screen bg-deepBlue text-slate-100 font-sans selection:bg-gold selection:text-deepBlue overflow-x-hidden">
+        <StructuredData />
         <SmoothScrollProvider>
           <Navbar />
           <div className="flex-grow">

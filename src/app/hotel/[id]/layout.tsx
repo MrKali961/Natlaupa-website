@@ -57,6 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         siteName: 'Natlaupa',
         images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: hotel.name }] : [],
         type: 'website',
+        locale: 'en_US',
       },
       twitter: {
         card: 'summary_large_image',

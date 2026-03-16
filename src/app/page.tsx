@@ -27,18 +27,37 @@ export default function Home() {
       <Hero />
       <ExperienceSelector onSelection={handleSelection} />
 
-      {isUnlocked && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-        >
-          <MoodMatcher />
-          <ValueProps />
-          <ConciergeRecommendations />
-          <Footer />
-        </motion.div>
-      )}
+      {/* Always in DOM for SEO crawlability; hidden via CSS until unlocked */}
+      <div
+        style={{
+          opacity: isUnlocked ? 1 : 0,
+          maxHeight: isUnlocked ? 'none' : '0px',
+          overflow: isUnlocked ? 'visible' : 'hidden',
+          transition: 'opacity 1s ease-out',
+        }}
+        aria-hidden={!isUnlocked}
+      >
+        {isUnlocked ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+          >
+            <MoodMatcher />
+            <ValueProps />
+            <ConciergeRecommendations />
+          </motion.div>
+        ) : (
+          <>
+            <MoodMatcher />
+            <ValueProps />
+            <ConciergeRecommendations />
+          </>
+        )}
+      </div>
+
+      {/* Footer always visible for SEO — contains navigation links */}
+      <Footer />
     </main>
   );
 }
