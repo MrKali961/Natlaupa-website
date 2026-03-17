@@ -34,13 +34,13 @@ const perks = [
     icon: Star,
     title: "Growth",
     description:
-      "Access exclusive tools and insights to elevate properties into icons and maximize your influence.",
+      "Access exclusive tools and insights to elevate properties/income and maximize your influence.",
   },
   {
     icon: Crown,
     title: "Legacy",
     description:
-      "Collaborate with elite minds like Dr. Serge Chamellan to shape enduring impact in luxury hospitality.",
+      "Collaborate with elite minds like Dr. Serge Osumanov of a single-earning impact in luxury hospitality.",
   },
 ];
 
@@ -48,35 +48,14 @@ const membershipDetails = [
   {
     icon: Shield,
     title: "Annual Fee",
-    description: "$60 per year",
-    note: "Open to verified mid-level hospitality professionals only",
+    description: "A symbolic annual contribution that supports the Circle and its initiatives.",
+    note: "Open to individuals passionate about hospitality, luxury travel, and meaningful connections.",
   },
   {
     icon: Lock,
     title: "Member Expectations",
     description:
-      "Uphold the highest standards of professionalism, maintain strict confidentiality, and actively contribute to the Angel community's growth and reputation.",
-  },
-];
-
-const steps = [
-  {
-    number: "01",
-    title: "Connect",
-    description:
-      "Join our active WhatsApp communities—share insights, discover leads, and network",
-  },
-  {
-    number: "02",
-    title: "Collaborate",
-    description:
-      "Present solutions, refine ideas, and co-create strategies with fellow pioneers",
-  },
-  {
-    number: "03",
-    title: "Elevate",
-    description:
-      "Leverage Natlaupa's reach, intelligence, and partnerships to maximize influence",
+      "Uphold the highest standards of professionalism, respect confidentiality, and actively contribute to the Angel community's growth and reputation.",
   },
 ];
 
@@ -292,6 +271,8 @@ Submitted via Natlaupa Website`;
               Welcome to the Inner Circle
             </motion.h1>
 
+            <p className="text-2xl md:text-3xl font-playfair text-gold mt-2">Natlaupa Private Club</p>
+
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -447,6 +428,28 @@ Submitted via Natlaupa Website`;
           </div>
         </section>
 
+        {/* Inside the Natlaupa Club Section */}
+        <section className="py-16 md:py-24 px-6 max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-playfair text-white mb-6">Inside the Natlaupa Club</h2>
+          <p className="text-white/80 text-lg mb-8">
+            The Natlaupa Club is a curated circle of individuals passionate about hospitality and luxury travel.
+          </p>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-xl font-semibold text-gold mb-2">Angels</h3>
+              <p className="text-white/70">
+                Members who connect, collaborate, and explore opportunities across the global hospitality ecosystem.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-gold mb-2">Senior Angels</h3>
+              <p className="text-white/70">
+                Experienced leaders who share their expertise, mentor members, and help shape the future of the Circle.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Senior Angels Section */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 bg-midnight/30">
           <div className="max-w-5xl mx-auto">
@@ -494,43 +497,6 @@ Submitted via Natlaupa Website`;
                   <p className="text-slate-400 leading-relaxed">
                     {angel.bio}
                   </p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10">
-          <div className="max-w-5xl mx-auto">
-            <motion.h2
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="font-serif text-3xl md:text-4xl text-white text-center mb-16"
-            >
-              Your Journey Starts Now
-            </motion.h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {steps.map((step, index) => (
-                <motion.div
-                  key={step.number}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="text-center"
-                >
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-full border-2 border-gold flex items-center justify-center">
-                    <span className="font-serif text-xl text-gold">
-                      {step.number}
-                    </span>
-                  </div>
-                  <h3 className="font-serif text-xl text-white mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="text-slate-400 text-sm">{step.description}</p>
                 </motion.div>
               ))}
             </div>

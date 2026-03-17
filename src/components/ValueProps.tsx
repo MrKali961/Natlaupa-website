@@ -12,14 +12,14 @@ const ValueProps: React.FC = () => {
       id: "01",
       category: "The Standard",
       title: "Curated Quality",
-      desc: "We accept less than 1% of applicants. Every property in our collection is rigorously vetted for architectural significance, design pedigree, and service excellence.",
+      desc: "We accept less than 1% of applicants. Every property in our collection is handpicked selected for its architectural significance, design pedigree, and service excellence.",
       img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop" // Abstract dark interior
     },
     {
       id: "02",
       category: "The Promise",
       title: "Best Price Guarantee",
-      desc: "True luxury is transparent. We negotiate directly with properties to ensure you receive the most competitive rates available, without hidden premiums.",
+      desc: "True luxury is transparent. We negotiate directly with properties to ensure you receive the most competitive rates available — without hidden premiums.",
       img: "https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=2000&auto=format&fit=crop" // Minimalist architecture
     },
     {
@@ -103,7 +103,7 @@ const ValueProps: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 md:mb-24 text-center">
          <h2 className="font-serif text-3xl md:text-5xl text-white mb-6">Natlaupa: Luxury one step closer</h2>
          <p className="text-slate-400 font-light max-w-2xl mx-auto text-sm md:text-base">
-            YOU ARE UNIQUE, SO WILL YOUR EXPERIENCE. Enjoy exclusive access, VIP treatment, and unmatched comfort. Natlaupa secures elite rates and premium perks luxury without compromise. Travel with purpose, earn as you go, and elevate every journey. This is more than a stay. It's your gateway to the extraordinary.
+            YOU ARE UNIQUE. SO WILL YOUR EXPERIENCE. Enjoy exclusive access, VIP treatment, and unmatched comfort. Natlaupa secures elite rates and premium perks luxury without compromise. Travel more, for less – at any pace, on any schedule and beyond any journey. This is more than a stay. It's your gateway to the extraordinary.
          </p>
       </div>
 

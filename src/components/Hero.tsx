@@ -47,7 +47,7 @@ const Hero: React.FC = () => {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="text-sm md:text-lg text-zinc-300 max-w-xs md:max-w-2xl font-light tracking-wide mb-10 md:mb-12 leading-relaxed"
         >
-          From exclusive benefits to 24/7 personalized advice, we bridge the gap between you and the world&apos;s most prestigious hotel experiences.
+          From exclusive benefits to 24/7 personalized service, we bridge the gap between your desires and the world&apos;s most prestigious hotel experiences.
         </motion.p>
 
         {/* Button */}
@@ -62,6 +62,16 @@ const Hero: React.FC = () => {
         >
           Explore Offers
         </motion.button>
+
+        {/* Supporting tagline */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9, duration: 0.8 }}
+          className="mt-5 text-xs md:text-sm text-white/60 font-light tracking-wide text-center"
+        >
+          Exclusive hotel rates, privileged upgrades, curated amenities, and 24/7 concierge support.
+        </motion.p>
       </div>
 
       {/* Scroll Indicator */}

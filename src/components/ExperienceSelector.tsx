@@ -548,11 +548,18 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
               <h2 className="text-gold text-[11px] xs:text-[13px] sm:text-[15px] font-medium uppercase tracking-[0.25em] sm:tracking-[0.35em] mb-2 sm:mb-3">
                 Pick Your Experience
               </h2>
+              <h2 className="text-3xl md:text-5xl font-playfair text-white mt-2">Start your Journey</h2>
+              <p className="text-white/60 text-xs sm:text-sm tracking-wide mt-2">
+                Choose how you&apos;d like to explore our collection
+              </p>
+              <p className="text-white/40 text-xs sm:text-sm tracking-wide italic mt-1">
+                Some journeys begin with a place, others with a feeling.
+              </p>
               <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="w-6 sm:w-8 h-[1px] bg-gold/40 mx-auto"
+                className="w-6 sm:w-8 h-[1px] bg-gold/40 mx-auto mt-3"
               />
             </motion.div>
 
@@ -624,6 +631,17 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     className="text-white/40 text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3 block"
                   >
                     where to go
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{
+                      opacity: hoveredChoice === "destination" ? 0.6 : 0,
+                      y: 0
+                    }}
+                    transition={{ delay: 0.6, duration: 0.3 }}
+                    className="text-white/50 text-[9px] portrait:text-[11px] sm:text-[10px] tracking-wide mt-1 block"
+                  >
+                    Find luxury hotels in the world&apos;s most iconic cities.
                   </motion.span>
                 </motion.button>
               </div>
@@ -702,6 +720,17 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                   >
                     how to feel
                   </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{
+                      opacity: hoveredChoice === "category" ? 0.6 : 0,
+                      y: 0
+                    }}
+                    transition={{ delay: 0.7, duration: 0.3 }}
+                    className="text-white/50 text-[9px] portrait:text-[11px] sm:text-[10px] tracking-wide mt-1 block"
+                  >
+                    Discover hotels based on the experience you&apos;re looking for — wellness, romance, adventure and more.
+                  </motion.span>
                 </motion.button>
               </div>
             </div>
@@ -761,8 +790,12 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
               <h2 className="text-gold text-base md:text-lg lg:text-xl font-semibold uppercase tracking-[0.3em] mb-3 drop-shadow-lg">
                 Pick Your Experience
               </h2>
-              <p className="text-white/60 text-sm md:text-base tracking-wide max-w-md drop-shadow-md">
+              <h2 className="text-3xl md:text-5xl font-playfair text-white mt-2">Start your Journey</h2>
+              <p className="text-white/60 text-sm md:text-base tracking-wide max-w-md drop-shadow-md mt-3">
                 Choose how you&apos;d like to explore our collection
+              </p>
+              <p className="text-white/40 text-sm md:text-base tracking-wide italic max-w-md drop-shadow-md mt-1">
+                Some journeys begin with a place, others with a feeling.
               </p>
             </motion.div>
 
@@ -828,6 +861,16 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     className="absolute -bottom-12 left-0 w-full text-center text-sm text-gold uppercase tracking-[0.3em]"
                   >
                     Where
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{
+                      opacity: hoveredChoice === "destination" ? 0.6 : 0,
+                      y: hoveredChoice === "destination" ? 0 : 10,
+                    }}
+                    className="absolute -bottom-20 left-0 w-full text-center text-xs text-white/60 tracking-wide"
+                  >
+                    Find luxury hotels in the world&apos;s most iconic cities.
                   </motion.p>
                 </motion.div>
               </div>
@@ -895,6 +938,16 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     className="absolute -bottom-12 left-0 w-full text-center text-sm text-gold uppercase tracking-[0.3em]"
                   >
                     How
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{
+                      opacity: hoveredChoice === "category" ? 0.6 : 0,
+                      y: hoveredChoice === "category" ? 0 : 10,
+                    }}
+                    className="absolute -bottom-20 left-0 w-full text-center text-xs text-white/60 tracking-wide"
+                  >
+                    Discover hotels based on the experience you&apos;re looking for — wellness, romance, adventure and more.
                   </motion.p>
                 </motion.div>
               </div>

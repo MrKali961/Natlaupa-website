@@ -164,7 +164,7 @@ const Navbar: React.FC = () => {
             </Link>
             <Link
               href="/become-angel"
-              className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 border border-gold text-gold hover:bg-gold hover:text-deepBlue transition-all duration-300"
+              className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 bg-gold text-deepBlue hover:bg-gold/90 transition-all duration-300"
             >
               Become an Angel
             </Link>

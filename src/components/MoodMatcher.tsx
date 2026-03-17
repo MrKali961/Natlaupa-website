@@ -48,8 +48,8 @@ interface Hotel {
 const FALLBACK_MOODS: Mood[] = [
   {
     id: "romantic",
-    name: "Romantic Escape",
-    slug: "romantic-escape",
+    name: "Riviera Lifestyle",
+    slug: "riviera-lifestyle",
     tagline: "For two hearts seeking solitude",
     icon: Heart,
     color: "from-rose-500/20 to-pink-500/20",
@@ -67,8 +67,8 @@ const FALLBACK_MOODS: Mood[] = [
   },
   {
     id: "adventure",
-    name: "Adventure Seeker",
-    slug: "adventure-seeker",
+    name: "Wellness & Rejuvenation",
+    slug: "wellness-rejuvenation",
     tagline: "For the bold and curious",
     icon: Compass,
     color: "from-orange-500/20 to-amber-500/20",
@@ -85,8 +85,8 @@ const FALLBACK_MOODS: Mood[] = [
   },
   {
     id: "cultural",
-    name: "Cultural Immersion",
-    slug: "cultural-immersion",
+    name: "Global Power Hub",
+    slug: "global-power-hub",
     tagline: "For the curious soul",
     icon: Palette,
     color: "from-purple-500/20 to-indigo-500/20",
@@ -103,8 +103,8 @@ const FALLBACK_MOODS: Mood[] = [
   },
   {
     id: "wellness",
-    name: "Pure Relaxation",
-    slug: "wellness-retreat",
+    name: "Timeless Elegance",
+    slug: "timeless-elegance",
     tagline: "For body and mind renewal",
     icon: Leaf,
     color: "from-emerald-500/20 to-teal-500/20",

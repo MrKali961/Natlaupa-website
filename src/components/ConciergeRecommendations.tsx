@@ -413,15 +413,15 @@ const ConciergeRecommendations: React.FC = () => {
                     <h5 className="font-serif text-lg text-white mb-4">This Week's Insights</h5>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-sm">Searches up</span>
+                        <span className="text-slate-400 text-sm">Destination of the week</span>
                         <span className="text-gold font-bold">{insights.searchTrend}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-sm">Top search</span>
+                        <span className="text-slate-400 text-sm">Top review</span>
                         <span className="text-white text-sm">{insights.topSearch}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-sm">Avg. stay</span>
+                        <span className="text-slate-400 text-sm">Avg. rate</span>
                         <span className="text-white text-sm">{insights.avgStay}</span>
                       </div>
                     </div>
