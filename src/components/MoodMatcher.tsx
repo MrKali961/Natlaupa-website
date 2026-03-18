@@ -311,10 +311,10 @@ const MoodMatcher: React.FC = () => {
             </span>
           </div>
           <h2 className="font-serif text-4xl md:text-5xl text-white mb-4">
-            What's Your <span className="italic text-gold">Mood</span>?
+            How Do You Want To <span className="italic text-gold">Feel</span>?
           </h2>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Tell us how you want to feel, and we'll curate the perfect escape.
+            Tell us the experience you're looking for, and we'll curate the perfect escape.
           </p>
         </motion.div>
 

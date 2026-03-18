@@ -27,37 +27,40 @@ export default function Home() {
       <Hero />
       <ExperienceSelector onSelection={handleSelection} />
 
-      {/* Always in DOM for SEO crawlability; hidden via CSS until unlocked */}
-      <div
-        style={{
-          opacity: isUnlocked ? 1 : 0,
-          maxHeight: isUnlocked ? 'none' : '0px',
-          overflow: isUnlocked ? 'visible' : 'hidden',
-          transition: 'opacity 1s ease-out',
-        }}
-        aria-hidden={!isUnlocked}
-      >
-        {isUnlocked ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, ease: 'easeOut' }}
-          >
-            <MoodMatcher />
-            <ValueProps />
-            <ConciergeRecommendations />
-          </motion.div>
-        ) : (
-          <>
-            <MoodMatcher />
-            <ValueProps />
-            <ConciergeRecommendations />
-          </>
-        )}
-      </div>
+      {isUnlocked && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+        >
+          <MoodMatcher />
+          <ValueProps />
+          <ConciergeRecommendations />
+          <Footer />
+        </motion.div>
+      )}
 
-      {/* Footer always visible for SEO — contains navigation links */}
-      <Footer />
+      {/* SEO: crawlable text + navigation links when content is gated */}
+      {!isUnlocked && (
+        <div
+          className="absolute w-px h-px overflow-hidden"
+          style={{ clip: 'rect(0,0,0,0)', clipPath: 'inset(50%)' }}
+          aria-hidden="true"
+        >
+          <p>Natlaupa offers luxury hotel accommodations worldwide with personalized AI-powered concierge services. Discover curated hotel experiences, mood-matched stays, and exclusive travel offers from handpicked properties.</p>
+          <nav>
+            <a href="/destinations">Destinations</a>
+            <a href="/styles">Hotel Styles</a>
+            <a href="/countries">Countries</a>
+            <a href="/offers">Offers</a>
+            <a href="/blog">Blog</a>
+            <a href="/about">About Natlaupa</a>
+            <a href="/contact">Contact</a>
+            <a href="/for-hotels">For Hotels</a>
+            <a href="/become-angel">Become an Angel</a>
+          </nav>
+        </div>
+      )}
     </main>
   );
 }

@@ -328,7 +328,7 @@ Submitted via Natlaupa Website`;
               viewport={{ once: true }}
               className="font-serif text-3xl md:text-4xl text-white text-center mb-16"
             >
-              Your Gateway to Luxury's Future
+              What Awaits Inside the Club
             </motion.h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

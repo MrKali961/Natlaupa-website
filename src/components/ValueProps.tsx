@@ -12,14 +12,14 @@ const ValueProps: React.FC = () => {
       id: "01",
       category: "The Standard",
       title: "Curated Quality",
-      desc: "We accept less than 1% of applicants. Every property in our collection is handpicked selected for its architectural significance, design pedigree, and service excellence.",
+      desc: "Each hotel is carefully selected for its uncompromising standards in architecture, interior design, and outstanding service.",
       img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop" // Abstract dark interior
     },
     {
       id: "02",
       category: "The Promise",
       title: "Best Price Guarantee",
-      desc: "True luxury is transparent. We negotiate directly with properties to ensure you receive the most competitive rates available — without hidden premiums.",
+      desc: "True luxury is transparent. We work directly with properties, so you always receive the best available rates — without compromise.",
       img: "https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=2000&auto=format&fit=crop" // Minimalist architecture
     },
     {
@@ -101,9 +101,9 @@ const ValueProps: React.FC = () => {
       
       {/* Intro Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 md:mb-24 text-center">
-         <h2 className="font-serif text-3xl md:text-5xl text-white mb-6">Natlaupa: Luxury one step closer</h2>
+         <h2 className="font-serif text-3xl md:text-5xl text-white mb-6">The Natlaupa Standard</h2>
          <p className="text-slate-400 font-light max-w-2xl mx-auto text-sm md:text-base">
-            YOU ARE UNIQUE. SO WILL YOUR EXPERIENCE. Enjoy exclusive access, VIP treatment, and unmatched comfort. Natlaupa secures elite rates and premium perks luxury without compromise. Travel more, for less – at any pace, on any schedule and beyond any journey. This is more than a stay. It's your gateway to the extraordinary.
+            Every detail matters. From the properties we select to the rates we negotiate, Natlaupa exists to deliver luxury without compromise — exceptional stays, exclusive privileges, and a concierge who never sleeps.
          </p>
       </div>
 

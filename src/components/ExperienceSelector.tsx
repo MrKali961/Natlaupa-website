@@ -610,7 +610,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     transition={{ duration: 0.3 }}
                     className="text-gold text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-1 sm:mb-2 block"
                   >
-                    pick your
+                    Explore by
                   </motion.span>
                   <motion.span
                     className="font-serif text-[2rem] portrait:text-[2.6rem] sm:text-[2.5rem] sm:portrait:text-[3.25rem] leading-none text-white font-medium tracking-tight block"
@@ -698,7 +698,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     transition={{ duration: 0.3 }}
                     className="text-gold text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-1 sm:mb-2 block"
                   >
-                    pick your
+                    Explore by
                   </motion.span>
                   <motion.span
                     className="font-serif text-[2rem] portrait:text-[2.6rem] sm:text-[2.5rem] sm:portrait:text-[3.25rem] leading-none text-white font-medium tracking-tight block"
@@ -707,7 +707,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     }}
                     transition={{ duration: 0.3 }}
                   >
-                    Mood
+                    Experience
                   </motion.span>
                   <motion.span
                     initial={{ opacity: 0, y: 5 }}
@@ -718,7 +718,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     transition={{ delay: 0.6, duration: 0.3 }}
                     className="text-white/40 text-[10px] portrait:text-[13px] sm:text-[12px] sm:portrait:text-[16px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3 block"
                   >
-                    how to feel
+                    what to experience
                   </motion.span>
                   <motion.span
                     initial={{ opacity: 0, y: 5 }}
@@ -817,7 +817,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">pick your</span>
+                    <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">Explore by</span>
                   </motion.div>
 
                   <AnimatePresence>
@@ -894,7 +894,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
                   >
-                    <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">pick your</span>
+                    <span className="text-gold text-xs sm:text-sm uppercase tracking-[0.3em]">Explore by</span>
                   </motion.div>
 
                   <AnimatePresence>
@@ -920,7 +920,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     transition={{ duration: 0.5 }}
                     className="font-serif text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight text-center"
                   >
-                    MOOD
+                    EXPERIENCE
                   </motion.h2>
 
                   <motion.div
@@ -937,7 +937,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                     }}
                     className="absolute -bottom-12 left-0 w-full text-center text-sm text-gold uppercase tracking-[0.3em]"
                   >
-                    How
+                    What
                   </motion.p>
                   <motion.p
                     initial={{ opacity: 0, y: 10 }}
@@ -998,7 +998,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                   </div>
                   <h2 className="font-serif text-4xl md:text-6xl text-white mb-4">
                     {mode === "destination"
-                      ? "Discover Your Next Chapter"
+                      ? "Discover Your Next Destination"
                       : "Architecture of Dreams"}
                   </h2>
                   <p className="text-slate-400 text-lg max-w-2xl mx-auto">
