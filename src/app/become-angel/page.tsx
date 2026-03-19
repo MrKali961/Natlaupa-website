@@ -26,13 +26,13 @@ const API_URL =
 const perks = [
   {
     icon: Users,
-    title: "Partnership",
+    title: "Collaboration",
     description:
       "Forge strategic alliances in IT, revenue management, and digital transformation to drive innovation.",
   },
   {
     icon: Star,
-    title: "Growth",
+    title: "Mentorship",
     description:
       "Access exclusive tools and insights to elevate properties/income and maximize your influence.",
   },

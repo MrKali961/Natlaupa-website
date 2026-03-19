@@ -47,10 +47,32 @@
 ## 4. Become Angel Page (`src/app/become-angel/page.tsx`)
 
 ### Section heading (line 331):
-- `Your Gateway to Luxury's Future` → `What Awaits Inside the Club`
+- `Your Gateway to Luxury's Future` → `What Awaits Inside the Club` ✅
+
+### Perk card titles (lines 29, 35):
+- `Partnership` → `Collaboration` ✅
+- `Growth` → `Mentorship` ✅
 
 ### "Inside the Natlaupa Club" section (lines 431-451):
-- Already exists and has correct content ✓
+- Already exists and has correct content ✅
 
 ### "Your Journey Starts Now" section:
-- Already removed ✓
+- Already removed ✅
+
+---
+
+## STATUS SUMMARY (as of 2026-03-19)
+
+### DONE CORRECTLY:
+- ExperienceSelector: all 14 changes (labels, headings, descriptions) ✅
+- MoodMatcher: heading, subtitle, fallback moods ✅
+- ValueProps: Card 01 + Card 02 descriptions ✅
+- Become Angel: all 15 items (text, sections, removal, titles) ✅
+- Hero: subtitle + tagline ✅
+- Navbar: button style ✅
+- ConciergeRecommendations: sidebar labels ✅
+
+### NEEDS CLIENT INPUT:
+- ValueProps intro heading + body: annotation says "Change The Whole Thing" — new copy not provided
+- ValueProps bullet items (Exclusive Access, VIP Privileges, Elite Rates, Purposeful Travel): not in this component — may need to be built or located elsewhere
+- ~~MoodMatcher: "Short description needed" on left side~~ — SKIPPED per client

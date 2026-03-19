@@ -100,11 +100,25 @@ const ValueProps: React.FC = () => {
     <section ref={containerRef} className="bg-deepBlue relative z-10 pt-24 pb-0">
       
       {/* Intro Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 md:mb-24 text-center">
-         <h2 className="font-serif text-3xl md:text-5xl text-white mb-6">The Natlaupa Standard</h2>
-         <p className="text-slate-400 font-light max-w-2xl mx-auto text-sm md:text-base">
-            Every detail matters. From the properties we select to the rates we negotiate, Natlaupa exists to deliver luxury without compromise — exceptional stays, exclusive privileges, and a concierge who never sleeps.
-         </p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 md:mb-24">
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+           <div>
+             <h3 className="font-serif text-lg text-gold mb-2">Exclusive Access</h3>
+             <p className="text-slate-400 font-light text-sm">Stay at the world&apos;s most exceptional hotels.</p>
+           </div>
+           <div>
+             <h3 className="font-serif text-lg text-gold mb-2">VIP Privileges</h3>
+             <p className="text-slate-400 font-light text-sm">Enjoy upgrades, perks, and personalized attention.</p>
+           </div>
+           <div>
+             <h3 className="font-serif text-lg text-gold mb-2">Elite Rates</h3>
+             <p className="text-slate-400 font-light text-sm">Luxury without compromise.</p>
+           </div>
+           <div>
+             <h3 className="font-serif text-lg text-gold mb-2">Purposeful Travel</h3>
+             <p className="text-slate-400 font-light text-sm">Earn as you go and elevate every journey.</p>
+           </div>
+         </div>
       </div>
 
       {/* Cinematic Bands */}
