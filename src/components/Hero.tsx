@@ -37,7 +37,7 @@ const Hero: React.FC = () => {
           transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
           className="font-serif text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-white mb-6 tracking-tight leading-tight"
         >
-          Luxury One Step Closer.
+          You travel. We handle everything.
         </motion.h1>
 
         {/* Subtitle */}

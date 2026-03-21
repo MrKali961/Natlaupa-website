@@ -28,13 +28,13 @@ const perks = [
     icon: Users,
     title: "Collaboration",
     description:
-      "Forge strategic alliances in IT, revenue management, and digital transformation to drive innovation.",
+      "Forge strategic alliances in IT, revenue management, and digital transformation to drive innovation. Connect with a curated network of entrepreneurs, hospitality professionals, creatives, and investors from around the world. Inside the Circle, members build partnerships, share opportunities, and collaborate on projects shaping the future of hospitality and luxury travel.",
   },
   {
     icon: Star,
     title: "Mentorship",
     description:
-      "Access exclusive tools and insights to elevate properties/income and maximize your influence.",
+      "Access exclusive tools and insights to elevate properties/income and maximize your influence. Learn directly from Senior Angels — experienced leaders in hospitality and luxury industries. Through guidance, conversations, and shared insights, they help members grow professionally and navigate new opportunities.",
   },
   {
     icon: Crown,
@@ -55,7 +55,7 @@ const membershipDetails = [
     icon: Lock,
     title: "Member Expectations",
     description:
-      "Uphold the highest standards of professionalism, respect confidentiality, and actively contribute to the Angel community's growth and reputation.",
+      "Maintain the highest standards of professionalism, respect confidentiality, and actively contribute to the growth, collaboration, and spirit of the Natlaupa Club.",
   },
 ];
 
@@ -271,7 +271,7 @@ Submitted via Natlaupa Website`;
               Welcome to the Inner Circle
             </motion.h1>
 
-            <p className="text-2xl md:text-3xl font-playfair text-gold mt-2">Natlaupa Private Club</p>
+            <p className="text-2xl md:text-3xl font-playfair text-gold mt-2">The Natlaupa private club</p>
 
             <motion.p
               initial={{ opacity: 0 }}
@@ -354,6 +354,28 @@ Submitted via Natlaupa Website`;
           </div>
         </section>
 
+        {/* Inside the Natlaupa Club Section */}
+        <section className="py-16 md:py-24 px-6 max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-playfair text-gold mb-6">Inside the Natlaupa Club</h2>
+          <p className="text-white/80 text-lg mb-8">
+            The Natlaupa Club is a curated circle of individuals passionate about hospitality and luxury travel.
+          </p>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-xl font-semibold text-gold mb-2">Angels</h3>
+              <p className="text-white/70">
+                Members who connect, collaborate, and explore opportunities across the global hospitality ecosystem.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-gold mb-2">Senior Angels</h3>
+              <p className="text-white/70">
+                Experienced leaders who share their expertise, mentor members, and help shape the future of the Circle.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Membership Details Section */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 bg-midnight/50">
           <div className="max-w-4xl mx-auto">
@@ -425,28 +447,6 @@ Submitted via Natlaupa Website`;
                 ))}
               </div>
             </motion.div>
-          </div>
-        </section>
-
-        {/* Inside the Natlaupa Club Section */}
-        <section className="py-16 md:py-24 px-6 max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-playfair text-white mb-6">Inside the Natlaupa Club</h2>
-          <p className="text-white/80 text-lg mb-8">
-            The Natlaupa Club is a curated circle of individuals passionate about hospitality and luxury travel.
-          </p>
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-xl font-semibold text-gold mb-2">Angels</h3>
-              <p className="text-white/70">
-                Members who connect, collaborate, and explore opportunities across the global hospitality ecosystem.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-gold mb-2">Senior Angels</h3>
-              <p className="text-white/70">
-                Experienced leaders who share their expertise, mentor members, and help shape the future of the Circle.
-              </p>
-            </div>
           </div>
         </section>
 

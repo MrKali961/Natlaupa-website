@@ -101,6 +101,7 @@ const ValueProps: React.FC = () => {
       
       {/* Intro Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 md:mb-24">
+         <h2 className="font-serif text-3xl md:text-5xl text-gold mb-12 text-center">Natlaupa: luxury one step closer</h2>
          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
            <div>
              <h3 className="font-serif text-lg text-gold mb-2">Exclusive Access</h3>

@@ -549,9 +549,6 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                 Pick Your Experience
               </h2>
               <h2 className="text-3xl md:text-5xl font-playfair text-white mt-2">Start your Journey</h2>
-              <p className="text-white/60 text-xs sm:text-sm tracking-wide mt-2">
-                Choose how you&apos;d like to explore our collection
-              </p>
               <p className="text-white/40 text-xs sm:text-sm tracking-wide italic mt-1">
                 Some journeys begin with a place, others with a feeling.
               </p>
@@ -791,9 +788,6 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                 Pick Your Experience
               </h2>
               <h2 className="text-3xl md:text-5xl font-playfair text-white mt-2">Start your Journey</h2>
-              <p className="text-white/60 text-sm md:text-base tracking-wide max-w-md drop-shadow-md mt-3">
-                Choose how you&apos;d like to explore our collection
-              </p>
               <p className="text-white/40 text-sm md:text-base tracking-wide italic max-w-md drop-shadow-md mt-1">
                 Some journeys begin with a place, others with a feeling.
               </p>
