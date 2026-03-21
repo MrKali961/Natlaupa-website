@@ -37,7 +37,7 @@ const Hero: React.FC = () => {
           transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
           className="font-serif text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-white mb-6 tracking-tight leading-tight"
         >
-          You travel. We handle everything.
+          You travel, We handle everything
         </motion.h1>
 
         {/* Subtitle */}
@@ -47,7 +47,7 @@ const Hero: React.FC = () => {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="text-sm md:text-lg text-zinc-300 max-w-xs md:max-w-2xl font-light tracking-wide mb-10 md:mb-12 leading-relaxed"
         >
-          From exclusive benefits to 24/7 personalized service, we bridge the gap between your desires and the world&apos;s most prestigious hotel experiences.
+          Exclusive hotel rates, privileged upgrades, curated amenities, and 24/7 concierge support.
         </motion.p>
 
         {/* Button */}
@@ -62,16 +62,6 @@ const Hero: React.FC = () => {
         >
           Explore Offers
         </motion.button>
-
-        {/* Supporting tagline */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-          className="mt-5 text-xs md:text-sm text-white/60 font-light tracking-wide text-center"
-        >
-          Exclusive hotel rates, privileged upgrades, curated amenities, and 24/7 concierge support.
-        </motion.p>
       </div>
 
       {/* Scroll Indicator */}

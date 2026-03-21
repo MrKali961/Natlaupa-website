@@ -545,9 +545,6 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="relative z-10 text-center flex-shrink-0"
             >
-              <h2 className="text-gold text-[11px] xs:text-[13px] sm:text-[15px] font-medium uppercase tracking-[0.25em] sm:tracking-[0.35em] mb-2 sm:mb-3">
-                Pick Your Experience
-              </h2>
               <h2 className="text-3xl md:text-5xl font-playfair text-white mt-2">Start your Journey</h2>
               <p className="text-white/40 text-xs sm:text-sm tracking-wide italic mt-1">
                 Some journeys begin with a place, others with a feeling.
@@ -784,9 +781,6 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
               transition={{ delay: 0.3, duration: 0.8 }}
               className="absolute top-28 md:top-32 lg:top-36 left-0 right-0 flex flex-col items-center justify-center text-center z-20 px-4"
             >
-              <h2 className="text-gold text-base md:text-lg lg:text-xl font-semibold uppercase tracking-[0.3em] mb-3 drop-shadow-lg">
-                Pick Your Experience
-              </h2>
               <h2 className="text-3xl md:text-5xl font-playfair text-white mt-2">Start your Journey</h2>
               <p className="text-white/40 text-sm md:text-base tracking-wide italic max-w-md drop-shadow-md mt-1">
                 Some journeys begin with a place, others with a feeling.

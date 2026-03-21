@@ -12,14 +12,14 @@ const ValueProps: React.FC = () => {
       id: "01",
       category: "The Standard",
       title: "Curated Quality",
-      desc: "Each hotel is carefully selected for its uncompromising standards in architecture, interior design, and outstanding service.",
+      desc: "Only the most exceptional properties join our collection. Each hotel is carefully selected for its architectural character, design pedigree, and commitment to outstanding service.",
       img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop" // Abstract dark interior
     },
     {
       id: "02",
       category: "The Promise",
       title: "Best Price Guarantee",
-      desc: "True luxury is transparent. We work directly with properties, so you always receive the best available rates — without compromise.",
+      desc: "Luxury should be transparent. By working directly with our partner properties, we ensure you receive the most competitive rates available — without hidden premiums.",
       img: "https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=2000&auto=format&fit=crop" // Minimalist architecture
     },
     {
@@ -101,7 +101,7 @@ const ValueProps: React.FC = () => {
       
       {/* Intro Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 md:mb-24">
-         <h2 className="font-serif text-3xl md:text-5xl text-gold mb-12 text-center">Natlaupa: luxury one step closer</h2>
+         <h2 className="font-serif text-3xl md:text-5xl text-white mb-12 text-center">Natlaupa: luxury one step closer</h2>
          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
            <div>
              <h3 className="font-serif text-lg text-gold mb-2">Exclusive Access</h3>

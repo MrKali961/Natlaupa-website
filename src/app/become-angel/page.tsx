@@ -28,19 +28,19 @@ const perks = [
     icon: Users,
     title: "Collaboration",
     description:
-      "Forge strategic alliances in IT, revenue management, and digital transformation to drive innovation. Connect with a curated network of entrepreneurs, hospitality professionals, creatives, and investors from around the world. Inside the Circle, members build partnerships, share opportunities, and collaborate on projects shaping the future of hospitality and luxury travel.",
+      "Connect with a curated network of entrepreneurs, hospitality professionals, creatives, and investors from around the world. Inside the Circle, members build partnerships, share opportunities, and collaborate on projects shaping the future of hospitality and luxury travel.",
   },
   {
     icon: Star,
     title: "Mentorship",
     description:
-      "Access exclusive tools and insights to elevate properties/income and maximize your influence. Learn directly from Senior Angels — experienced leaders in hospitality and luxury industries. Through guidance, conversations, and shared insights, they help members grow professionally and navigate new opportunities.",
+      "Unlock opportunities for career development, business partnerships, and industry insights. Whether you're building a project, exploring the hospitality world, or expanding your network, the Circle connects you with the right people.",
   },
   {
     icon: Crown,
-    title: "Legacy",
+    title: "Mentorship",
     description:
-      "Collaborate with elite minds like Dr. Serge Osumanov of a single-earning impact in luxury hospitality.",
+      "Learn directly from Senior Angels — experienced leaders in hospitality and luxury industries. Through guidance, conversations, and shared insights, they help members grow professionally and navigate new opportunities.",
   },
 ];
 
@@ -268,19 +268,10 @@ Submitted via Natlaupa Website`;
               transition={{ delay: 0.1 }}
               className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-8"
             >
-              Welcome to the Inner Circle
+              The Natlaupa private club
             </motion.h1>
 
-            <p className="text-2xl md:text-3xl font-playfair text-gold mt-2">The Natlaupa private club</p>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-xl text-slate-300 font-light leading-relaxed mb-6 max-w-2xl mx-auto"
-            >
-              A World Where Visionaries Thrive.
-            </motion.p>
+            <p className="text-2xl md:text-3xl font-playfair text-gold mt-2">A World Where Visionaries Thrive.</p>
 
             <motion.p
               initial={{ opacity: 0 }}
@@ -288,10 +279,13 @@ Submitted via Natlaupa Website`;
               transition={{ delay: 0.25 }}
               className="text-lg text-slate-400 font-light leading-relaxed mb-12 max-w-2xl mx-auto"
             >
-              You've entered a curated ecosystem of innovators, strategists, and
-              luxury curators redefining the future of hospitality. Step into a
-              world where your expertise fuels luxury travel and your
-              performance is richly rewarded.
+              Natlaupa brings together a curated circle of individuals who share
+              a passion for exceptional hospitality and meaningful connections.
+              From hospitality leaders and entrepreneurs to investors, creatives,
+              and curious minds — our members come from diverse backgrounds but
+              share one common vision: elevating the world of luxury travel.
+              Inside the Circle, members exchange ideas, build partnerships, and
+              unlock unique opportunities across the global hospitality ecosystem.
             </motion.p>
 
             <motion.div
@@ -355,23 +349,86 @@ Submitted via Natlaupa Website`;
         </section>
 
         {/* Inside the Natlaupa Club Section */}
-        <section className="py-16 md:py-24 px-6 max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-playfair text-gold mb-6">Inside the Natlaupa Club</h2>
-          <p className="text-white/80 text-lg mb-8">
-            The Natlaupa Club is a curated circle of individuals passionate about hospitality and luxury travel.
-          </p>
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-xl font-semibold text-gold mb-2">Angels</h3>
-              <p className="text-white/70">
-                Members who connect, collaborate, and explore opportunities across the global hospitality ecosystem.
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-midnight/50 border-t border-white/10">
+          <div className="max-w-5xl mx-auto">
+            {/* Section Header */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <span className="text-gold text-sm uppercase tracking-[0.3em] mb-4 block">
+                Exclusive Membership
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl text-white mb-6">
+                Inside the Natlaupa Club
+              </h2>
+              <div className="w-16 h-px bg-gold/40 mx-auto mb-6" />
+              <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                The Natlaupa Club is a curated circle of individuals passionate about hospitality and luxury travel.
               </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-gold mb-2">Senior Angels</h3>
-              <p className="text-white/70">
-                Experienced leaders who share their expertise, mentor members, and help shape the future of the Circle.
-              </p>
+            </motion.div>
+
+            {/* Tier Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Angels Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="group relative p-8 border border-white/10 rounded-sm bg-deepBlue/50 hover:border-gold/30 transition-colors duration-500 overflow-hidden"
+              >
+                <div className="absolute top-0 left-0 w-px h-16 bg-gradient-to-b from-gold/60 to-transparent" />
+                <div className="absolute top-0 left-0 w-16 h-px bg-gradient-to-r from-gold/60 to-transparent" />
+                <div className="flex items-start gap-5">
+                  <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors duration-500">
+                    <Users className="text-gold" size={26} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl text-white mb-3">
+                      Angels
+                    </h3>
+                    <p className="text-slate-400 leading-relaxed">
+                      Members who connect, collaborate, and explore opportunities across the global hospitality ecosystem.
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="absolute inset-0 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ boxShadow: "inset 0 0 40px rgba(201,163,82,0.04)" }}
+                />
+              </motion.div>
+
+              {/* Senior Angels Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="group relative p-8 border border-white/10 rounded-sm bg-deepBlue/50 hover:border-gold/30 transition-colors duration-500 overflow-hidden"
+              >
+                <div className="absolute top-0 left-0 w-px h-16 bg-gradient-to-b from-gold/60 to-transparent" />
+                <div className="absolute top-0 left-0 w-16 h-px bg-gradient-to-r from-gold/60 to-transparent" />
+                <div className="flex items-start gap-5">
+                  <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold/20 transition-colors duration-500">
+                    <Crown className="text-gold" size={26} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl text-white mb-3">
+                      Senior Angels
+                    </h3>
+                    <p className="text-slate-400 leading-relaxed">
+                      Experienced leaders who share their expertise, mentor members, and help shape the future of the Circle.
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="absolute inset-0 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ boxShadow: "inset 0 0 40px rgba(201,163,82,0.04)" }}
+                />
+              </motion.div>
             </div>
           </div>
         </section>
@@ -496,6 +553,78 @@ Submitted via Natlaupa Website`;
                   </p>
                   <p className="text-slate-400 leading-relaxed">
                     {angel.bio}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Ambassadors Section */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-deepBlue border-t border-white/10">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <span className="text-gold text-xs uppercase tracking-[0.3em] mb-4 block">
+                Ambassadors
+              </span>
+              <h2 className="font-serif text-4xl md:text-5xl text-white mb-4">
+                Our Ambassadors
+              </h2>
+              <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                Passionate professionals who represent the Natlaupa spirit around the world
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  name: "Marion Chaaya",
+                  initials: "MC",
+                  bio1: "Marion embodies a modern vision of hospitality, centered on connection and emotion.",
+                  bio2: "As a Natlaupa Club ambassador, she fosters authentic connections within the community.",
+                },
+                {
+                  name: "Sleiman Douaihy",
+                  initials: "SD",
+                  bio1: "Sleiman brings a strong foundation in hospitality, shaped by international experience between Lebanon and Paris.",
+                  bio2: "He is driven by a passion for service, detail, and creating meaningful guest experiences.",
+                },
+                {
+                  name: "Manuela Perissinotto",
+                  initials: "MP",
+                  bio1: "Manuela is a Front Office Manager known for her precision and ability to run operations seamlessly.",
+                  bio2: "With experience across Dubai, France, and Italy, she brings structure, efficiency, and a truly international edge.",
+                },
+              ].map((ambassador, index) => (
+                <motion.div
+                  key={ambassador.name}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15 }}
+                  className="group flex flex-col items-center text-center p-8 border border-white/10 rounded-sm bg-midnight/30 hover:border-gold/30 transition-colors duration-500"
+                >
+                  {/* Image placeholder */}
+                  <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mb-6 group-hover:bg-gold/15 group-hover:border-gold/40 transition-colors duration-500 flex-shrink-0">
+                    <span className="font-serif text-gold text-xl tracking-wide">
+                      {ambassador.initials}
+                    </span>
+                  </div>
+
+                  <h3 className="font-serif text-xl text-white mb-4">
+                    {ambassador.name}
+                  </h3>
+
+                  <p className="text-slate-400 text-sm leading-relaxed mb-3">
+                    {ambassador.bio1}
+                  </p>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    {ambassador.bio2}
                   </p>
                 </motion.div>
               ))}
