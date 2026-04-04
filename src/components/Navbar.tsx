@@ -166,7 +166,7 @@ const Navbar: React.FC = () => {
               href="/become-angel"
               className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 bg-gold text-deepBlue hover:bg-gold/90 transition-all duration-300"
             >
-              Become an Angel
+              Join The Club
             </Link>
           </div>
 
@@ -246,7 +246,7 @@ const Navbar: React.FC = () => {
               onClick={() => setIsOpen(false)}
               className="font-serif text-2xl text-gold hover:text-white transition-colors"
             >
-              Become an Angel
+              Join The Club
             </Link>
           </div>
         </motion.div>

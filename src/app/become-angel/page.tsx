@@ -19,6 +19,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import Footer from "@/components/Footer";
 
 const API_URL =
@@ -32,7 +33,7 @@ const perks = [
   },
   {
     icon: Star,
-    title: "Mentorship",
+    title: "Growth",
     description:
       "Unlock opportunities for career development, business partnerships, and industry insights. Whether you're building a project, exploring the hospitality world, or expanding your network, the Circle connects you with the right people.",
   },
@@ -48,7 +49,7 @@ const membershipDetails = [
   {
     icon: Shield,
     title: "Annual Fee",
-    description: "A symbolic annual contribution that supports the Circle and its initiatives.",
+    description: "A symbolic annual contribution of 60€ that supports the Circle and its initiatives.",
     note: "Open to individuals passionate about hospitality, luxury travel, and meaningful connections.",
   },
   {
@@ -271,7 +272,7 @@ Submitted via Natlaupa Website`;
               The Natlaupa private club
             </motion.h1>
 
-            <p className="text-2xl md:text-3xl font-playfair text-gold mt-2">A World Where Visionaries Thrive.</p>
+            <p className="text-2xl md:text-3xl font-serif text-gold mt-2">A World Where Visionaries Thrive.</p>
 
             <motion.p
               initial={{ opacity: 0 }}
@@ -279,13 +280,7 @@ Submitted via Natlaupa Website`;
               transition={{ delay: 0.25 }}
               className="text-lg text-slate-400 font-light leading-relaxed mb-12 max-w-2xl mx-auto"
             >
-              Natlaupa brings together a curated circle of individuals who share
-              a passion for exceptional hospitality and meaningful connections.
-              From hospitality leaders and entrepreneurs to investors, creatives,
-              and curious minds — our members come from diverse backgrounds but
-              share one common vision: elevating the world of luxury travel.
-              Inside the Circle, members exchange ideas, build partnerships, and
-              unlock unique opportunities across the global hospitality ecosystem.
+              Learn, Connect, Grow
             </motion.p>
 
             <motion.div
@@ -585,12 +580,14 @@ Submitted via Natlaupa Website`;
                 {
                   name: "Marion Chaaya",
                   initials: "MC",
+                  image: "/angels/marion-chaaya.jpg",
                   bio1: "Marion embodies a modern vision of hospitality, centered on connection and emotion.",
                   bio2: "As a Natlaupa Club ambassador, she fosters authentic connections within the community.",
                 },
                 {
                   name: "Sleiman Douaihy",
                   initials: "SD",
+                  image: "/angels/sleiman-douaihy.jpg",
                   bio1: "Sleiman brings a strong foundation in hospitality, shaped by international experience between Lebanon and Paris.",
                   bio2: "He is driven by a passion for service, detail, and creating meaningful guest experiences.",
                 },
@@ -609,12 +606,23 @@ Submitted via Natlaupa Website`;
                   transition={{ delay: index * 0.15 }}
                   className="group flex flex-col items-center text-center p-8 border border-white/10 rounded-sm bg-midnight/30 hover:border-gold/30 transition-colors duration-500"
                 >
-                  {/* Image placeholder */}
-                  <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mb-6 group-hover:bg-gold/15 group-hover:border-gold/40 transition-colors duration-500 flex-shrink-0">
-                    <span className="font-serif text-gold text-xl tracking-wide">
-                      {ambassador.initials}
-                    </span>
-                  </div>
+                  {ambassador.image ? (
+                    <div className="w-24 h-24 rounded-full overflow-hidden border border-gold/20 mb-6 group-hover:border-gold/40 transition-colors duration-500 flex-shrink-0">
+                      <Image
+                        src={ambassador.image}
+                        alt={ambassador.name}
+                        width={96}
+                        height={96}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mb-6 group-hover:bg-gold/15 group-hover:border-gold/40 transition-colors duration-500 flex-shrink-0">
+                      <span className="font-serif text-gold text-xl tracking-wide">
+                        {ambassador.initials}
+                      </span>
+                    </div>
+                  )}
 
                   <h3 className="font-serif text-xl text-white mb-4">
                     {ambassador.name}
