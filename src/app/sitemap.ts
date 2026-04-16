@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { slugify } from '@/lib/slugify';
 
 const BASE_URL = 'https://www.natlaupa.com';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
@@ -195,7 +196,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic country pages
   const countryPages: MetadataRoute.Sitemap = countries.map(({ country }) => ({
-    url: `${BASE_URL}/countries/${country.toLowerCase().replace(/\s+/g, '-')}`,
+    url: `${BASE_URL}/countries/${slugify(country)}`,
     lastModified: currentDate,
     changeFrequency: 'weekly',
     priority: 0.7,

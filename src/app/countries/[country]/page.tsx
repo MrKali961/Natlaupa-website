@@ -1,205 +1,26 @@
-'use client';
+import { notFound } from 'next/navigation';
+import { fetchCountries, fetchHotelsByCountry } from '@/lib/server-api';
+import CountryPageClient from './CountryPageClient';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
-import { useHotels } from '@/hooks/useHotels';
-import HotelCard from '@/components/HotelCard';
-import Footer from '@/components/Footer';
-
-export default function CountryPage({ params }: { params: Promise<{ country: string }> }) {
-  const { country } = React.use(params);
+export default async function CountryPage({ params }: { params: Promise<{ country: string }> }) {
+  const { country } = await params;
   const decodedCountry = decodeURIComponent(country).replace(/-/g, ' ');
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [matchedCountry, setMatchedCountry] = useState<string | null>(null);
 
-  // First, fetch just countries to find the exact match
-  const { countries, isLoading: isLoadingCountries } = useHotels();
-
-  // Find the matched country name (case-insensitive)
-  useEffect(() => {
-    if (countries.length > 0) {
-      const found = countries.find(
-        c => c.toLowerCase() === decodedCountry.toLowerCase()
-      );
-      setMatchedCountry(found || null);
-    }
-  }, [countries, decodedCountry]);
-
-  // Then fetch hotels filtered by the matched country (server-side filtering)
-  const { hotels, isLoading: isLoadingHotels, error } = useHotels(
-    matchedCountry ? { country: matchedCountry } : undefined
+  const countriesData = await fetchCountries();
+  const allCountries = countriesData.map(c => c.country);
+  const matchedCountry = allCountries.find(
+    c => c.toLowerCase() === decodedCountry.toLowerCase()
   );
 
-  const isLoading = isLoadingCountries || (matchedCountry && isLoadingHotels);
+  if (!matchedCountry) notFound();
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-deepBlue flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-deepBlue flex items-center justify-center text-white">
-        <div className="text-center">
-          <h2 className="text-4xl font-serif mb-4">Error Loading Country</h2>
-          <p className="text-slate-400 mb-8">{error}</p>
-          <Link href="/countries" className="text-gold hover:underline">
-            Browse All Countries
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Wait for countries to load before showing "not found"
-  if (!isLoadingCountries && !matchedCountry) {
-    return (
-      <div className="min-h-screen bg-deepBlue flex items-center justify-center text-white">
-        <div className="text-center">
-          <h2 className="text-4xl font-serif mb-4">Country Not Found</h2>
-          <p className="text-slate-400 mb-8">We could not find properties in this location.</p>
-          <Link href="/countries" className="text-gold hover:underline">
-            Browse All Countries
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isLoading && matchedCountry && hotels.length === 0) {
-    return (
-      <div className="min-h-screen bg-deepBlue flex items-center justify-center text-white">
-        <div className="text-center">
-          <h2 className="text-4xl font-serif mb-4">{matchedCountry}</h2>
-          <p className="text-slate-400 mb-8">No properties available in this country yet.</p>
-          <Link href="/countries" className="text-gold hover:underline">
-            Browse All Countries
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Still loading or no matched country yet
-  if (!matchedCountry) {
-    return (
-      <div className="min-h-screen bg-deepBlue flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
-      </div>
-    );
-  }
-
-  const heroImage = hotels[0]?.imageUrl || 'https://picsum.photos/1920/1080?random=60';
-  const avgRating = (hotels.reduce((sum, h) => sum + h.rating, 0) / hotels.length).toFixed(1);
+  const hotels = await fetchHotelsByCountry(matchedCountry);
 
   return (
-    <>
-      <main className="bg-deepBlue min-h-screen">
-        {/* Hero Section */}
-        <div className="relative h-[50vh] sm:h-[55vh] md:h-[60vh] w-full">
-          <div className="absolute inset-0">
-            <img
-              src={heroImage}
-              alt={matchedCountry}
-              className="w-full h-full object-cover grayscale brightness-50"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/50 to-transparent" />
-          </div>
-
-          {/* Back Button */}
-          <div className="absolute top-28 left-4 md:top-32 md:left-8 z-20">
-            <Link href="/countries" className="flex items-center text-white/70 hover:text-gold transition-colors group">
-              <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-              <span className="uppercase tracking-widest text-xs font-bold">All Countries</span>
-            </Link>
-          </div>
-
-          <div className="absolute bottom-0 left-0 w-full p-4 sm:p-6 md:p-12 lg:p-16 z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="max-w-4xl"
-            >
-              <div className="flex items-center text-gold text-xs sm:text-sm uppercase tracking-widest mb-2 sm:mb-4">
-                <MapPin size={14} className="mr-1.5 sm:mr-2 flex-shrink-0" />
-                <span>{hotels.length} {hotels.length === 1 ? 'Property' : 'Properties'}</span>
-              </div>
-              <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-white mb-2 sm:mb-4">
-                {matchedCountry}
-              </h1>
-              <p className="text-slate-300 text-sm sm:text-base md:text-lg mb-2 sm:mb-4">
-                {avgRating} avg. rating
-              </p>
-              {hotels[0]?.description && (
-                <div className="max-w-2xl">
-                  <p className={`text-slate-400 text-xs sm:text-sm md:text-base font-light leading-relaxed ${
-                    !isDescriptionExpanded ? 'line-clamp-2 sm:line-clamp-3' : ''
-                  }`}>
-                    {hotels[0].description}
-                  </p>
-                  {hotels[0].description.length > 100 && (
-                    <button
-                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                      className="flex items-center gap-1 text-gold text-xs sm:text-sm mt-2 hover:underline transition-all group"
-                    >
-                      <span>{isDescriptionExpanded ? 'See less' : 'See more'}</span>
-                      {isDescriptionExpanded ? (
-                        <ChevronUp size={14} className="group-hover:-translate-y-0.5 transition-transform" />
-                      ) : (
-                        <ChevronDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
-                      )}
-                    </button>
-                  )}
-                </div>
-              )}
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Hotels Grid */}
-        <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6 sm:mb-8">
-              <h2 className="font-serif text-xl sm:text-2xl text-white">
-                Properties in {matchedCountry}
-              </h2>
-              <Link href="/offers" className="text-gold text-xs sm:text-sm hover:underline">
-                View All Offers
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-              {hotels.map((hotel, index) => (
-                <HotelCard key={hotel.id} hotel={hotel} index={index} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Other Countries */}
-        <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 border-t border-white/10">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="font-serif text-xl sm:text-2xl text-white mb-4 sm:mb-8">Explore Other Countries</h2>
-            <div className="flex flex-wrap gap-2 sm:gap-3">
-              {countries.filter(c => c !== matchedCountry).map(c => (
-                <Link
-                  key={c}
-                  href={`/countries/${c.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 border border-white/20 text-white hover:border-gold hover:text-gold transition-colors text-xs sm:text-sm uppercase tracking-wider sm:tracking-widest"
-                >
-                  {c}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </>
+    <CountryPageClient
+      hotels={hotels}
+      matchedCountry={matchedCountry}
+      allCountries={allCountries}
+    />
   );
 }
