@@ -16,7 +16,7 @@ export default function LatestOfferStrip() {
       initial={{ opacity: 0, y: -6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.8, duration: 0.5, ease: 'easeOut' }}
-      className="absolute top-[133px] left-0 right-0 z-20"
+      className="absolute bottom-0 left-0 right-0 z-20"
     >
       <Link
         href={`/offer/${offer.slug || offer.id}`}
