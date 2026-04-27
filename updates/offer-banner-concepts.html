@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offer Banner — Design Concepts</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #111; font-family: 'Georgia', serif; color: #fff; }
+
+    /* ── tokens ── */
+    :root {
+      --gold: #C9A55A;
+      --deepBlue: #0a0a0f;
+      --zinc300: #d4d4d8;
+      --zinc400: #a1a1aa;
+      --zinc600: #52525b;
+    }
+
+    /* ── layout ── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
+    h1 { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--zinc400); margin-bottom: 64px; }
+    .concept { margin-bottom: 80px; }
+    .concept-label {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 16px;
+    }
+
+    /* ── hero shell shared ── */
+    .hero-shell {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      background: linear-gradient(160deg, #1a1a24 0%, #0a0a0f 60%);
+      border: 1px solid #2a2a3a;
+      overflow: hidden;
+    }
+    /* fake bg texture */
+    .hero-shell::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 40px,
+        rgba(255,255,255,.015) 40px,
+        rgba(255,255,255,.015) 41px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 60px,
+        rgba(255,255,255,.015) 60px,
+        rgba(255,255,255,.015) 61px
+      );
+    }
+    /* centered hero text skeleton */
+    .hero-text-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -60%);
+      text-align: center;
+    }
+    .skel-line {
+      background: rgba(255,255,255,.12);
+      border-radius: 2px;
+      margin: 0 auto 10px;
+    }
+    .hero-h1   { width: 340px; height: 18px; }
+    .hero-sub  { width: 220px; height: 10px; margin-top: 12px; }
+    .hero-sub2 { width: 140px; height: 8px;  margin-top: 6px; }
+    .hero-btn  {
+      width: 120px; height: 34px; border-radius: 999px;
+      background: rgba(255,255,255,.14); margin: 18px auto 0;
+    }
+    .hero-scroll {
+      position: absolute; bottom: 20px; left: 50%;
+      transform: translateX(-50%);
+      width: 18px; height: 18px;
+      border-right: 1.5px solid rgba(255,255,255,.2);
+      border-bottom: 1.5px solid rgba(255,255,255,.2);
+      transform: translateX(-50%) rotate(45deg);
+    }
+    /* fake navbar */
+    .hero-nav {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .nav-logo { width: 36px; height: 36px; background: rgba(255,255,255,.15); border-radius: 2px; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link  { width: 40px; height: 8px; background: rgba(255,255,255,.12); border-radius: 2px; }
+    .nav-cta   { width: 80px; height: 26px; background: var(--gold); opacity: .7; border-radius: 1px; }
+
+
+    /* ══════════════════════════════════════
+       CONCEPT 1 — Floating Glass Card
+    ══════════════════════════════════════ */
+    .c1-card {
+      position: absolute;
+      bottom: 36px; left: 28px;
+      width: 310px;
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.1);
+      border-left: 2px solid var(--gold);
+      display: flex;
+      gap: 0;
+      overflow: hidden;
+    }
+    .c1-thumb {
+      width: 90px;
+      flex-shrink: 0;
+      background: linear-gradient(160deg, #2a2a35, #1a1a22);
+      position: relative;
+    }
+    .c1-thumb::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        45deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px,
+        transparent 1px, transparent 8px
+      );
+    }
+    .c1-body {
+      padding: 12px 14px;
+      flex: 1;
+    }
+    .c1-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 8px; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 8px;
+    }
+    .c1-badge-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); }
+    .c1-title  { width: 130px; height: 11px; background: rgba(255,255,255,.5); border-radius: 2px; margin-bottom: 6px; }
+    .c1-title2 { width: 90px;  height: 11px; background: rgba(255,255,255,.35); border-radius: 2px; margin-bottom: 10px; }
+    .c1-loc    { width: 110px; height: 8px;  background: rgba(255,255,255,.18); border-radius: 2px; margin-bottom: 14px; }
+    .c1-cta {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 8px; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(255,255,255,.5);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .c1-arrow { width: 12px; height: 1px; background: var(--gold); position: relative; }
+    .c1-arrow::after { content: ''; position: absolute; right: 0; top: -2.5px; width: 6px; height: 6px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); transform: rotate(45deg); }
+
+
+    /* ══════════════════════════════════════
+       CONCEPT 2 — Ticker Strip
+    ══════════════════════════════════════ */
+    .c2-strip {
+      position: absolute;
+      top: 56px; left: 0; right: 0;
+      height: 38px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(255,255,255,.06);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 18px;
+    }
+    .c2-sep { color: var(--gold); font-size: 10px; flex-shrink: 0; }
+    .c2-label {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 8px; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); flex-shrink: 0;
+    }
+    .c2-divider { width: 1px; height: 14px; background: rgba(255,255,255,.15); flex-shrink: 0; }
+    .c2-text-block { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .c2-offer-title { width: 160px; height: 9px; background: rgba(255,255,255,.45); border-radius: 2px; }
+    .c2-dot { color: var(--zinc600); font-size: 8px; }
+    .c2-loc { width: 80px; height: 8px; background: rgba(255,255,255,.2); border-radius: 2px; }
+    .c2-cta-right {
+      margin-left: auto; flex-shrink: 0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .c2-cta-label {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 8px; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold);
+    }
+    .c2-cta-arrow { color: var(--gold); font-size: 10px; }
+
+
+    /* ══════════════════════════════════════
+       CONCEPT 3 — Corner Billboard
+    ══════════════════════════════════════ */
+    .c3-card {
+      position: absolute;
+      bottom: 36px; right: 28px;
+      width: 220px;
+      height: 270px;
+      overflow: hidden;
+      border-left: 2px solid var(--gold);
+    }
+    /* image bg placeholder */
+    .c3-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, #2c2c3a 0%, #141420 100%);
+    }
+    .c3-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        135deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px,
+        transparent 1px, transparent 10px
+      );
+    }
+    .c3-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.85) 40%, transparent 100%);
+    }
+    .c3-body {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 14px 14px 16px;
+    }
+    .c3-exp {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 7px; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .c3-exp-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); }
+    .c3-title-l  { width: 140px; height: 12px; background: rgba(255,255,255,.6); border-radius: 2px; margin-bottom: 5px; }
+    .c3-title-l2 { width: 100px; height: 12px; background: rgba(255,255,255,.45); border-radius: 2px; margin-bottom: 10px; }
+    .c3-loc-row  { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
+    .c3-pin { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); opacity: .7; }
+    .c3-loc-bar { width: 100px; height: 7px; background: rgba(255,255,255,.25); border-radius: 2px; }
+    .c3-btn {
+      display: flex; align-items: center; justify-content: center;
+      height: 28px;
+      border: 1px solid rgba(255,255,255,.3);
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 7px; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(255,255,255,.8);
+    }
+    /* top badge */
+    .c3-top-badge {
+      position: absolute; top: 12px; left: 14px;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 7px; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--deepBlue);
+      background: var(--gold);
+      padding: 3px 8px;
+    }
+
+    /* ── annotation callouts ── */
+    .notes {
+      margin-top: 14px;
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .note {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 10px; letter-spacing: .04em;
+      color: var(--zinc400);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
+    .note span { color: var(--gold); }
+  </style>
+</head>
+<body>
+<div class="page">
+  <h1>Natlaupa — Offer Banner · 3 Concepts</h1>
+
+  <!-- ══ CONCEPT 1 ══ -->
+  <div class="concept">
+    <div class="concept-label">Option 1 — Floating Glass Card · bottom-left</div>
+
+    <div class="hero-shell">
+      <!-- navbar -->
+      <div class="hero-nav">
+        <div class="nav-logo"></div>
+        <div class="nav-links">
+          <div class="nav-link"></div>
+          <div class="nav-link"></div>
+          <div class="nav-link"></div>
+        </div>
+        <div class="nav-cta"></div>
+      </div>
+
+      <!-- hero content -->
+      <div class="hero-text-center">
+        <div class="skel-line hero-h1"></div>
+        <div class="skel-line hero-sub"></div>
+        <div class="skel-line hero-sub2"></div>
+        <div class="skel-line hero-btn"></div>
+      </div>
+      <div class="hero-scroll"></div>
+
+      <!-- BANNER -->
+      <div class="c1-card">
+        <div class="c1-thumb"></div>
+        <div class="c1-body">
+          <div class="c1-badge"><div class="c1-badge-dot"></div> Latest Offer</div>
+          <div class="c1-title"></div>
+          <div class="c1-title2"></div>
+          <div class="c1-loc"></div>
+          <div class="c1-cta">View Offer <div class="c1-arrow"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><span>Position:</span> fixed bottom-left, above scroll arrow</div>
+      <div class="note"><span>Style:</span> frosted glass · backdrop-blur · white/6 bg</div>
+      <div class="note"><span>Left border:</span> 2px gold accent strip</div>
+      <div class="note"><span>Image:</span> grayscale thumbnail → colour on hover</div>
+      <div class="note"><span>Animation:</span> slide in from left on load</div>
+      <div class="note"><span>Mobile:</span> hidden or collapsed to icon</div>
+    </div>
+  </div>
+
+  <!-- ══ CONCEPT 2 ══ -->
+  <div class="concept">
+    <div class="concept-label">Option 2 — Announcement Ticker Strip · full-width below navbar</div>
+
+    <div class="hero-shell">
+      <!-- navbar -->
+      <div class="hero-nav">
+        <div class="nav-logo"></div>
+        <div class="nav-links">
+          <div class="nav-link"></div>
+          <div class="nav-link"></div>
+          <div class="nav-link"></div>
+        </div>
+        <div class="nav-cta"></div>
+      </div>
+
+      <!-- BANNER STRIP -->
+      <div class="c2-strip">
+        <span class="c2-sep">✦</span>
+        <span class="c2-label">Latest Offer</span>
+        <div class="c2-divider"></div>
+        <div class="c2-text-block">
+          <div class="c2-offer-title"></div>
+          <span class="c2-dot">·</span>
+          <div class="c2-loc"></div>
+        </div>
+        <div class="c2-cta-right">
+          <span class="c2-cta-label">View Offer</span>
+          <span class="c2-cta-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- hero content -->
+      <div class="hero-text-center" style="transform: translate(-50%, -45%);">
+        <div class="skel-line hero-h1"></div>
+        <div class="skel-line hero-sub"></div>
+        <div class="skel-line hero-sub2"></div>
+        <div class="skel-line hero-btn"></div>
+      </div>
+      <div class="hero-scroll"></div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><span>Position:</span> pinned just below the navbar, full width</div>
+      <div class="note"><span>Style:</span> semi-transparent black · backdrop-blur · hairline borders</div>
+      <div class="note"><span>Content:</span> gold ✦ · "LATEST OFFER" · offer title · location · View Offer →</div>
+      <div class="note"><span>Animation:</span> fade down on load · text marquee on mobile</div>
+      <div class="note"><span>Mood:</span> most minimal — luxury arrivals board / ticker tape</div>
+    </div>
+  </div>
+
+  <!-- ══ CONCEPT 3 ══ -->
+  <div class="concept">
+    <div class="concept-label">Option 3 — Corner Billboard · bottom-right</div>
+
+    <div class="hero-shell">
+      <!-- navbar -->
+      <div class="hero-nav">
+        <div class="nav-logo"></div>
+        <div class="nav-links">
+          <div class="nav-link"></div>
+          <div class="nav-link"></div>
+          <div class="nav-link"></div>
+        </div>
+        <div class="nav-cta"></div>
+      </div>
+
+      <!-- hero content -->
+      <div class="hero-text-center">
+        <div class="skel-line hero-h1"></div>
+        <div class="skel-line hero-sub"></div>
+        <div class="skel-line hero-sub2"></div>
+        <div class="skel-line hero-btn"></div>
+      </div>
+      <div class="hero-scroll"></div>
+
+      <!-- BANNER -->
+      <div class="c3-card">
+        <div class="c3-bg"></div>
+        <div class="c3-overlay"></div>
+        <div class="c3-top-badge">Trending</div>
+        <div class="c3-body">
+          <div class="c3-exp"><div class="c3-exp-dot"></div> Experience Type</div>
+          <div class="c3-title-l"></div>
+          <div class="c3-title-l2"></div>
+          <div class="c3-loc-row">
+            <div class="c3-pin"></div>
+            <div class="c3-loc-bar"></div>
+          </div>
+          <div class="c3-btn">View Offer</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><span>Position:</span> fixed bottom-right corner</div>
+      <div class="note"><span>Style:</span> offer image as full background · gradient overlay</div>
+      <div class="note"><span>Left border:</span> 2px gold accent strip</div>
+      <div class="note"><span>Badges:</span> experience type (gold) · trending pill</div>
+      <div class="note"><span>CTA:</span> full-width outlined "View Offer" button</div>
+      <div class="note"><span>Animation:</span> slides up from bottom on load</div>
+      <div class="note"><span>Mobile:</span> hides on small screens</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

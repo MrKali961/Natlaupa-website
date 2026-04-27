@@ -1,6 +1,9 @@
+'use client';
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import LatestOfferStrip from '@/components/LatestOfferStrip';
 
 const Hero: React.FC = () => {
   
@@ -47,7 +50,16 @@ const Hero: React.FC = () => {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="text-sm md:text-lg text-zinc-300 max-w-xs md:max-w-2xl font-light tracking-wide mb-10 md:mb-12 leading-relaxed"
         >
-          Exclusive hotel rates, privileged upgrades, curated amenities, and 24/7 concierge support.
+          Exclusive hotel rates, privileged upgrades, curated amenities.
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="text-xs md:text-sm text-zinc-400 max-w-xs md:max-w-2xl font-light tracking-widest mb-10 md:mb-12 uppercase"
+        >
+          24/7 Concierge Support
         </motion.p>
 
         {/* Button */}
@@ -63,6 +75,8 @@ const Hero: React.FC = () => {
           Explore Offers
         </motion.button>
       </div>
+
+      <LatestOfferStrip />
 
       {/* Scroll Indicator */}
       <motion.div

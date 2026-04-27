@@ -21,6 +21,7 @@ export const NAV_LINKS = [
 
 export const FOOTER_LINKS = {
   explore: [
+    { name: "Destinations", path: "/destinations" },
     { name: "All Offers", path: "/offers" },
     { name: "Countries", path: "/countries" },
     { name: "Styles", path: "/styles" },

@@ -203,3 +203,24 @@ export async function fetchOfferBySlug(slug: string): Promise<Offer | null> {
   const raw = await apiFetch<Record<string, any>>(`/offers/slug/${slug}`);
   return raw ? transformOffer(raw) : null;
 }
+
+// ---------------------------------------------------------------------------
+// Blog fetchers (for generateMetadata only — UI uses /api/blogs/* route)
+// ---------------------------------------------------------------------------
+
+export interface ServerBlog {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  coverImage?: string | null;
+  featuredImage?: string | null;
+  author: { firstName: string; lastName: string };
+  publishedAt?: string | null;
+}
+
+export async function fetchBlogBySlug(slug: string): Promise<ServerBlog | null> {
+  return apiFetch<ServerBlog>(`/blogs/slug/${slug}`);
+}
