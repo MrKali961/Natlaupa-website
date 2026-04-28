@@ -19,6 +19,16 @@ const nextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  async redirects() {
+    return [
+      { source: '/legal-notice',       destination: '/mentions-legales',                 permanent: true },
+      { source: '/privacy-policy',     destination: '/politique-de-confidentialite',     permanent: true },
+      { source: '/terms-of-use',       destination: '/cgu',                              permanent: true },
+      { source: '/terms-of-service',   destination: '/conditions-generales-service',     permanent: true },
+      { source: '/cookie-policy',      destination: '/politique-cookies',                permanent: true },
+      { source: '/mediation',          destination: '/mediation-consommation',           permanent: true },
+    ];
+  },
   async headers() {
     return [
       {
