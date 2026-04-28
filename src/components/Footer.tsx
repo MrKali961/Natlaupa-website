@@ -18,6 +18,7 @@ const Footer: React.FC = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [consentGiven, setConsentGiven] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +27,12 @@ const Footer: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+
+    if (!consentGiven) {
+      setError("Veuillez accepter la politique de confidentialité pour vous inscrire.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/newsletter", {
@@ -48,6 +55,7 @@ const Footer: React.FC = () => {
       setEmail("");
       setFirstName("");
       setLastName("");
+      setConsentGiven(false);
 
       // Reset success state after 5 seconds
       setTimeout(() => {
@@ -118,7 +126,7 @@ const Footer: React.FC = () => {
       {/* Links Section */}
       <div className="border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Explore */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -179,6 +187,30 @@ const Footer: React.FC = () => {
               </h4>
               <nav className="flex flex-col gap-2">
                 {FOOTER_LINKS.programs.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.path}
+                    className="text-slate-400 text-sm hover:text-gold transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </nav>
+            </motion.div>
+
+            {/* Legal */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="text-center md:text-left"
+            >
+              <h4 className="text-gold text-xs uppercase tracking-[0.2em] mb-4">
+                Informations Légales
+              </h4>
+              <nav className="flex flex-col gap-2">
+                {FOOTER_LINKS.legal.map((link) => (
                   <Link
                     key={link.name}
                     href={link.path}
@@ -262,6 +294,24 @@ const Footer: React.FC = () => {
                     )}
                   </button>
                 </div>
+                {/* RGPD consent checkbox */}
+                <label className="flex items-start gap-3 cursor-pointer text-left">
+                  <input
+                    type="checkbox"
+                    checked={consentGiven}
+                    onChange={(e) => setConsentGiven(e.target.checked)}
+                    required
+                    disabled={isSubmitting}
+                    className="mt-1 w-4 h-4 flex-shrink-0 accent-gold disabled:opacity-50"
+                  />
+                  <span className="text-slate-500 text-xs leading-relaxed">
+                    J&apos;accepte de recevoir la newsletter Natlaupa et reconnais avoir pris connaissance de la{" "}
+                    <Link href="/politique-de-confidentialite" className="text-gold hover:text-white transition-colors underline">
+                      politique de confidentialité
+                    </Link>
+                    . Désinscription possible à tout moment.
+                  </span>
+                </label>
                 {error && (
                   <p className="text-red-400 text-xs mt-2 text-center">
                     {error}
@@ -303,6 +353,9 @@ const Footer: React.FC = () => {
                 THE ELITES SOLUTIONS
               </span>
             </a>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/30 text-center">
+              NATLAUPA &mdash; SASU au capital de 2&nbsp;000&nbsp;&#8364; &mdash; 901&nbsp;265&nbsp;082 R.C.S. Nanterre &mdash; 29 rue du Pont, 92200 Neuilly-sur-Seine
+            </p>
           </motion.div>
         </div>
       </div>

@@ -90,6 +90,7 @@ export default function BecomeAngel() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [showStickyButton, setShowStickyButton] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -114,6 +115,12 @@ export default function BecomeAngel() {
     setIsSubmitting(true);
     setFormError(null);
 
+    if (!consentGiven) {
+      setFormError("Veuillez accepter le traitement de vos données pour continuer.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await fetch(`${API_URL}/angel-applications`, {
         method: "POST",
@@ -127,6 +134,7 @@ export default function BecomeAngel() {
       }
 
       setFormSubmitted(true);
+      setConsentGiven(false);
       setFormData({
         firstName: "",
         lastName: "",
@@ -152,6 +160,12 @@ export default function BecomeAngel() {
     e.preventDefault();
     setIsSubmitting(true);
     setFormError(null);
+
+    if (!consentGiven) {
+      setFormError("Veuillez accepter le traitement de vos données pour continuer.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       // First submit to backend
@@ -192,6 +206,7 @@ Submitted via Natlaupa Website`;
 
       // Reset form and close modal
       setFormSubmitted(true);
+      setConsentGiven(false);
       setFormData({
         firstName: "",
         lastName: "",
@@ -880,6 +895,23 @@ Submitted via Natlaupa Website`;
                         the highest standards of professionalism and
                         confidentiality.
                       </p>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        id="consentGiven"
+                        checked={consentGiven}
+                        onChange={(e) => setConsentGiven(e.target.checked)}
+                        className="mt-1 w-4 h-4 flex-shrink-0 accent-gold"
+                      />
+                      <label htmlFor="consentGiven" className="text-slate-400 text-xs leading-relaxed">
+                        J&apos;accepte que mes données soient traitées par Natlaupa pour l&apos;évaluation de ma candidature, conformément à la{" "}
+                        <Link href="/politique-de-confidentialite" className="text-gold hover:text-white transition-colors underline">
+                          Politique de Confidentialité
+                        </Link>
+                        . Ces données seront conservées 2 ans maximum.
+                      </label>
                     </div>
 
                     <div className="flex items-center gap-3">

@@ -35,4 +35,12 @@ export const FOOTER_LINKS = {
     { name: "For Hotels", path: "/for-hotels" },
     { name: "Become an Angel", path: "/become-angel" },
   ],
+  legal: [
+    { name: "Mentions Légales", path: "/mentions-legales" },
+    { name: "Politique de Confidentialité", path: "/politique-de-confidentialite" },
+    { name: "CGU", path: "/cgu" },
+    { name: "CGS / CGV", path: "/conditions-generales-service" },
+    { name: "Politique de Cookies", path: "/politique-cookies" },
+    { name: "Médiation", path: "/mediation-consommation" },
+  ],
 };

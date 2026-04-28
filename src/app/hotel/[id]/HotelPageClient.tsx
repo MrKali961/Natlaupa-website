@@ -603,6 +603,13 @@ Submitted via Natlaupa Website`;
                         )}
                       </button>
                     </div>
+                    <p className="text-slate-500 text-xs leading-relaxed mt-3">
+                      Vos données sont traitées par Natlaupa pour traiter votre demande, conformément à notre{" "}
+                      <Link href="/politique-de-confidentialite" className="text-gold hover:text-white transition-colors underline">
+                        Politique de Confidentialité
+                      </Link>
+                      . Vous disposez d&apos;un droit d&apos;accès, de rectification et de suppression de vos données.
+                    </p>
                   </form>
                 </>
               )}

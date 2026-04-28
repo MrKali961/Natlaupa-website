@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, CheckCircle, Loader2 } from "lucide-react";
 import Footer from "@/components/Footer";
@@ -201,6 +202,18 @@ export default function Contact() {
                     </span>
                   </label>
                 </div>
+                <p className="text-slate-500 text-xs leading-relaxed">
+                  Vos données sont traitées par Natlaupa pour répondre à votre
+                  demande, conformément à notre{" "}
+                  <Link
+                    href="/politique-de-confidentialite"
+                    className="text-gold hover:text-white transition-colors underline"
+                  >
+                    Politique de Confidentialité
+                  </Link>
+                  . Vous disposez d&apos;un droit d&apos;accès, de rectification
+                  et de suppression de vos données.
+                </p>
                 <button
                   type="submit"
                   disabled={isSubmitting}

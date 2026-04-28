@@ -315,6 +315,78 @@ export default function About() {
           </div>
         </section>
 
+        {/* Comment ça marche — French Code de la Consommation L121-2 compliance */}
+        <section className="py-24 px-4 bg-black/20">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-4"
+            >
+              <span className="text-gold text-sm font-medium tracking-widest uppercase">Notre Service</span>
+              <h2 className="font-serif text-4xl md:text-5xl text-white mt-3 mb-4">
+                Comment fonctionne Natlaupa
+              </h2>
+              <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                Une plateforme à double entrée — pour les voyageurs comme pour les hôtels.
+              </p>
+            </motion.div>
+
+            {/* Client placeholder note */}
+            <div className="max-w-3xl mx-auto mb-12 bg-yellow-500/10 border border-yellow-500/30 rounded p-3 text-yellow-300 text-xs">
+              ⚠️ Le client doit préciser ici le modèle tarifaire exact (gratuit pour les voyageurs ? commission ? abonnement hôtel ?) avant mise en ligne.
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Pour les voyageurs */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0 }}
+                className="bg-midnight/50 border border-white/5 rounded-lg p-8 hover:border-gold/30 transition-colors duration-500"
+              >
+                <p className="text-gold text-xs font-medium tracking-widest uppercase mb-4">Pour les voyageurs</p>
+                <h3 className="font-serif text-xl text-white mb-4">Accès exclusif &amp; conseils personnalisés</h3>
+                <p className="text-slate-400 leading-relaxed text-sm">
+                  Accédez à une sélection exclusive d&apos;hôtels de luxe, bénéficiez de conseils personnalisés et de tarifs avantageux négociés par nos experts. <span className="text-yellow-400/80">[TODO : Gratuit / Commission incluse / autre — à préciser]</span>
+                </p>
+              </motion.div>
+
+              {/* Pour les hôtels */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.15 }}
+                className="bg-midnight/50 border border-white/5 rounded-lg p-8 hover:border-gold/30 transition-colors duration-500"
+              >
+                <p className="text-gold text-xs font-medium tracking-widest uppercase mb-4">Pour les hôtels</p>
+                <h3 className="font-serif text-xl text-white mb-4">Visibilité &amp; clientèle haut de gamme</h3>
+                <p className="text-slate-400 leading-relaxed text-sm">
+                  Rejoignez notre réseau de partenaires et bénéficiez d&apos;une visibilité auprès d&apos;une clientèle haut de gamme. <span className="text-yellow-400/80">[TODO : Abonnement / Commission / autre — à préciser]</span>
+                </p>
+              </motion.div>
+
+              {/* Le Club Angel */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="bg-midnight/50 border border-white/5 rounded-lg p-8 hover:border-gold/30 transition-colors duration-500"
+              >
+                <p className="text-gold text-xs font-medium tracking-widest uppercase mb-4">Le Club Angel</p>
+                <h3 className="font-serif text-xl text-white mb-4">Programme exclusif — 60&nbsp;€/an</h3>
+                <p className="text-slate-400 leading-relaxed text-sm">
+                  Un programme exclusif pour les professionnels de l&apos;hôtellerie à 60&nbsp;€/an, donnant accès à un réseau de mentors, partenaires et opportunités de collaboration.
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
         {/* Three Promises */}
         <section className="py-24 px-4">
           <div className="max-w-6xl mx-auto">

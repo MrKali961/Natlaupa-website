@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cookie, Shield, BarChart3, Sparkles, X, Check, Settings } from 'lucide-react';
+import Link from 'next/link';
 
 interface ConsentState {
   essential: boolean;
@@ -146,7 +147,10 @@ const CookieConsentBanner: React.FC = () => {
                         </div>
                         <p className="text-slate-400 text-sm leading-relaxed">
                           We use cookies to enhance your browsing experience and provide personalized
-                          hotel recommendations. Choose your preferences below.
+                          hotel recommendations. Choose your preferences below or{' '}
+                          <Link href="/politique-cookies" className="text-gold hover:text-white transition-colors underline">
+                            learn more about our cookie policy
+                          </Link>.
                         </p>
                       </div>
 

@@ -714,6 +714,16 @@ Submitted via Natlaupa Website`;
                         )}
                       </button>
                     </div>
+                    <p className="text-slate-500 text-xs leading-relaxed mt-3">
+                      Vos coordonnées sont traitées par Natlaupa pour traiter votre demande de partenariat, conformément à notre{" "}
+                      <Link
+                        href="/politique-de-confidentialite"
+                        className="text-gold hover:text-white transition-colors underline"
+                      >
+                        Politique de Confidentialité
+                      </Link>
+                      . Vous pouvez exercer vos droits à tout moment en nous contactant.
+                    </p>
                   </form>
                 </>
               )}
