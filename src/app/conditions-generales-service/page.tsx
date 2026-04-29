@@ -259,28 +259,53 @@ export default function ConditionsGeneralesService() {
             {/* 13. Médiation de la consommation */}
             <section>
               <h2 className="font-serif text-2xl text-white mb-4">13. Médiation de la consommation</h2>
-              <div className="border border-gold/20 rounded-sm p-6 bg-gold/5">
+              <div className="border border-white/10 rounded-sm p-6 bg-white/5 space-y-4">
                 <p className="text-gold text-xs uppercase tracking-widest mb-3">
                   Conformément à l&apos;article L616-1 du Code de la consommation
                 </p>
-                <p className="text-slate-300">
+                <p className="text-slate-300 mb-4">
                   En cas de litige non résolu après réclamation écrite adressée à NATLAUPA, le
-                  consommateur peut saisir gratuitement le médiateur de la consommation compétent.
-                  NATLAUPA est en cours d&apos;adhésion à un dispositif de médiation agréé. Les coordonnées
-                  du médiateur seront publiées sur cette page dès l&apos;adhésion effective.
+                  consommateur peut saisir gratuitement le médiateur de la consommation compétent :
                 </p>
-                <p className="text-slate-400 text-sm mt-4">
-                  Le consommateur peut également recourir à la plateforme de résolution en ligne des
-                  litiges de la Commission Européenne :{" "}
-                  <a
-                    href="https://ec.europa.eu/consumers/odr"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gold hover:text-white transition-colors underline"
-                  >
-                    https://ec.europa.eu/consumers/odr
-                  </a>
-                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-gold text-xs uppercase tracking-widest mb-1">Nom</p>
+                    <p className="text-white font-medium">Philippe GARNIER</p>
+                  </div>
+                  <div>
+                    <p className="text-gold text-xs uppercase tracking-widest mb-1">Qualité</p>
+                    <p className="text-white font-medium">Médiateur</p>
+                  </div>
+                  <div>
+                    <p className="text-gold text-xs uppercase tracking-widest mb-1">Email</p>
+                    <p className="text-white font-medium">
+                      <a href="mailto:bussy.garnier@orange.fr" className="text-gold hover:text-white transition-colors underline">
+                        bussy.garnier@orange.fr
+                      </a>
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gold text-xs uppercase tracking-widest mb-1">Téléphone</p>
+                    <p className="text-white font-medium">
+                      <a href="tel:+33614208571" className="text-gold hover:text-white transition-colors">
+                        06 14 20 85 71
+                      </a>
+                    </p>
+                  </div>
+                </div>
+                <div className="border-t border-white/10 pt-4">
+                  <p className="text-slate-400 text-sm">
+                    La saisine est gratuite pour le consommateur. Le consommateur peut également recourir à la plateforme de résolution en ligne des litiges de la Commission Européenne :{" "}
+                    <a
+                      href="https://ec.europa.eu/consumers/odr"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gold hover:text-white transition-colors underline"
+                    >
+                      https://ec.europa.eu/consumers/odr
+                    </a>
+                  </p>
+                </div>
               </div>
             </section>
 

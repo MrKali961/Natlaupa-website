@@ -63,21 +63,38 @@ export default function MediationConsommation() {
               <h2 className="font-serif text-2xl text-white mb-4">
                 Médiateur compétent
               </h2>
-              <div className="border border-amber-500/30 rounded p-6 bg-amber-500/10 space-y-3">
-                <div className="flex items-start gap-3">
-                  <span className="text-amber-300 text-xl flex-shrink-0">⚠️</span>
-                  <div className="flex-1">
-                    <p className="text-amber-300 font-semibold mb-2">
-                      Adhésion en cours
+              <div className="border border-white/10 rounded p-6 bg-white/5 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-gold text-xs uppercase tracking-widest mb-1">Nom</p>
+                    <p className="text-white font-medium">Philippe GARNIER</p>
+                  </div>
+                  <div>
+                    <p className="text-gold text-xs uppercase tracking-widest mb-1">Qualité</p>
+                    <p className="text-white font-medium">Médiateur</p>
+                  </div>
+                  <div>
+                    <p className="text-gold text-xs uppercase tracking-widest mb-1">Email</p>
+                    <p className="text-white font-medium">
+                      <a href="mailto:bussy.garnier@orange.fr" className="text-gold hover:text-white transition-colors underline">
+                        bussy.garnier@orange.fr
+                      </a>
                     </p>
-                    <p className="text-amber-200/80 text-sm leading-relaxed">
-                      NATLAUPA est actuellement en cours d'adhésion à un dispositif de médiation de la consommation agréé. Les coordonnées complètes du médiateur compétent (nom, adresse, site internet, modalités de saisine) seront publiées sur cette page dès l'adhésion effective.
+                  </div>
+                  <div>
+                    <p className="text-gold text-xs uppercase tracking-widest mb-1">Téléphone</p>
+                    <p className="text-white font-medium">
+                      <a href="tel:+33614208571" className="text-gold hover:text-white transition-colors">
+                        06 14 20 85 71
+                      </a>
                     </p>
                   </div>
                 </div>
-                <p className="text-amber-200/70 text-xs italic">
-                  Organismes de médiation agréés consultables sur le site de la CNIL et sur le registre officiel : <a href="https://www.economie.gouv.fr" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:text-white transition-colors underline">www.economie.gouv.fr</a>
-                </p>
+                <div className="border-t border-white/10 pt-4">
+                  <p className="text-slate-400 text-sm">
+                    La saisine du médiateur est gratuite pour le consommateur. Elle doit être effectuée dans un délai d&apos;un an à compter de la réclamation écrite adressée à NATLAUPA.
+                  </p>
+                </div>
               </div>
             </section>
 
