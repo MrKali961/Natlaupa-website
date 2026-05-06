@@ -6,7 +6,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, firstName, lastName } = body;
+    const { email, firstName, lastName, consent } = body;
 
     // Validate email
     if (!email) {
@@ -25,6 +25,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate consent
+    if (consent !== true) {
+      return NextResponse.json(
+        { error: 'Consent is required to subscribe' },
+        { status: 400 }
+      );
+    }
+
     // Forward to server API
     const response = await fetch(`${API_URL}/newsletters/subscribe`, {
       method: 'POST',
@@ -33,6 +41,7 @@ export async function POST(request: NextRequest) {
         email,
         firstName: firstName || undefined,
         lastName: lastName || undefined,
+        consent: true,
       }),
     });
 

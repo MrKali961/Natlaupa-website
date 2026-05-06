@@ -42,6 +42,7 @@ const Footer: React.FC = () => {
           email,
           firstName: firstName || undefined,
           lastName: lastName || undefined,
+          consent: true,
         }),
       });
 
