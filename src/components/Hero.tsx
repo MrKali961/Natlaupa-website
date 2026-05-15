@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, ChevronUp, FolderOpen } from 'lucide-react';
 import LatestOfferStrip from '@/components/LatestOfferStrip';
 
 interface GalleryHotel {
@@ -18,6 +18,8 @@ interface GalleryHotel {
 const Hero: React.FC = () => {
   const [latestHotels, setLatestHotels] = useState<GalleryHotel[]>([]);
   const [isGalleryLoading, setIsGalleryLoading] = useState(true);
+  const [isFolderOpen, setIsFolderOpen] = useState(false);
+  const folderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch('/api/hotels/latest')
@@ -42,6 +44,17 @@ const Hero: React.FC = () => {
       .catch(() => {})
       .finally(() => setIsGalleryLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!isFolderOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (folderRef.current && !folderRef.current.contains(e.target as Node)) {
+        setIsFolderOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isFolderOpen]);
 
   const handleScrollDown = () => {
     if ((window as any).lenis) {
@@ -110,9 +123,9 @@ const Hero: React.FC = () => {
         </motion.button>
       </div>
 
-      {/* Hotel Gallery — grid divides space into exact thirds, no overflow possible */}
+      {/* Mobile gallery — grid at bottom, hidden on desktop */}
       {showGallery && (
-        <div className="relative z-10 flex-shrink-0 px-4 pb-12 md:pb-14">
+        <div className="relative z-10 flex-shrink-0 px-4 pb-12 md:pb-14 lg:hidden">
           <div className="grid grid-cols-3 gap-2 sm:gap-3 max-w-[480px] mx-auto">
             {isGalleryLoading
               ? [0, 1, 2].map(i => (
@@ -149,6 +162,82 @@ const Hero: React.FC = () => {
                   </motion.div>
                 ))}
           </div>
+        </div>
+      )}
+
+      {/* Desktop folder widget — lower-left corner, hidden on mobile */}
+      {showGallery && (
+        <div
+          ref={folderRef}
+          className="hidden lg:block absolute bottom-14 left-6 xl:left-10 z-20"
+        >
+          {/* Cards — slide upward on open */}
+          <AnimatePresence>
+            {isFolderOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 14 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="flex gap-2 mb-2"
+              >
+                {isGalleryLoading
+                  ? [0, 1, 2].map(i => (
+                      <div key={i} className="w-[110px] h-[147px] bg-white/5 animate-pulse flex-shrink-0" />
+                    ))
+                  : latestHotels.map((hotel, i) => (
+                      <motion.div
+                        key={hotel.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.07, duration: 0.22, ease: 'easeOut' }}
+                        whileHover={{ scale: 1.04, y: -3 }}
+                        className="relative w-[110px] h-[147px] overflow-hidden border border-white/10 hover:border-gold/50 transition-colors duration-300 flex-shrink-0"
+                      >
+                        <Link href={`/hotel/${hotel.slug}`} className="block w-full h-full">
+                          <img
+                            src={hotel.imageUrl}
+                            alt={hotel.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://picsum.photos/300/400';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-2">
+                            <div className="text-white text-[9px] font-semibold tracking-wide truncate leading-tight">
+                              {hotel.name}
+                            </div>
+                            <div className="text-white/50 text-[8px] mt-0.5 truncate">
+                              {[hotel.city, hotel.country].filter(Boolean).join(', ')}
+                            </div>
+                          </div>
+                        </Link>
+                      </motion.div>
+                    ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Folder tab */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.6, ease: 'easeOut' }}
+            onClick={() => setIsFolderOpen(v => !v)}
+            className="flex items-center gap-2.5 px-4 py-2.5 bg-black/50 backdrop-blur-md border border-white/10 hover:border-gold/30 hover:bg-black/70 transition-all duration-300 group"
+          >
+            <FolderOpen size={13} className="text-white/40 group-hover:text-gold/70 transition-colors duration-300" />
+            <span className="text-white/60 text-[10px] uppercase tracking-[0.15em] font-semibold group-hover:text-white/90 transition-colors duration-300">
+              Latest Hotels
+            </span>
+            <motion.div
+              animate={{ rotate: isFolderOpen ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ChevronUp size={11} className="text-white/30 group-hover:text-gold/60 transition-colors duration-300" />
+            </motion.div>
+          </motion.button>
         </div>
       )}
 
