@@ -230,11 +230,16 @@ section {
   100% { transform: translateX(-50%); }
 }
 
-@media (min-width: 1024px) {
-  .hero-marquee-track {
-    animation: marquee 40s linear infinite;
-    will-change: transform;
-  }
+/* Continuous infinite loop on every viewport. The track renders the
+   hotel group twice and animates 0 → -50%, so one group scrolls out
+   exactly as its duplicate scrolls in — perfectly seamless. */
+.hero-marquee-track {
+  animation: marquee 40s linear infinite;
+  will-change: transform;
+}
+
+/* Pause on hover (hover-capable pointers only — no effect on touch) */
+@media (hover: hover) and (pointer: fine) {
   .hero-marquee-viewport:hover .hero-marquee-track {
     animation-play-state: paused;
   }

@@ -77,12 +77,12 @@ const HeroLatestHotels: React.FC = () => {
       </div>
 
       {/* Track viewport:
-          mobile  → native swipe + scroll-snap (no auto motion)
-          desktop → seamless auto-pan marquee, pauses on hover
-          reduced-motion → no auto-pan, manual scroll instead */}
+          all viewports → seamless infinite auto-pan marquee
+          hover-capable → pauses on hover
+          reduced-motion → no auto-pan, native swipe + scroll-snap instead */}
       <div
-        className="hero-marquee-viewport relative w-full overflow-x-auto snap-x snap-mandatory
-                   lg:overflow-hidden lg:snap-none lg:motion-reduce:overflow-x-auto
+        className="hero-marquee-viewport relative w-full overflow-hidden
+                   motion-reduce:overflow-x-auto motion-reduce:snap-x motion-reduce:snap-mandatory
                    [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
         <div className="hero-marquee-track flex w-max gap-3 px-5 md:px-8">
