@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import CustomScrollbar from '@/components/CustomScrollbar';
 import StructuredData from '@/components/StructuredData';
 
 const inter = Inter({
@@ -153,6 +154,7 @@ export default function RootLayout({
           </div>
           <CookieConsentBanner />
           <WhatsAppButton />
+          <CustomScrollbar />
         </SmoothScrollProvider>
       </body>
     </html>
