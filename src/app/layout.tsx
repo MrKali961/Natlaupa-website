@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import Navbar from '@/components/Navbar';
+import LatestOfferStrip from '@/components/LatestOfferStrip';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
 import WhatsAppButton from '@/components/WhatsAppButton';
@@ -148,6 +149,7 @@ export default function RootLayout({
       <body className="flex flex-col min-h-screen bg-deepBlue text-slate-100 font-sans selection:bg-gold selection:text-deepBlue overflow-x-hidden">
         <StructuredData />
         <SmoothScrollProvider>
+          <LatestOfferStrip />
           <Navbar />
           <div className="flex-grow">
             {children}

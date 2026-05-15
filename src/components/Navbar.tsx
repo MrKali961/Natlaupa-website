@@ -194,7 +194,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${navbarClasses}`}>
+    <nav className={`fixed top-10 left-0 w-full z-50 transition-all duration-500 ${navbarClasses}`}>
       <div className="max-w-[95%] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center relative">
 

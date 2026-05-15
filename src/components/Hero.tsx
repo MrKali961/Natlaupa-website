@@ -2,7 +2,6 @@
 
 import React, { useRef } from 'react';
 import { motion, useScroll } from 'framer-motion';
-import LatestOfferStrip from '@/components/LatestOfferStrip';
 import HeroLatestHotels from '@/components/HeroLatestHotels';
 import HeroBackground from '@/components/hero/HeroBackground';
 import HeroHeadline from '@/components/hero/HeroHeadline';
@@ -72,10 +71,8 @@ const Hero: React.FC = () => {
         </motion.button>
       </div>
 
-      {/* Latest hotels — unified responsive filmstrip, sits above the offer strip */}
+      {/* Latest hotels — unified responsive filmstrip */}
       <HeroLatestHotels />
-
-      <LatestOfferStrip />
     </section>
   );
 };
