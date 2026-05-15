@@ -136,14 +136,13 @@ const ConciergePrompt: React.FC<ConciergePromptProps> = ({ onScrollToGate }) => 
         />
         <button
           type="submit"
-          aria-label={
-            query.trim().length < 2 ? 'Explore offers' : 'Search'
-          }
-          className="flex-shrink-0 w-9 h-9 md:w-10 md:h-10 rounded-full
-                     flex items-center justify-center text-black
-                     bg-gold hover:bg-softGold transition-colors duration-300"
+          aria-label={query.trim().length < 2 ? 'Explore offers' : 'Search'}
+          className="flex-shrink-0 rounded-full px-5 py-2 md:px-7 md:py-2.5
+                     bg-white text-zinc-900 font-sans text-[11px] md:text-xs
+                     font-semibold uppercase tracking-[0.15em]
+                     hover:bg-gold hover:text-black transition-colors duration-300"
         >
-          <span className="text-base leading-none">→</span>
+          Explore
         </button>
       </form>
 

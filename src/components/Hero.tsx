@@ -35,40 +35,19 @@ const Hero: React.FC = () => {
       <HeroBackground progress={scrollYProgress} />
 
       {/* Center content — grows to fill available space */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center items-center text-center px-4 md:px-0 min-h-0">
+      <div className="relative z-10 flex-1 flex flex-col justify-end items-center text-center px-4 md:px-0 min-h-0 pb-6 md:pb-8">
         <HeroHeadline />
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          className="text-sm md:text-lg text-zinc-300 max-w-xs md:max-w-2xl font-light tracking-wide mb-4 md:mb-6 leading-relaxed"
-        >
-          Exclusive hotel rates, privileged upgrades, curated amenities.
-        </motion.p>
+        <ConciergePrompt onScrollToGate={handleScrollDown} />
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-xs md:text-sm text-zinc-400 max-w-xs md:max-w-2xl font-light tracking-widest mb-6 md:mb-8 uppercase"
+          className="text-xs md:text-sm text-zinc-400 max-w-xs md:max-w-2xl font-light tracking-widest uppercase"
         >
           24/7 Concierge Support
         </motion.p>
-
-        <ConciergePrompt onScrollToGate={handleScrollDown} />
-
-        <motion.button
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ delay: 0.65 }}
-          onClick={handleScrollDown}
-          className="px-8 py-3 md:px-10 md:py-4 bg-white text-zinc-900 rounded-full font-sans text-xs md:text-sm font-semibold uppercase tracking-[0.15em] hover:bg-gold hover:text-black transition-all duration-300 shadow-2xl shadow-black/20"
-        >
-          Explore Offers
-        </motion.button>
       </div>
 
       {/* Latest hotels — unified responsive filmstrip */}

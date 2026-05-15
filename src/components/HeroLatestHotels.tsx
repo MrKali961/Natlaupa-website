@@ -64,7 +64,7 @@ const HeroLatestHotels: React.FC = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7, duration: 0.7, ease: 'easeOut' }}
-      className="relative z-20 w-full flex-shrink-0 pb-12"
+      className="relative z-20 w-full flex-shrink-0 pb-4"
     >
       {/* Header — hairline + gold label, matched to LatestOfferStrip */}
       <div className="flex items-center gap-3 px-5 md:px-8 mb-3">
@@ -90,14 +90,14 @@ const HeroLatestHotels: React.FC = () => {
             ? [0, 1, 2, 3, 4, 5].map(i => (
                 <div
                   key={i}
-                  className="h-[155px] sm:h-[175px] lg:h-[195px] aspect-[3/4] flex-shrink-0 bg-white/5 animate-pulse"
+                  className="h-[155px] sm:h-[175px] lg:h-[195px] aspect-[4/3] flex-shrink-0 bg-white/5 animate-pulse"
                 />
               ))
             : [...loopHotels, ...loopHotels].map((hotel, i) => (
                 <div
                   key={`${hotel.id}-${i}`}
                   aria-hidden={i >= loopHotels.length}
-                  className="group/card relative h-[155px] sm:h-[175px] lg:h-[195px] aspect-[3/4]
+                  className="group/card relative h-[155px] sm:h-[175px] lg:h-[195px] aspect-[4/3]
                              flex-shrink-0 snap-start overflow-hidden border border-white/10
                              hover:border-gold/50 transition-colors duration-300"
                 >
