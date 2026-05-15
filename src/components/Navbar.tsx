@@ -133,6 +133,7 @@ const Navbar: React.FC = () => {
               width={85}
               height={85}
               className="object-contain transition-opacity duration-300"
+              style={{ height: 'auto' }}
               priority
             />
           </Link>
