@@ -26,7 +26,7 @@ const HeroLatestHotels: React.FC = () => {
         const raw = data.data?.items || data.data?.hotels || data.data || [];
         const items = Array.isArray(raw) ? raw : [];
         setLatestHotels(
-          items.slice(0, 6).map((h: Record<string, unknown>) => ({
+          items.slice(0, 10).map((h: Record<string, unknown>) => ({
             id: h.id as string,
             name: h.name as string,
             slug: h.slug as string,
@@ -90,14 +90,14 @@ const HeroLatestHotels: React.FC = () => {
             ? [0, 1, 2, 3, 4, 5].map(i => (
                 <div
                   key={i}
-                  className="h-[155px] sm:h-[175px] lg:h-[195px] aspect-[4/3] flex-shrink-0 bg-white/5 animate-pulse"
+                  className="h-[155px] sm:h-[175px] lg:h-[195px] aspect-[3/4] flex-shrink-0 bg-white/5 animate-pulse"
                 />
               ))
             : [...loopHotels, ...loopHotels].map((hotel, i) => (
                 <div
                   key={`${hotel.id}-${i}`}
                   aria-hidden={i >= loopHotels.length}
-                  className="group/card relative h-[155px] sm:h-[175px] lg:h-[195px] aspect-[4/3]
+                  className="group/card relative h-[155px] sm:h-[175px] lg:h-[195px] aspect-[3/4]
                              flex-shrink-0 snap-start overflow-hidden border border-white/10
                              hover:border-gold/50 transition-colors duration-300"
                 >

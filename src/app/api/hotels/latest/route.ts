@@ -5,7 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1
 export async function GET(request: NextRequest) {
   try {
     // Try date-sorted endpoint first
-    const response = await fetch(`${API_URL}/hotels?limit=3&sortBy=createdAt&sortOrder=desc`, {
+    const response = await fetch(`${API_URL}/hotels?limit=10&sortBy=createdAt&sortOrder=desc`, {
       headers: { 'Content-Type': 'application/json' },
       next: { revalidate: 300 },
     });
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fallback to trending hotels
-    const fallback = await fetch(`${API_URL}/hotels/trending?limit=3`, {
+    const fallback = await fetch(`${API_URL}/hotels/trending?limit=10`, {
       headers: { 'Content-Type': 'application/json' },
       next: { revalidate: 300 },
     });
