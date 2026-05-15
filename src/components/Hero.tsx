@@ -34,8 +34,8 @@ const Hero: React.FC = () => {
     >
       <HeroBackground progress={scrollYProgress} />
 
-      {/* Center content — grows to fill available space */}
-      <div className="relative z-10 flex-1 flex flex-col justify-end items-center text-center px-4 md:px-0 min-h-0 pb-6 md:pb-8">
+      {/* Center content — vertically centered in the space above the filmstrip */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center items-center text-center px-4 md:px-0 min-h-0">
         <HeroHeadline />
 
         <ConciergePrompt onScrollToGate={handleScrollDown} />
