@@ -110,46 +110,45 @@ const Hero: React.FC = () => {
         </motion.button>
       </div>
 
-      {/* Hotel Gallery — fixed height row, never overlaps content */}
+      {/* Hotel Gallery — grid divides space into exact thirds, no overflow possible */}
       {showGallery && (
-        <div className="relative z-10 flex justify-center items-end gap-2 sm:gap-3 px-4 pb-12 md:pb-14 flex-shrink-0">
-          {isGalleryLoading
-            ? [0, 1, 2].map(i => (
-                <div
-                  key={i}
-                  className="w-[28vw] max-w-[150px] min-w-[80px] h-[18vw] max-h-[190px] min-h-[100px] bg-white/5 animate-pulse flex-shrink-0"
-                />
-              ))
-            : latestHotels.map((hotel, i) => (
-                <motion.div
-                  key={hotel.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 + i * 0.2, duration: 0.6, ease: 'easeOut' }}
-                  whileHover={{ scale: 1.03 }}
-                  className="relative w-[28vw] max-w-[150px] min-w-[80px] h-[18vw] max-h-[190px] min-h-[100px] overflow-hidden flex-shrink-0 border border-transparent hover:border-gold/50 transition-colors duration-300"
-                >
-                  <Link href={`/hotel/${hotel.slug}`} className="block w-full h-full">
-                    <img
-                      src={hotel.imageUrl}
-                      alt={hotel.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://picsum.photos/300/400';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-1.5 md:p-2.5">
-                      <div className="text-white text-[9px] sm:text-[10px] md:text-xs font-semibold tracking-wide truncate">
-                        {hotel.name}
+        <div className="relative z-10 flex-shrink-0 px-4 pb-12 md:pb-14">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 max-w-[480px] mx-auto">
+            {isGalleryLoading
+              ? [0, 1, 2].map(i => (
+                  <div key={i} className="aspect-[3/4] bg-white/5 animate-pulse" />
+                ))
+              : latestHotels.map((hotel, i) => (
+                  <motion.div
+                    key={hotel.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 + i * 0.2, duration: 0.6, ease: 'easeOut' }}
+                    whileHover={{ scale: 1.03 }}
+                    className="relative aspect-[3/4] overflow-hidden border border-transparent hover:border-gold/50 transition-colors duration-300"
+                  >
+                    <Link href={`/hotel/${hotel.slug}`} className="block w-full h-full">
+                      <img
+                        src={hotel.imageUrl}
+                        alt={hotel.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://picsum.photos/300/400';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-1.5 md:p-2.5">
+                        <div className="text-white text-[9px] sm:text-[10px] md:text-xs font-semibold tracking-wide truncate">
+                          {hotel.name}
+                        </div>
+                        <div className="text-white/50 text-[8px] sm:text-[9px] md:text-[10px] mt-0.5 truncate">
+                          {[hotel.city, hotel.country].filter(Boolean).join(', ')}
+                        </div>
                       </div>
-                      <div className="text-white/50 text-[8px] sm:text-[9px] md:text-[10px] mt-0.5 truncate">
-                        {[hotel.city, hotel.country].filter(Boolean).join(', ')}
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
+                    </Link>
+                  </motion.div>
+                ))}
+          </div>
         </div>
       )}
 
