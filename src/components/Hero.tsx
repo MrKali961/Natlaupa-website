@@ -54,7 +54,10 @@ const Hero: React.FC = () => {
   const showGallery = isGalleryLoading || latestHotels.length > 0;
 
   return (
-    <section className="relative w-full overflow-hidden bg-deepBlue" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
+    <section
+      className="relative w-full overflow-hidden bg-deepBlue flex flex-col"
+      style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
+    >
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
@@ -65,9 +68,8 @@ const Hero: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4 md:px-0">
-
+      {/* Center content — grows to fill available space */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center items-center text-center px-4 md:px-0 min-h-0">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -81,7 +83,7 @@ const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="text-sm md:text-lg text-zinc-300 max-w-xs md:max-w-2xl font-light tracking-wide mb-10 md:mb-12 leading-relaxed"
+          className="text-sm md:text-lg text-zinc-300 max-w-xs md:max-w-2xl font-light tracking-wide mb-4 md:mb-6 leading-relaxed"
         >
           Exclusive hotel rates, privileged upgrades, curated amenities.
         </motion.p>
@@ -90,7 +92,7 @@ const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-xs md:text-sm text-zinc-400 max-w-xs md:max-w-2xl font-light tracking-widest mb-10 md:mb-12 uppercase"
+          className="text-xs md:text-sm text-zinc-400 max-w-xs md:max-w-2xl font-light tracking-widest mb-6 md:mb-10 uppercase"
         >
           24/7 Concierge Support
         </motion.p>
@@ -108,14 +110,14 @@ const Hero: React.FC = () => {
         </motion.button>
       </div>
 
-      {/* Latest Hotels Gallery */}
+      {/* Hotel Gallery — fixed height row, never overlaps content */}
       {showGallery && (
-        <div className="absolute bottom-16 md:bottom-20 left-0 right-0 z-10 flex justify-center gap-2 md:gap-3 px-4 pointer-events-none">
+        <div className="relative z-10 flex justify-center items-end gap-2 sm:gap-3 px-4 pb-12 md:pb-14 flex-shrink-0">
           {isGalleryLoading
             ? [0, 1, 2].map(i => (
                 <div
                   key={i}
-                  className="w-[110px] md:w-[150px] h-[150px] md:h-[200px] bg-white/5 animate-pulse flex-shrink-0"
+                  className="w-[28vw] max-w-[150px] min-w-[80px] h-[18vw] max-h-[190px] min-h-[100px] bg-white/5 animate-pulse flex-shrink-0"
                 />
               ))
             : latestHotels.map((hotel, i) => (
@@ -125,7 +127,7 @@ const Hero: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 + i * 0.2, duration: 0.6, ease: 'easeOut' }}
                   whileHover={{ scale: 1.03 }}
-                  className="relative w-[110px] md:w-[150px] h-[150px] md:h-[200px] overflow-hidden flex-shrink-0 border border-transparent hover:border-gold/50 transition-colors duration-300 pointer-events-auto"
+                  className="relative w-[28vw] max-w-[150px] min-w-[80px] h-[18vw] max-h-[190px] min-h-[100px] overflow-hidden flex-shrink-0 border border-transparent hover:border-gold/50 transition-colors duration-300"
                 >
                   <Link href={`/hotel/${hotel.slug}`} className="block w-full h-full">
                     <img
@@ -137,11 +139,11 @@ const Hero: React.FC = () => {
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-2 md:p-3">
-                      <div className="text-white text-[10px] md:text-xs font-semibold tracking-wide truncate">
+                    <div className="absolute bottom-0 left-0 right-0 p-1.5 md:p-2.5">
+                      <div className="text-white text-[9px] sm:text-[10px] md:text-xs font-semibold tracking-wide truncate">
                         {hotel.name}
                       </div>
-                      <div className="text-white/50 text-[9px] md:text-[10px] mt-0.5 truncate">
+                      <div className="text-white/50 text-[8px] sm:text-[9px] md:text-[10px] mt-0.5 truncate">
                         {[hotel.city, hotel.country].filter(Boolean).join(', ')}
                       </div>
                     </div>
@@ -151,16 +153,17 @@ const Hero: React.FC = () => {
         </div>
       )}
 
-      <LatestOfferStrip />
-
+      {/* Scroll indicator — above the offer strip */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, y: [0, 10, 0] }}
         transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
-        className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex justify-center text-white/30 z-30"
+        className="absolute bottom-12 md:bottom-14 left-1/2 -translate-x-1/2 text-white/20 z-20 pointer-events-none hidden lg:flex"
       >
-        <ChevronDown size={28} strokeWidth={1} />
+        <ChevronDown size={24} strokeWidth={1} />
       </motion.div>
+
+      <LatestOfferStrip />
     </section>
   );
 };
