@@ -1,96 +1,43 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, FolderOpen } from 'lucide-react';
+import React, { useRef } from 'react';
+import { motion, useScroll } from 'framer-motion';
 import LatestOfferStrip from '@/components/LatestOfferStrip';
-
-interface GalleryHotel {
-  id: string;
-  name: string;
-  slug: string;
-  city: string;
-  country: string;
-  imageUrl: string;
-}
+import HeroLatestHotels from '@/components/HeroLatestHotels';
+import HeroBackground from '@/components/hero/HeroBackground';
+import HeroHeadline from '@/components/hero/HeroHeadline';
+import ConciergePrompt from '@/components/hero/ConciergePrompt';
 
 const Hero: React.FC = () => {
-  const [latestHotels, setLatestHotels] = useState<GalleryHotel[]>([]);
-  const [isGalleryLoading, setIsGalleryLoading] = useState(true);
-  const [isFolderOpen, setIsFolderOpen] = useState(false);
-  const folderRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    fetch('/api/hotels/latest')
-      .then(r => r.json())
-      .then(data => {
-        const raw = data.data?.items || data.data?.hotels || data.data || [];
-        const items = Array.isArray(raw) ? raw : [];
-        setLatestHotels(
-          items.slice(0, 3).map((h: Record<string, unknown>) => ({
-            id: h.id as string,
-            name: h.name as string,
-            slug: h.slug as string,
-            city: (h.city as string) || '',
-            country: (h.country as string) || ((h.destination as { country?: string })?.country) || '',
-            imageUrl:
-              (h.thumbnailImage as string) ||
-              ((h.images as { url: string }[])?.[0]?.url) ||
-              'https://picsum.photos/300/400',
-          }))
-        );
-      })
-      .catch(() => {})
-      .finally(() => setIsGalleryLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (!isFolderOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (folderRef.current && !folderRef.current.contains(e.target as Node)) {
-        setIsFolderOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isFolderOpen]);
+  // 0 at rest → 1 as the hero scrolls out toward the experience-selector gate.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
 
   const handleScrollDown = () => {
     if ((window as any).lenis) {
       (window as any).lenis.scrollTo('#experience-selector', { duration: 1.5 });
     } else {
-      document.getElementById('experience-selector')?.scrollIntoView({ behavior: 'smooth' });
+      document
+        .getElementById('experience-selector')
+        ?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  const showGallery = isGalleryLoading || latestHotels.length > 0;
-
   return (
     <section
+      ref={sectionRef}
       className="relative w-full overflow-hidden bg-deepBlue flex flex-col"
       style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
     >
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=3540&auto=format&fit=crop"
-          alt="Luxury Landscape"
-          className="w-full h-full object-cover grayscale contrast-125 brightness-75"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
-      </div>
+      <HeroBackground progress={scrollYProgress} />
 
       {/* Center content — grows to fill available space */}
       <div className="relative z-10 flex-1 flex flex-col justify-center items-center text-center px-4 md:px-0 min-h-0">
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
-          className="font-serif text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-white mb-6 tracking-tight leading-tight"
-        >
-          You travel, We handle everything
-        </motion.h1>
+        <HeroHeadline />
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -105,17 +52,19 @@ const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-xs md:text-sm text-zinc-400 max-w-xs md:max-w-2xl font-light tracking-widest mb-6 md:mb-10 uppercase"
+          className="text-xs md:text-sm text-zinc-400 max-w-xs md:max-w-2xl font-light tracking-widest mb-6 md:mb-8 uppercase"
         >
           24/7 Concierge Support
         </motion.p>
+
+        <ConciergePrompt onScrollToGate={handleScrollDown} />
 
         <motion.button
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.65 }}
           onClick={handleScrollDown}
           className="px-8 py-3 md:px-10 md:py-4 bg-white text-zinc-900 rounded-full font-sans text-xs md:text-sm font-semibold uppercase tracking-[0.15em] hover:bg-gold hover:text-black transition-all duration-300 shadow-2xl shadow-black/20"
         >
@@ -123,133 +72,8 @@ const Hero: React.FC = () => {
         </motion.button>
       </div>
 
-      {/* Mobile gallery — grid at bottom, hidden on desktop */}
-      {showGallery && (
-        <div className="relative z-10 flex-shrink-0 px-4 pb-12 md:pb-14 lg:hidden">
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 max-w-[480px] mx-auto">
-            {isGalleryLoading
-              ? [0, 1, 2].map(i => (
-                  <div key={i} className="aspect-[3/4] bg-white/5 animate-pulse" />
-                ))
-              : latestHotels.map((hotel, i) => (
-                  <motion.div
-                    key={hotel.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 + i * 0.2, duration: 0.6, ease: 'easeOut' }}
-                    whileHover={{ scale: 1.03 }}
-                    className="relative aspect-[3/4] overflow-hidden border border-transparent hover:border-gold/50 transition-colors duration-300"
-                  >
-                    <Link href={`/hotel/${hotel.slug}`} className="block w-full h-full">
-                      <img
-                        src={hotel.imageUrl}
-                        alt={hotel.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://picsum.photos/300/400';
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-1.5 md:p-2.5">
-                        <div className="text-white text-[9px] sm:text-[10px] md:text-xs font-semibold tracking-wide truncate">
-                          {hotel.name}
-                        </div>
-                        <div className="text-white/50 text-[8px] sm:text-[9px] md:text-[10px] mt-0.5 truncate">
-                          {[hotel.city, hotel.country].filter(Boolean).join(', ')}
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-          </div>
-        </div>
-      )}
-
-      {/* Desktop folder widget — lower-left corner, hidden on mobile */}
-      {showGallery && (
-        <div
-          ref={folderRef}
-          className="hidden lg:block absolute bottom-14 left-6 xl:left-10 z-20"
-        >
-          {/* Cards — slide upward on open */}
-          <AnimatePresence>
-            {isFolderOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 14 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
-                className="flex gap-2 mb-2"
-              >
-                {isGalleryLoading
-                  ? [0, 1, 2].map(i => (
-                      <div key={i} className="w-[110px] h-[147px] bg-white/5 animate-pulse flex-shrink-0" />
-                    ))
-                  : latestHotels.map((hotel, i) => (
-                      <motion.div
-                        key={hotel.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.07, duration: 0.22, ease: 'easeOut' }}
-                        whileHover={{ scale: 1.04, y: -3 }}
-                        className="relative w-[110px] h-[147px] overflow-hidden border border-white/10 hover:border-gold/50 transition-colors duration-300 flex-shrink-0"
-                      >
-                        <Link href={`/hotel/${hotel.slug}`} className="block w-full h-full">
-                          <img
-                            src={hotel.imageUrl}
-                            alt={hotel.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://picsum.photos/300/400';
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-2">
-                            <div className="text-white text-[9px] font-semibold tracking-wide truncate leading-tight">
-                              {hotel.name}
-                            </div>
-                            <div className="text-white/50 text-[8px] mt-0.5 truncate">
-                              {[hotel.city, hotel.country].filter(Boolean).join(', ')}
-                            </div>
-                          </div>
-                        </Link>
-                      </motion.div>
-                    ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Folder tab */}
-          <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.6, ease: 'easeOut' }}
-            onClick={() => setIsFolderOpen(v => !v)}
-            className="flex items-center gap-2.5 px-4 py-2.5 bg-black/50 backdrop-blur-md border border-white/10 hover:border-gold/30 hover:bg-black/70 transition-all duration-300 group"
-          >
-            <FolderOpen size={13} className="text-white/40 group-hover:text-gold/70 transition-colors duration-300" />
-            <span className="text-white/60 text-[10px] uppercase tracking-[0.15em] font-semibold group-hover:text-white/90 transition-colors duration-300">
-              Latest Hotels
-            </span>
-            <motion.div
-              animate={{ rotate: isFolderOpen ? 180 : 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <ChevronUp size={11} className="text-white/30 group-hover:text-gold/60 transition-colors duration-300" />
-            </motion.div>
-          </motion.button>
-        </div>
-      )}
-
-      {/* Scroll indicator — above the offer strip */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, y: [0, 10, 0] }}
-        transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
-        className="absolute bottom-12 md:bottom-14 left-1/2 -translate-x-1/2 text-white/20 z-20 pointer-events-none hidden lg:flex"
-      >
-        <ChevronDown size={24} strokeWidth={1} />
-      </motion.div>
+      {/* Latest hotels — unified responsive filmstrip, sits above the offer strip */}
+      <HeroLatestHotels />
 
       <LatestOfferStrip />
     </section>

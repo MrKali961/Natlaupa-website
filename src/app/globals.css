@@ -223,3 +223,25 @@ section {
     opacity: 1;
   }
 }
+
+/* Hero "Latest Hotels" filmstrip marquee */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@media (min-width: 1024px) {
+  .hero-marquee-track {
+    animation: marquee 40s linear infinite;
+    will-change: transform;
+  }
+  .hero-marquee-viewport:hover .hero-marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-marquee-track {
+    animation: none;
+  }
+}
