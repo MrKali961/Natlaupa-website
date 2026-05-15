@@ -144,7 +144,7 @@ const Navbar: React.FC = () => {
               <Link
                 key={link.name}
                 href={link.path}
-                className={`text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 ${
+                className={`text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 py-[14px] inline-flex items-center ${
                   pathname === link.path ? 'text-gold' : 'text-white/70 hover:text-white'
                 }`}
               >
@@ -157,7 +157,7 @@ const Navbar: React.FC = () => {
           <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
             <Link
               href="/for-hotels"
-              className={`text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 ${
+              className={`text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 py-[14px] inline-flex items-center ${
                 pathname === '/for-hotels' ? 'text-gold' : 'text-white/70 hover:text-white'
               }`}
             >
@@ -165,7 +165,7 @@ const Navbar: React.FC = () => {
             </Link>
             <Link
               href="/become-angel"
-              className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 bg-gold text-deepBlue hover:bg-gold/90 transition-all duration-300"
+              className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-[14px] bg-gold text-deepBlue hover:bg-gold/90 transition-all duration-300"
             >
               Join The Club
             </Link>
