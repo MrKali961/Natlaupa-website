@@ -1,12 +1,12 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Become an Angel',
+  title: 'Join the Private Club',
   description: 'Join Natlaupa\'s exclusive ambassador program. Earn rewards, get VIP access, and help others discover extraordinary luxury stays.',
   openGraph: {
-    title: 'Become a Natlaupa Angel | Ambassador Program',
+    title: 'Join the Natlaupa Private Club | Ambassador Program',
     description: 'Join Natlaupa\'s exclusive ambassador program. Earn rewards, get VIP access, and help others discover extraordinary luxury stays.',
-    url: 'https://www.natlaupa.com/become-angel',
+    url: 'https://www.natlaupa.com/join-the-private-club',
     siteName: 'Natlaupa',
     type: 'website',
     locale: 'en_US',
@@ -15,22 +15,22 @@ export const metadata: Metadata = {
         url: 'https://www.natlaupa.com/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Become a Natlaupa Angel - Ambassador Program',
+        alt: 'Join the Natlaupa Private Club - Ambassador Program',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Become a Natlaupa Angel | Ambassador Program',
+    title: 'Join the Natlaupa Private Club | Ambassador Program',
     description: 'Join Natlaupa\'s exclusive ambassador program. Earn rewards, get VIP access, and help others discover extraordinary luxury stays.',
     images: ['https://www.natlaupa.com/opengraph-image'],
   },
   alternates: {
-    canonical: 'https://www.natlaupa.com/become-angel',
+    canonical: 'https://www.natlaupa.com/join-the-private-club',
   },
 };
 
-export default function BecomeAngelLayout({
+export default function JoinThePrivateClubLayout({
   children,
 }: {
   children: React.ReactNode;

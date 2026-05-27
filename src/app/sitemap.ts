@@ -101,13 +101,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/for-hotels`,
+      url: `${BASE_URL}/hospitality`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
-      url: `${BASE_URL}/become-angel`,
+      url: `${BASE_URL}/join-the-private-club`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.7,

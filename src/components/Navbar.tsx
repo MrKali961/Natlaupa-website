@@ -301,18 +301,18 @@ const Navbar: React.FC = () => {
             </div>
 
             <Link
-              href="/for-hotels"
+              href="/hospitality"
               className={`text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 py-4 inline-flex items-center ${
-                pathname === '/for-hotels' ? 'text-gold' : 'text-white/70 hover:text-white'
+                pathname === '/hospitality' ? 'text-gold' : 'text-white/70 hover:text-white'
               }`}
             >
-              For Hotels
+              Hospitality
             </Link>
             <Link
-              href="/become-angel"
+              href="/join-the-private-club"
               className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-4 bg-gold text-deepBlue hover:bg-gold/90 transition-all duration-300"
             >
-              Join The Club
+              Join the Private Club
             </Link>
           </div>
 
@@ -422,18 +422,18 @@ const Navbar: React.FC = () => {
             <div className="w-16 h-px bg-gold/30 mx-auto my-4" />
 
             <Link
-              href="/for-hotels"
+              href="/hospitality"
               onClick={closeMobileMenu}
               className="font-serif text-2xl text-white/70 hover:text-gold transition-colors"
             >
-              For Hotels
+              Hospitality
             </Link>
             <Link
-              href="/become-angel"
+              href="/join-the-private-club"
               onClick={closeMobileMenu}
               className="font-serif text-2xl text-gold hover:text-white transition-colors"
             >
-              Join The Club
+              Join the Private Club
             </Link>
           </div>
         </motion.div>

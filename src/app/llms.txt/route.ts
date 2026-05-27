@@ -106,11 +106,11 @@ export async function GET() {
   // Core pages
   lines.push('## Main Pages');
   lines.push('');
-  lines.push(`- [Home](${BASE_URL}): Landing page with AI-powered mood matcher, experience selector, and curated hotel recommendations`);
+  lines.push(`- [Private Travel](${BASE_URL}): Landing page with AI-powered mood matcher, experience selector, and curated hotel recommendations`);
   lines.push(`- [About](${BASE_URL}/about): Our story, mission, and the team behind Natlaupa`);
   lines.push(`- [Contact](${BASE_URL}/contact): Reach our concierge team — available 24/7 for luxury travel inquiries`);
-  lines.push(`- [For Hotels](${BASE_URL}/for-hotels): Partnership program for hotels and resorts to join the Natlaupa network`);
-  lines.push(`- [Become an Angel](${BASE_URL}/become-angel): Ambassador program — earn rewards and VIP access by referring travelers`);
+  lines.push(`- [Hospitality](${BASE_URL}/hospitality): Partnership program for hotels and resorts to join the Natlaupa network`);
+  lines.push(`- [Join the Private Club](${BASE_URL}/join-the-private-club): Ambassador program — earn rewards and VIP access by referring travelers`);
   lines.push(`- [Blog](${BASE_URL}/blog): Travel guides, hotel reviews, and luxury lifestyle articles`);
   lines.push(`- [Offers](${BASE_URL}/offers): Curated travel experiences and exclusive hotel packages`);
   lines.push(`- [Destinations](${BASE_URL}/destinations): Browse luxury hotels by destination`);

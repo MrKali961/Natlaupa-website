@@ -29,11 +29,11 @@ const VIEWPORTS = {
 };
 
 const PAGES_TO_AUDIT: PageConfig[] = [
-  { name: 'Home', path: '/', folder: 'home', sections: ['hero', 'trending', 'experience', 'value-props', 'footer'] },
+  { name: 'Private Travel', path: '/', folder: 'home', sections: ['hero', 'trending', 'experience', 'value-props', 'footer'] },
   { name: 'About', path: '/about', folder: 'about', sections: ['hero', 'content', 'map', 'footer'] },
   { name: 'Contact', path: '/contact', folder: 'contact', sections: ['form', 'info', 'footer'] },
-  { name: 'Become Angel', path: '/become-angel', folder: 'become-angel', sections: ['hero', 'benefits', 'form', 'footer'] },
-  { name: 'For Hotels', path: '/for-hotels', folder: 'for-hotels', sections: ['hero', 'benefits', 'form', 'footer'] },
+  { name: 'Join the Private Club', path: '/join-the-private-club', folder: 'join-the-private-club', sections: ['hero', 'benefits', 'form', 'footer'] },
+  { name: 'Hospitality', path: '/hospitality', folder: 'hospitality', sections: ['hero', 'benefits', 'form', 'footer'] },
   { name: 'Countries List', path: '/countries', folder: 'countries', sections: ['header', 'list', 'footer'] },
   { name: 'Country Detail - Japan', path: '/countries/japan', folder: 'countries', sections: ['header', 'hotels', 'footer'] },
   { name: 'Offers List', path: '/offers', folder: 'offers', sections: ['header', 'list', 'footer'] },

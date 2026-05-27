@@ -14,7 +14,7 @@ export interface MapDestination {
 export const MAP_DESTINATIONS: MapDestination[] = [];
 
 export const NAV_LINKS = [
-  { name: "Home", path: "/" },
+  { name: "Private Travel", path: "/" },
   { name: "About Us", path: "/about" },
   { name: "Contact", path: "/contact" },
 ];
@@ -32,8 +32,8 @@ export const FOOTER_LINKS = {
     { name: "Contact", path: "/contact" },
   ],
   programs: [
-    { name: "For Hotels", path: "/for-hotels" },
-    { name: "Become an Angel", path: "/become-angel" },
+    { name: "Hospitality", path: "/hospitality" },
+    { name: "Join the Private Club", path: "/join-the-private-club" },
   ],
   legal: [
     { name: "Mentions Légales", path: "/mentions-legales" },

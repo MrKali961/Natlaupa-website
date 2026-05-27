@@ -84,7 +84,7 @@ const seniorAngels = [
   }
 ];
 
-export default function BecomeAngel() {
+export default function JoinThePrivateClub() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

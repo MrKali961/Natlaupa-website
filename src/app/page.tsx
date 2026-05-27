@@ -57,8 +57,8 @@ export default function Home() {
             <a href="/blog">Blog</a>
             <a href="/about">About Natlaupa</a>
             <a href="/contact">Contact</a>
-            <a href="/for-hotels">For Hotels</a>
-            <a href="/become-angel">Become an Angel</a>
+            <a href="/hospitality">Hospitality</a>
+            <a href="/join-the-private-club">Join the Private Club</a>
           </nav>
         </div>
       )}

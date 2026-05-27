@@ -73,7 +73,7 @@ interface ErrorResponse {
   details?: ValidationError[];
 }
 
-export default function ForHotels() {
+export default function Hospitality() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -262,7 +262,7 @@ Submitted via Natlaupa Website`;
             >
               <Building2 className="text-gold" size={28} />
               <span className="text-gold text-sm uppercase tracking-[0.3em]">
-                For Hotels
+                Hospitality
               </span>
             </motion.div>
 

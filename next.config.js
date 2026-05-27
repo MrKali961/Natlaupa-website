@@ -27,6 +27,8 @@ const nextConfig = {
       { source: '/terms-of-service',   destination: '/conditions-generales-service',     permanent: true },
       { source: '/cookie-policy',      destination: '/politique-cookies',                permanent: true },
       { source: '/mediation',          destination: '/mediation-consommation',           permanent: true },
+      { source: '/for-hotels',         destination: '/hospitality',                      permanent: true },
+      { source: '/become-angel',       destination: '/join-the-private-club',            permanent: true },
     ];
   },
   async headers() {
