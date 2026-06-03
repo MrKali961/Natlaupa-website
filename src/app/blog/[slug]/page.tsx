@@ -1,30 +1,43 @@
 import type { Metadata } from 'next';
-import { fetchBlogBySlug } from '@/lib/server-api';
-import BlogDetailClient from './BlogDetailClient';
+import { notFound } from 'next/navigation';
+import { fetchBlogFull } from '@/lib/server-api';
+import { authorDisplayName } from '@/lib/blog';
+import BlogArticle from '@/components/blog/BlogArticle';
+import { JsonLd, blogPostingSchema, breadcrumbList } from '@/components/JsonLd';
 
+const BASE_URL = 'https://www.natlaupa.com';
+
+// Consolidated metadata (the old [slug]/layout.tsx duplicate is removed). Canonical
+// + robots are preserved here so the article self-canonicalizes.
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const blog = await fetchBlogBySlug(slug);
+  const blog = await fetchBlogFull(slug);
 
-  if (!blog) return { title: 'Article Not Found' };
+  if (!blog) {
+    return { title: 'Article Not Found', robots: { index: false, follow: true } };
+  }
 
   const title = blog.metaTitle || blog.title;
   const description =
-    blog.metaDescription ||
-    blog.excerpt ||
-    `Read "${blog.title}" by ${blog.author.firstName} ${blog.author.lastName} on the Natlaupa travel blog.`;
-  const image = blog.featuredImage || blog.coverImage;
+    blog.metaDescription || blog.excerpt || `Read "${blog.title}" on the Natlaupa Journal.`;
+  const image = blog.coverImage || blog.featuredImage || undefined;
+  const url = `/blog/${blog.slug}`;
 
   return {
     title,
     description,
+    alternates: { canonical: url },
+    robots: { index: true, follow: true },
     openGraph: {
       title,
       description,
       type: 'article',
-      url: `/blog/${slug}`,
+      url,
+      siteName: 'Natlaupa',
+      locale: 'en_US',
       ...(blog.publishedAt && { publishedTime: blog.publishedAt }),
-      authors: [`${blog.author.firstName} ${blog.author.lastName}`],
+      ...(blog.updatedAt && { modifiedTime: blog.updatedAt }),
+      authors: [authorDisplayName(blog.author)],
       ...(image && { images: [{ url: image, width: 1200, height: 630, alt: title }] }),
     },
     twitter: {
@@ -38,5 +51,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  return <BlogDetailClient slug={slug} />;
+  const blog = await fetchBlogFull(slug);
+  if (!blog) notFound();
+
+  return (
+    <>
+      <JsonLd
+        data={[
+          blogPostingSchema(blog),
+          breadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Journal', path: '/blog' },
+            { name: blog.title, path: `${BASE_URL}/blog/${blog.slug}` },
+          ]),
+        ]}
+      />
+      <BlogArticle blog={blog} />
+    </>
+  );
 }

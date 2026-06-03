@@ -5,6 +5,7 @@ import ResetCookiesButton from "@/components/ResetCookiesButton";
 export const metadata: Metadata = {
   title: "Politique de Cookies | Natlaupa",
   description: "Politique de gestion des cookies et technologies de traçage sur natlaupa.com, conformément aux recommandations de la CNIL.",
+  alternates: { canonical: "/politique-cookies" },
   robots: { index: true, follow: true },
 };
 

@@ -82,28 +82,6 @@ export default function StylesPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-deepBlue flex items-center justify-center">
-        <div className="text-white text-xl">Loading styles...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-deepBlue flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-4xl font-serif mb-4 text-white">Error Loading Styles</h2>
-          <p className="text-slate-400 mb-8">{error}</p>
-          <Link href="/" className="text-gold hover:underline">
-            Return Home
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <main className="bg-deepBlue min-h-screen">
@@ -128,6 +106,14 @@ export default function StylesPage() {
         {/* Styles Grid */}
         <section className="py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
+            {isLoading ? (
+              <div className="py-24 text-center text-slate-400 text-lg">Loading styles…</div>
+            ) : error ? (
+              <div className="py-24 text-center">
+                <p className="text-slate-400 mb-4">{error}</p>
+                <Link href="/" className="text-gold hover:underline">Return Home</Link>
+              </div>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {stylesWithData.map((style, index) => (
                 <motion.div
@@ -179,6 +165,7 @@ export default function StylesPage() {
                 </motion.div>
               ))}
             </div>
+            )}
 
             {/* Pagination */}
             {pagination && pagination.totalPages > 1 && (

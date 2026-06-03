@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { fetchDestinations, fetchHotelsByDestination } from '@/lib/server-api';
 import DestinationPageClient from './DestinationPageClient';
+import { JsonLd, breadcrumbList } from '@/components/JsonLd';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -44,5 +45,16 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
 
   const hotels = await fetchHotelsByDestination(destination.id);
 
-  return <DestinationPageClient destination={destination} hotels={hotels} />;
+  return (
+    <>
+      <JsonLd
+        data={breadcrumbList([
+          { name: 'Home', path: '/' },
+          { name: 'Destinations', path: '/destinations' },
+          { name: destination.name, path: `/destinations/${slug}` },
+        ])}
+      />
+      <DestinationPageClient destination={destination} hotels={hotels} />
+    </>
+  );
 }

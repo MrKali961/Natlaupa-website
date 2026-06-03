@@ -1,6 +1,11 @@
+// Single canonical organization node, referenced by @id elsewhere.
+// TravelAgency is a subtype of Organization, so one node (not two) represents the brand.
+const ORG_ID = 'https://www.natlaupa.com/#organization';
+
 const travelAgencySchema = {
   '@context': 'https://schema.org',
   '@type': 'TravelAgency',
+  '@id': ORG_ID,
   name: 'Natlaupa',
   url: 'https://www.natlaupa.com',
   description:
@@ -14,29 +19,13 @@ const travelAgencySchema = {
   ],
 };
 
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Natlaupa',
-  url: 'https://www.natlaupa.com',
-  logo: 'https://www.natlaupa.com/natlaupa-logo.svg',
-  sameAs: [
-    'https://www.instagram.com/natlaupaa',
-    'https://www.linkedin.com/company/natlaupa/',
-    'https://www.facebook.com/share/1BwjBfNUpp/?mibextid=wwXIfr',
-  ],
-};
-
 const webSiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': 'https://www.natlaupa.com/#website',
   name: 'Natlaupa',
   url: 'https://www.natlaupa.com',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: 'https://www.natlaupa.com/destinations?q={search_term_string}',
-    'query-input': 'required name=search_term_string',
-  },
+  publisher: { '@id': ORG_ID },
 };
 
 export default function StructuredData() {
@@ -45,10 +34,6 @@ export default function StructuredData() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(travelAgencySchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
       <script
         type="application/ld+json"

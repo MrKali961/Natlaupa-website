@@ -354,9 +354,6 @@ const Footer: React.FC = () => {
                 THE ELITES SOLUTIONS
               </span>
             </a>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/30 text-center">
-              NATLAUPA &mdash; SASU au capital de 2&nbsp;000&nbsp;&#8364; &mdash; 901&nbsp;265&nbsp;082 R.C.S. Nanterre &mdash; 29 rue du Pont, 92200 Neuilly-sur-Seine
-            </p>
           </motion.div>
         </div>
       </div>

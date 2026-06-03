@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Médiation de la Consommation | Natlaupa",
   description: "Informations sur la médiation de la consommation pour les litiges avec Natlaupa, conformément à l'article L616-1 du Code de la consommation.",
+  alternates: { canonical: "/mediation-consommation" },
+  robots: { index: true, follow: true },
 };
 
 export default function MediationConsommation() {

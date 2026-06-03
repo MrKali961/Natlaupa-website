@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 const WHATSAPP_NUMBER = "33775743875";
@@ -8,6 +9,11 @@ const WHATSAPP_MESSAGE = "Hello! I'm interested in learning more about Natlaupa'
 
 const WhatsAppButton: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const pathname = usePathname();
+
+  // Blog routes render their own persistent concierge CTA (StickyConciergeCTA).
+  // Suppress this float there so there are not two competing persistent prompts.
+  if (pathname?.startsWith("/blog")) return null;
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 

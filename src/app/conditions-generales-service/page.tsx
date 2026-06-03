@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "CGS — Conditions Générales de Service | Natlaupa",
   description:
     "Conditions Générales de Service (CGS / CGV) de Natlaupa — conciergerie hôtelière, conseil, mise en relation et assistance à la réservation.",
+  alternates: { canonical: "/conditions-generales-service" },
   robots: { index: true, follow: true },
 };
 

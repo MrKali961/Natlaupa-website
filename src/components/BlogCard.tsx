@@ -3,95 +3,169 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowRight, Eye } from 'lucide-react';
-import { Blog } from '@/lib/types';
+import { ArrowRight } from 'lucide-react';
+import { authorDisplayName, readingTimeMinutes, formatBlogDate, normalizeTags } from '@/lib/blog';
 
-interface BlogCardProps {
-  blog: Blog;
-  index?: number;
+/** Minimal shape both the server list (ServerBlogFull) and the client Blog type satisfy. */
+export interface BlogCardData {
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  coverImage?: string | null;
+  author?: { firstName?: string | null; lastName?: string | null } | null;
+  publishedAt?: string | Date | null;
+  createdAt?: string | Date | null;
+  content?: string;
+  tags?: (string | { name: string })[] | null;
 }
 
-export default function BlogCard({ blog, index = 0 }: BlogCardProps) {
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
+interface BlogCardProps {
+  blog: BlogCardData;
+  index?: number;
+  /** featured = full-width editorial treatment (the list view's single pop-out). */
+  featured?: boolean;
+}
 
-  const calculateReadTime = (content: string) => {
-    const wordsPerMinute = 200;
-    const wordCount = content.split(/\s+/).length;
-    const readTime = Math.ceil(wordCount / wordsPerMinute);
-    return readTime;
-  };
+const EASE = [0.25, 1, 0.5, 1] as const;
 
+/**
+ * Typographic cover fallback — a deterministic, brand-consistent title plate used
+ * when an article has no coverImage. Never a gray box or broken-image icon.
+ */
+function TypographicCover({ title, featured }: { title: string; featured?: boolean }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
-    >
-      <Link href={`/blog/${blog.slug}`} className="group/blog block">
-        <div className="relative overflow-hidden rounded-sm border border-white/10 hover-capable:hover:border-gold/30 transition-colors duration-300 h-full flex flex-col">
-          <div className="relative h-64 overflow-hidden">
-            <img
-              src={blog.coverImage || '/placeholder-blog.jpg'}
-              alt={blog.title}
-              className="w-full h-full object-cover grayscale group-hover/blog:grayscale-0 group-hover/blog:scale-110 transition-all duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-transparent to-transparent" />
+    <div className="absolute inset-0 overflow-hidden bg-gradient-to-br from-[#0a0a0a] via-midnight to-black">
+      {/* faint gold wash for depth */}
+      <div className="absolute -inset-[20%] bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.12),transparent_55%)]" />
+      <div className="absolute inset-0 flex items-center justify-center p-6">
+        <span
+          className={`font-serif text-center text-gold/15 leading-[0.95] select-none ${
+            featured ? 'text-6xl md:text-8xl' : 'text-4xl'
+          }`}
+        >
+          {title}
+        </span>
+      </div>
+      {/* gold hairline + monogram, the brand "seal" */}
+      <div className="absolute top-5 left-5 flex items-center gap-3">
+        <span className="block w-8 h-px bg-gold/60" />
+        <span className="text-gold/70 text-[10px] uppercase tracking-[0.3em]">Natlaupa</span>
+      </div>
+    </div>
+  );
+}
 
-            {blog.tags && blog.tags.length > 0 && (
-              <div className="absolute top-4 left-4 bg-gold text-deepBlue px-3 py-1 text-xs font-bold uppercase tracking-widest">
-                {blog.tags[0].name}
-              </div>
+export default function BlogCard({ blog, index = 0, featured = false }: BlogCardProps) {
+  const author = authorDisplayName(blog.author);
+  const date = formatBlogDate(blog.publishedAt ?? blog.createdAt ?? null);
+  const mins = blog.content ? readingTimeMinutes(blog.content) : undefined;
+  const tag = normalizeTags(blog.tags)[0];
+  const hasCover = Boolean(blog.coverImage);
+
+  // ── Featured: full-width editorial unit (single pop-out of the list view) ──
+  if (featured) {
+    return (
+      <motion.article
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, ease: EASE }}
+      >
+        <Link
+          href={`/blog/${blog.slug}`}
+          className="group grid md:grid-cols-2 gap-px overflow-hidden border border-white/10 hover-capable:hover:border-gold/40 transition-colors duration-500 bg-white/[0.02]"
+        >
+          <div className="relative aspect-[16/11] md:aspect-auto md:min-h-[26rem] overflow-hidden">
+            {hasCover ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={blog.coverImage as string}
+                alt={blog.title}
+                className="absolute inset-0 w-full h-full object-cover grayscale-[35%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.2s]"
+              />
+            ) : (
+              <TypographicCover title={blog.title} featured />
             )}
-
-            <div className="absolute top-4 right-4 flex items-center bg-deepBlue/80 backdrop-blur-sm px-2 py-1 rounded-sm">
-              <Eye className="text-gold" size={12} />
-              <span className="ml-1 text-white text-xs font-bold">{blog.viewCount}</span>
-            </div>
           </div>
-
-          <div className="p-6 bg-deepBlue flex-grow flex flex-col">
-            <div className="flex items-center gap-4 text-slate-400 text-xs mb-3">
-              <div className="flex items-center">
-                <Calendar size={12} className="mr-1 text-gold" />
-                <span>{formatDate(blog.publishedAt || blog.createdAt)}</span>
-              </div>
-              <div className="flex items-center">
-                <Clock size={12} className="mr-1 text-gold" />
-                <span>{calculateReadTime(blog.content)} min read</span>
-              </div>
-            </div>
-
-            <h3 className="font-serif text-xl text-white mb-3 group-hover/blog:text-gold transition-colors line-clamp-2">
+          <div className="flex flex-col justify-center p-8 md:p-12 lg:p-16">
+            <span className="text-gold text-[11px] uppercase tracking-[0.35em] mb-6">
+              {tag ?? "Editor's Selection"}
+            </span>
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-white leading-[1.08] mb-5 group-hover:text-gold/90 transition-colors duration-500">
               {blog.title}
-            </h3>
-
-            {blog.excerpt && (
-              <p className="text-slate-400 text-sm mb-4 line-clamp-3 flex-grow">
+            </h2>
+            {blog.excerpt ? (
+              <p className="text-slate-300 font-light leading-relaxed mb-8 max-w-prose line-clamp-3">
                 {blog.excerpt}
               </p>
+            ) : (
+              <div className="mb-8" />
             )}
-
-            <div className="flex items-center justify-between pt-4 border-t border-white/10 mt-auto">
-              <div className="flex items-center">
-                <span className="text-xs text-slate-400">
-                  By <span className="text-gold">{blog.author.firstName} {blog.author.lastName}</span>
-                </span>
-              </div>
-              <div className="flex items-center text-white group-hover/blog:text-gold transition-colors">
-                <span className="text-xs uppercase tracking-widest mr-2">Read More</span>
-                <ArrowRight size={14} className="group-hover/blog:translate-x-1 transition-transform" />
-              </div>
+            <div className="flex items-center gap-4 text-xs text-slate-400">
+              <span className="text-slate-300">{author}</span>
+              {date && <span className="text-slate-600">·</span>}
+              {date && <span>{date}</span>}
+              {mins && <span className="text-slate-600">·</span>}
+              {mins && <span>{mins} min read</span>}
             </div>
+            <span className="mt-8 inline-flex items-center gap-3 text-white text-sm uppercase tracking-[0.2em] group-hover:text-gold transition-colors">
+              Read the story
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </span>
+          </div>
+        </Link>
+      </motion.article>
+    );
+  }
+
+  // ── Standard grid card: ≤3 chunks, whole card is one tap target ──
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: EASE, delay: (index % 3) * 0.08 }}
+      className="h-full"
+    >
+      <Link
+        href={`/blog/${blog.slug}`}
+        className="group flex flex-col h-full overflow-hidden border border-white/10 hover-capable:hover:border-gold/40 transition-colors duration-500 bg-white/[0.02]"
+      >
+        <div className="relative aspect-[3/2] overflow-hidden">
+          {hasCover ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={blog.coverImage as string}
+              alt={blog.title}
+              className="absolute inset-0 w-full h-full object-cover grayscale-[35%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.2s]"
+            />
+          ) : (
+            <TypographicCover title={blog.title} />
+          )}
+          {tag && (
+            <span className="absolute top-4 left-4 bg-deepBlue/70 backdrop-blur-sm text-gold px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em]">
+              {tag}
+            </span>
+          )}
+        </div>
+        <div className="flex flex-col flex-grow p-6">
+          <h3 className="font-serif text-xl md:text-2xl text-white leading-snug mb-3 line-clamp-2 group-hover:text-gold/90 transition-colors duration-500">
+            {blog.title}
+          </h3>
+          {blog.excerpt && (
+            <p className="text-slate-400 text-sm leading-relaxed line-clamp-2 mb-5">{blog.excerpt}</p>
+          )}
+          <div className="mt-auto flex items-center gap-3 text-xs text-slate-500 pt-4 border-t border-white/5">
+            <span className="text-slate-400">{author}</span>
+            {(date || mins) && <span className="text-slate-700">·</span>}
+            <span>{mins ? `${mins} min read` : date}</span>
+            <ArrowRight
+              size={14}
+              className="ml-auto text-slate-500 group-hover:text-gold group-hover:translate-x-1 transition-all"
+            />
           </div>
         </div>
       </Link>
-    </motion.div>
+    </motion.article>
   );
 }

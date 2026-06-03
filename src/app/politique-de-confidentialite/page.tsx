@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Politique de Confidentialité | Natlaupa",
   description: "Politique de confidentialité et de protection des données personnelles de natlaupa.com, conforme au RGPD (Règlement UE 2016/679).",
+  alternates: { canonical: "/politique-de-confidentialite" },
   robots: { index: true, follow: true },
 };
 

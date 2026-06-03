@@ -224,3 +224,47 @@ export interface ServerBlog {
 export async function fetchBlogBySlug(slug: string): Promise<ServerBlog | null> {
   return apiFetch<ServerBlog>(`/blogs/slug/${slug}`);
 }
+
+// Full blog (incl. content) for SERVER-RENDERING the article body + JSON-LD.
+// The article body MUST ship in the initial HTML for SEO, so the detail page
+// fetches this server-side and passes it as a prop (no client-only fetch).
+export interface ServerBlogTag {
+  id?: string;
+  name: string;
+}
+
+export interface ServerBlogFull {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string | null;
+  coverImage?: string | null;
+  featuredImage?: string | null;
+  author?: { id?: string; firstName?: string; lastName?: string; email?: string } | null;
+  status?: string;
+  publishedAt?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  viewCount?: number;
+  tags?: (ServerBlogTag | string)[];
+}
+
+export async function fetchBlogFull(slug: string): Promise<ServerBlogFull | null> {
+  return apiFetch<ServerBlogFull>(`/blogs/slug/${slug}`);
+}
+
+export async function fetchBlogsList(): Promise<ServerBlogFull[]> {
+  const raw = await apiFetch<ServerBlogFull[] | { items?: ServerBlogFull[]; blogs?: ServerBlogFull[] }>(
+    '/blogs/public',
+  );
+  if (Array.isArray(raw)) return raw;
+  if (raw && typeof raw === 'object') {
+    return (raw as { items?: ServerBlogFull[]; blogs?: ServerBlogFull[] }).items
+      || (raw as { items?: ServerBlogFull[]; blogs?: ServerBlogFull[] }).blogs
+      || [];
+  }
+  return [];
+}

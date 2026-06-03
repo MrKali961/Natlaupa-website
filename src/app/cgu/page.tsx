@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "CGU — Conditions Générales d'Utilisation | Natlaupa",
   description: "Conditions Générales d'Utilisation du site et des services Natlaupa, incluant les informations de médiation de la consommation.",
+  alternates: { canonical: "/cgu" },
   robots: { index: true, follow: true },
 };
 

@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Natlaupa — Blog List (/blog) · UX Wireframe v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── Natlaupa brand tokens ─────────────────────────────────────── */
+:root{
+  --deep-900:#06111F; --deep-800:#0A1A2E; --deep-700:#11263C; --deep-600:#1A3147;
+  --gold-500:#C2A24B; --gold-300:#D9C089;
+  --text-100:#F5F2EA; --text-300:#C7D0DA; --text-500:#8493A3;
+  --font-display:"Playfair Display",Georgia,serif;
+  --font-body:"Inter",system-ui,sans-serif;
+  --p-biology:#5BA17B; --p-physics:#5B8FD6; --p-social:#C2A24B; --p-synthesis:#8493A3;
+  --space:clamp(48px,8vw,140px);
+  /* ── Preserved for annotation overlay legibility ── */
+  --ivory-50:#FBF8F1; --ivory-200:#ECE4D4;
+  --ink-900:#1C1A17; --ink-500:#6B655C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font-body);
+  color:var(--text-100);
+  background:var(--deep-800);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  padding-top:72px; /* fixed nav offset */
+}
+h1,h2,h3{font-family:var(--font-display);font-weight:400}
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.eyebrow{
+  font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--gold-500);font-family:var(--font-body);font-weight:500
+}
+
+/* ─── Fixed Navbar ───────────────────────────────────────────────── */
+.site-nav{
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  height:72px;
+  background:rgba(10,26,46,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;
+}
+.site-nav .wrap{
+  width:100%;max-width:1240px;margin:0 auto;
+  padding:0 clamp(20px,5vw,64px);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.site-nav .brand{
+  font-family:var(--font-display);font-size:20px;letter-spacing:.08em;
+  color:var(--text-100);text-decoration:none;
+}
+.site-nav .links{display:flex;gap:32px;font-size:13px;letter-spacing:.04em}
+.site-nav .links a{color:var(--text-300);text-decoration:none;transition:color .2s}
+.site-nav .links a:hover{color:var(--gold-300)}
+.site-nav .links a.active{color:var(--gold-500)}
+.site-nav .cta-nav{
+  font-size:12px;letter-spacing:.08em;padding:10px 22px;
+  background:transparent;border:1px solid var(--gold-500);color:var(--gold-500);
+  cursor:pointer;text-decoration:none;transition:all .28s
+}
+.site-nav .cta-nav:hover{background:var(--gold-500);color:var(--deep-900)}
+
+/* ─── Hero ───────────────────────────────────────────────────────── */
+.blog-hero{
+  padding:clamp(56px,10vw,120px) 0 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  text-align:center;
+}
+.blog-hero .eyebrow{margin-bottom:20px;display:block}
+.blog-hero h1{
+  font-size:clamp(40px,7vw,88px);
+  line-height:1.02;letter-spacing:-.02em;
+  color:var(--text-100);
+  max-width:18ch;margin:0 auto;
+}
+.blog-hero .intro{
+  font-size:clamp(15px,1.4vw,18px);
+  color:var(--text-300);
+  max-width:54ch;margin:20px auto 0;
+  line-height:1.7;
+}
+.hero-peek{
+  margin-top:clamp(36px,5vw,60px);
+  height:clamp(40px,6vw,70px);
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:16px;
+}
+.hero-peek-arrow{
+  width:1px;height:40px;background:var(--gold-500);opacity:.5;
+  position:relative;display:flex;flex-direction:column;align-items:center;
+}
+.hero-peek-label{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-500);margin-bottom:10px;
+}
+
+/* ─── Featured article ───────────────────────────────────────────── */
+.featured-wrap{
+  padding:var(--space) 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.featured-label{
+  display:flex;align-items:center;gap:14px;margin-bottom:clamp(28px,4vw,48px);
+}
+.featured-label .eyebrow{margin:0}
+.featured-label::after{
+  content:'';flex:1;height:1px;background:rgba(255,255,255,.1);
+}
+.featured-card{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:clamp(32px,5vw,80px);
+  align-items:center;
+  text-decoration:none;
+  color:inherit;
+  padding:clamp(32px,4vw,56px);
+  background:var(--deep-700);
+  border:1px solid rgba(255,255,255,.08);
+  border-left:3px solid var(--gold-500);
+  transition:border-color .3s;
+}
+.featured-card:hover{border-left-color:var(--gold-300)}
+.featured-cover{
+  aspect-ratio:16/10;
+  background:linear-gradient(135deg,var(--deep-600) 0%,var(--deep-900) 100%);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+.featured-cover .cover-placeholder{
+  font-family:var(--font-display);
+  font-size:clamp(28px,4vw,52px);
+  font-style:italic;
+  color:var(--gold-500);
+  opacity:.6;
+  text-align:center;
+  padding:24px;
+  line-height:1.2;
+}
+.featured-cover .cover-note{
+  position:absolute;bottom:10px;right:12px;
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-500);
+}
+.featured-body{padding:0}
+.featured-body .category{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold-500);margin-bottom:16px;
+}
+.featured-body h2{
+  font-size:clamp(26px,3.5vw,44px);
+  line-height:1.1;letter-spacing:-.01em;
+  color:var(--text-100);margin-bottom:16px;
+}
+.featured-body .excerpt{
+  font-size:clamp(14px,1.2vw,16px);
+  color:var(--text-300);
+  line-height:1.75;
+  max-width:38ch;margin-bottom:24px;
+}
+.featured-body .meta-line{
+  font-size:12px;color:var(--text-500);
+  display:flex;align-items:center;gap:10px;
+}
+.featured-body .meta-line span+span::before{content:'·';margin-right:10px}
+.featured-read-more{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold-500);margin-top:28px;
+  border-bottom:1px solid rgba(194,162,75,.35);padding-bottom:2px;
+}
+
+/* ─── N=1 note ───────────────────────────────────────────────────── */
+.n1-note{
+  margin:clamp(16px,2vw,24px) 0 0;
+  padding:14px 20px;
+  background:rgba(194,162,75,.07);
+  border:1px dashed rgba(194,162,75,.25);
+  border-radius:2px;
+  font-size:12px;letter-spacing:.01em;color:var(--text-500);
+  line-height:1.6;
+}
+.n1-note strong{color:var(--gold-300)}
+
+/* ─── Filter bar (conditional, ghosted) ─────────────────────────── */
+.filter-section{
+  padding:clamp(32px,4vw,48px) 0 0;
+}
+.filter-bar{
+  display:flex;align-items:center;gap:16px;
+  opacity:.35;pointer-events:none;
+  border:1px solid rgba(255,255,255,.1);
+  padding:14px 20px;
+  background:var(--deep-700);
+}
+.filter-bar .search-box{
+  flex:1;min-width:0;
+  height:36px;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  display:flex;align-items:center;padding:0 14px;gap:8px;
+}
+.filter-bar .search-box span{font-size:13px;color:var(--text-500)}
+.filter-facets{display:flex;gap:8px;flex-wrap:wrap}
+.filter-facet{
+  font-size:11px;letter-spacing:.1em;padding:6px 14px;
+  border:1px solid rgba(255,255,255,.15);color:var(--text-300);
+  text-transform:uppercase;
+}
+.filter-note{
+  margin-top:12px;
+  font-size:11px;letter-spacing:.04em;color:var(--text-500);
+  padding:0 2px;
+}
+
+/* ─── Article grid ───────────────────────────────────────────────── */
+.grid-section{
+  padding:var(--space) 0;
+}
+.grid-heading{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:clamp(28px,4vw,48px);
+}
+.grid-heading .eyebrow{margin:0}
+.grid-heading::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+
+.article-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:clamp(16px,2.5vw,28px);
+}
+.article-card{
+  display:block;text-decoration:none;color:inherit;
+  background:var(--deep-700);
+  border:1px solid rgba(255,255,255,.07);
+  transition:border-color .25s,transform .25s;
+}
+.article-card:hover{border-color:rgba(194,162,75,.35);transform:translateY(-2px)}
+.card-cover{
+  aspect-ratio:16/10;
+  background:linear-gradient(135deg,var(--deep-600) 0%,var(--deep-900) 100%);
+  overflow:hidden;
+  position:relative;
+}
+.card-cover img{width:100%;height:100%;object-fit:cover;display:block}
+/* Typographic / gradient fallback cover */
+.card-cover--fallback{
+  background:linear-gradient(160deg,var(--deep-600) 0%,#0E2040 60%,var(--deep-900) 100%);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+.card-cover--fallback .fallback-title{
+  font-family:var(--font-display);font-style:italic;
+  font-size:clamp(16px,2vw,22px);
+  color:var(--gold-500);opacity:.7;text-align:center;line-height:1.3;
+}
+.card-cover .cover-reserved-note{
+  position:absolute;bottom:8px;right:10px;
+  font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-500);
+}
+.card-body{padding:clamp(16px,2vw,24px)}
+.card-body .card-category{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold-500);margin-bottom:10px;
+}
+.card-body h3{
+  font-family:var(--font-display);
+  font-size:clamp(17px,2vw,22px);
+  line-height:1.2;letter-spacing:-.01em;
+  color:var(--text-100);margin-bottom:10px;
+}
+.card-body .card-meta{
+  font-size:12px;color:var(--text-500);
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+.card-body .card-excerpt{
+  font-size:13px;color:var(--text-300);
+  line-height:1.65;margin-top:10px;
+}
+/* Reveal motion note */
+.grid-motion-note{
+  margin-top:clamp(16px,2vw,24px);
+  padding:12px 18px;
+  border:1px dashed rgba(91,143,214,.3);
+  font-size:11px;color:var(--text-500);letter-spacing:.02em;
+  line-height:1.6;
+}
+
+/* ─── Concierge band ─────────────────────────────────────────────── */
+.concierge-band{
+  padding:clamp(48px,7vw,100px) 0;
+  border-top:1px solid rgba(255,255,255,.08);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.concierge-inner{
+  max-width:660px;margin:0 auto;text-align:center;
+}
+.concierge-inner .eyebrow{margin-bottom:20px;display:block}
+.concierge-inner h2{
+  font-size:clamp(24px,3vw,38px);
+  line-height:1.15;
+  color:var(--text-100);
+  max-width:22ch;margin:0 auto 20px;
+}
+.concierge-inner .body-copy{
+  font-size:clamp(14px,1.2vw,16px);
+  color:var(--text-300);
+  max-width:46ch;margin:0 auto 32px;
+  line-height:1.75;
+}
+.concierge-cta{
+  display:inline-block;
+  font-size:13px;letter-spacing:.08em;
+  padding:16px 36px;
+  border:1px solid var(--gold-500);color:var(--gold-500);
+  text-decoration:none;
+  background:transparent;
+  transition:all .28s;cursor:pointer;
+}
+.concierge-cta:hover{background:var(--gold-500);color:var(--deep-900)}
+.concierge-reassurance{
+  margin-top:14px;
+  font-size:12px;color:var(--text-500);letter-spacing:.02em;
+}
+
+/* ─── Newsletter ─────────────────────────────────────────────────── */
+.newsletter-section{
+  padding:clamp(40px,6vw,80px) 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.newsletter-inner{max-width:520px;margin:0 auto;text-align:center;}
+.newsletter-inner .eyebrow{display:block;margin-bottom:14px}
+.newsletter-inner .nl-body{
+  font-size:clamp(13px,1.1vw,15px);
+  color:var(--text-500);margin-bottom:24px;line-height:1.65;
+}
+.nl-form{display:flex;gap:0;max-width:400px;margin:0 auto}
+.nl-form input[type="email"]{
+  flex:1;min-width:0;
+  height:46px;padding:0 16px;
+  background:var(--deep-700);
+  border:1px solid rgba(255,255,255,.12);
+  border-right:none;
+  color:var(--text-100);font-size:13px;font-family:var(--font-body);
+  outline:none;
+}
+.nl-form input[type="email"]::placeholder{color:var(--text-500)}
+.nl-form button{
+  height:46px;padding:0 24px;
+  background:var(--deep-600);border:1px solid rgba(255,255,255,.12);
+  color:var(--text-300);font-size:12px;letter-spacing:.08em;font-family:var(--font-body);
+  cursor:pointer;white-space:nowrap;
+}
+.nl-consent{
+  margin-top:12px;font-size:11px;color:var(--text-500);
+}
+
+/* ─── Sticky CTA ─────────────────────────────────────────────────── */
+.sticky-cta{
+  position:fixed;
+  bottom:28px;right:28px;
+  z-index:700;
+  opacity:0;pointer-events:none;
+  transition:opacity .4s;
+}
+.sticky-cta.visible{opacity:1;pointer-events:auto}
+.sticky-cta-pill{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:12px 22px;
+  background:var(--deep-700);
+  border:1px solid rgba(194,162,75,.4);
+  color:var(--gold-300);
+  font-size:12px;letter-spacing:.06em;
+  text-decoration:none;
+  box-shadow:0 4px 24px rgba(0,0,0,.4);
+  transition:border-color .25s,background .25s;
+}
+.sticky-cta-pill:hover{background:var(--deep-600);border-color:var(--gold-500)}
+.sticky-cta-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold-500);flex-shrink:0;
+}
+/* Mobile sticky bar */
+@media(max-width:640px){
+  .sticky-cta{
+    bottom:0;left:0;right:0;
+    display:flex;justify-content:center;
+    background:var(--deep-800);
+    border-top:1px solid rgba(194,162,75,.25);
+    padding:10px 20px;
+    height:54px;
+    box-shadow:0 -4px 20px rgba(0,0,0,.3);
+  }
+  .sticky-cta-pill{
+    width:100%;justify-content:center;
+    border:none;background:transparent;box-shadow:none;padding:0;
+    font-size:13px;
+  }
+}
+
+/* ─── Footer placeholder ─────────────────────────────────────────── */
+.site-footer{
+  padding:clamp(40px,5vw,64px) 0 clamp(80px,12vw,120px); /* bottom pad for sticky bar */
+  border-top:1px solid rgba(255,255,255,.06);
+  display:flex;flex-direction:column;gap:32px;
+}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:32px;flex-wrap:wrap}
+.footer-brand{font-family:var(--font-display);font-size:18px;color:var(--text-100)}
+.footer-links{display:flex;gap:24px;font-size:13px}
+.footer-links a{color:var(--text-500);text-decoration:none}
+.footer-bottom{
+  font-size:11px;color:var(--text-500);letter-spacing:.04em;
+  border-top:1px solid rgba(255,255,255,.06);padding-top:20px;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────── */
+@media(max-width:820px){
+  .featured-card{grid-template-columns:1fr}
+  .article-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .article-grid{grid-template-columns:1fr}
+  .filter-facets{display:none}
+}
+
+/* ─── Annotation layer (from template — DO NOT REMOVE) ────────────── */
+#ux-toggle{
+  position:fixed;right:18px;bottom:18px;z-index:9999;
+  font:13px var(--font-body);
+  background:var(--ink-900);color:var(--ivory-50);
+  border:none;padding:11px 16px;cursor:pointer;border-radius:2px;letter-spacing:.03em
+}
+/* Note: on mobile the sticky bar occupies bottom-0; shift toggle up on mobile */
+@media(max-width:640px){
+  #ux-toggle{bottom:70px}
+}
+body.ux-on [data-ux-id]{
+  outline:1.5px dashed rgba(194,162,75,.7);outline-offset:4px;position:relative
+}
+.ux-marker{
+  position:absolute;z-index:9000;transform:translate(-50%,-50%);
+  width:24px;height:24px;border-radius:50%;color:#fff;
+  font:600 12px var(--font-body);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.3)
+}
+#ux-panel{
+  position:fixed;top:0;right:0;width:360px;max-width:88vw;height:100vh;
+  overflow-y:auto;
+  background:var(--ivory-50);
+  border-left:1px solid var(--ivory-200);
+  z-index:9500;padding:24px 22px;display:none;
+  box-shadow:-8px 0 30px rgba(0,0,0,.08)
+}
+body.ux-on #ux-panel{display:block}
+body.ux-on{padding-right:0}
+#ux-panel h3{font-family:var(--font-display);font-size:20px;margin-bottom:4px;color:var(--ink-900)}
+#ux-panel .sub{color:var(--ink-500);font-size:12px;margin-bottom:18px}
+.ux-item{border-top:1px solid var(--ivory-200);padding:14px 0}
+.ux-item .head{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.ux-item .num{
+  width:22px;height:22px;border-radius:50%;color:#fff;
+  font:600 11px var(--font-body);display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.ux-item .sec{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-500)}
+.ux-item .dir{font-size:14px;color:var(--ink-900);margin-bottom:6px}
+.ux-item .meta{font-size:12px;color:var(--ink-500)}
+.ux-item .pill{
+  display:inline-block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 7px;border-radius:10px;color:#fff;margin-right:4px
+}
+.ux-item .conf{float:right;font-size:11px;color:var(--ink-500)}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ FIXED NAVBAR (placeholder) ════════════════ -->
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="/">Natlaupa</a>
+    <div class="links">
+      <a href="/properties">Properties</a>
+      <a href="/places">Places</a>
+      <a href="/blog" class="active">Journal</a>
+      <a href="/about">About</a>
+    </div>
+    <a class="cta-nav" href="/contact">Speak to a concierge</a>
+  </div>
+</nav>
+
+<!-- ════════════════ HERO ════════════════ -->
+<section
+  class="blog-hero"
+  data-ux-id="list-hero-oneglance"
+  data-pillar="biology,physics,social"
+  data-principle="DualProcess,VisualHierarchy,FirstImpressionCredibility,Unity,CoreWebVitals"
+  data-hypothesis="A text-only one-glance hero that reveals the first article above the fold raises scroll-past-hero vs a tall image hero that hides all articles."
+  data-confidence="high"
+  data-metric="scroll_depth_past_hero">
+  <div class="wrap">
+    <span class="eyebrow">The Journal</span>
+    <h1>The Natlaupa<br>Journal</h1>
+    <p class="intro">Field notes for the discerning traveller — properties, places and stays our editors and concierge team have vetted in person.</p>
+    <div class="hero-peek" aria-hidden="true">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <span class="hero-peek-label">Editor's Selection</span>
+        <div class="hero-peek-arrow"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ FEATURED ARTICLE ════════════════ -->
+<section class="featured-wrap">
+  <div class="wrap">
+
+    <div class="featured-label">
+      <span class="eyebrow">Editor's Selection</span>
+    </div>
+
+    <a
+      class="featured-card"
+      href="/blog/riad-of-the-season"
+      data-ux-id="list-featured-primacy-popout"
+      data-pillar="biology,physics,social"
+      data-principle="SerialPosition,VonRestorff,PreAttentive,Fitts,VisualWeight,SocialProof"
+      data-hypothesis="A single isolated featured article in the primacy slot concentrates first fixation and clicks, raising article_open_rate vs a uniform grid."
+      data-confidence="high"
+      data-metric="article_open_rate">
+
+      <div class="featured-cover">
+        <div class="cover-placeholder">Marrakech,<br>in winter light</div>
+        <span class="cover-note">[ cover image or typographic fallback ]</span>
+      </div>
+
+      <div class="featured-body">
+        <div class="category">Properties · Morocco</div>
+        <h2>The Riad That Changed Our Thinking on Marrakech</h2>
+        <p class="excerpt">
+          Twelve rooms, two centuries of tilework, and a chef who sources from the souk at five in the morning. Camille Roux spent four nights and emerged newly converted.
+        </p>
+        <div class="meta-line">
+          <span>Camille Roux</span>
+          <span>8 min read</span>
+          <span>June 2026</span>
+        </div>
+        <span class="featured-read-more">Read the field note &#8594;</span>
+      </div>
+    </a>
+
+    <!-- N=1 suppress-grid note — distinct DOM node, same block -->
+    <div
+      class="n1-note"
+      data-ux-id="list-n1-suppress-grid"
+      data-pillar="biology,social"
+      data-principle="ProcessingFluency,BannerBlindness,Scarcity"
+      data-hypothesis="Suppressing the grid when only one article exists removes empty-cell noise and focuses attention on the single piece, decreasing bounce_rate vs rendering an empty or partially-filled grid."
+      data-confidence="high"
+      data-metric="bounce_rate">
+      <strong>Conditional render rule (n=1):</strong> With only 1 published article, render the featured unit above and stop — suppress the article grid entirely. No empty cells, no duplicates. The grid section appears at <strong>n &ge; 3</strong> articles; filter bar at <strong>n &ge; 7</strong>. This note is a build annotation and does not render in production.
+    </div>
+
+  </div><!-- /wrap -->
+</section>
+
+<!-- ════════════════ FILTER BAR (conditional, ghosted) ════════════════ -->
+<section class="filter-section">
+  <div class="wrap">
+    <div
+      data-ux-id="list-filter-conditional"
+      data-pillar="biology,physics"
+      data-principle="Hick,CognitiveLoad,ResponseTimeThresholds"
+      data-hypothesis="Deferring search/filter until the catalogue reaches ~7 articles prevents choice paralysis on thin catalogues, raising article_open_rate vs rendering facets on sparse content."
+      data-confidence="med"
+      data-metric="article_open_rate">
+      <div class="filter-bar" aria-disabled="true" aria-label="Search and filters — rendered at n≥7 articles">
+        <div class="search-box">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <span>Search field notes&hellip;</span>
+        </div>
+        <div class="filter-facets">
+          <span class="filter-facet">Properties</span>
+          <span class="filter-facet">Places</span>
+          <span class="filter-facet">Stays</span>
+          <span class="filter-facet">All regions</span>
+          <span class="filter-facet">All seasons</span>
+        </div>
+      </div>
+      <p class="filter-note">
+        &#9432; Filter bar renders only at n &ge; 7 articles. Facets capped at 5. Keystroke response target &lt; 100 ms. Shown here as ghosted/disabled for planning purposes.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ ARTICLE GRID ════════════════ -->
+<section class="grid-section">
+  <div class="wrap">
+
+    <div class="grid-heading">
+      <span class="eyebrow">All field notes</span>
+    </div>
+
+    <div
+      class="article-grid"
+      data-ux-id="list-grid-cards"
+      data-pillar="biology,physics"
+      data-principle="Fitts,ProcessingFluency,BannerBlindness,Cowan,CoreWebVitals"
+      data-hypothesis="Whole-card tap targets + reserved aspect-ratio cover boxes + designed coverless fallbacks raise article_open_rate and hold CLS<0.1 vs title-only links and gray placeholders."
+      data-confidence="high"
+      data-metric="article_open_rate">
+
+      <!-- Card 1 — with cover image (placeholder) -->
+      <a class="article-card" href="/blog/aman-bali-season">
+        <div class="card-cover">
+          <!-- <img src="/covers/aman-bali.jpg" alt="Aman Bali terraces at dusk"> -->
+          <div class="card-cover--fallback">
+            <span class="fallback-title">Bali,<br>in the dry season</span>
+          </div>
+          <span class="cover-reserved-note">[ reserved 16/10 — CLS=0 ]</span>
+        </div>
+        <div class="card-body">
+          <div class="card-category">Stays · Indonesia</div>
+          <h3>Aman Bali in the Dry Season: Why June Is the Only Month That Matters</h3>
+          <div class="card-meta">
+            <span>Lena Hartmann · 5 min read</span>
+          </div>
+          <p class="card-excerpt">The terraces are empty before eight. The pool has four. If you've been going in August you've been doing it wrong.</p>
+        </div>
+      </a>
+
+      <!-- Card 2 — with cover image (placeholder) -->
+      <a class="article-card" href="/blog/lisbon-palacio">
+        <div class="card-cover">
+          <div class="card-cover--fallback">
+            <span class="fallback-title">Lisbon,<br>Bairro Alto</span>
+          </div>
+          <span class="cover-reserved-note">[ reserved 16/10 — CLS=0 ]</span>
+        </div>
+        <div class="card-body">
+          <div class="card-category">Properties · Portugal</div>
+          <h3>The Palácio That Predates the Earthquake — and Hasn't Been Renovated Since (Thankfully)</h3>
+          <div class="card-meta">
+            <span>Marcus Leoni · 7 min read</span>
+          </div>
+          <!-- No excerpt: omit cleanly, no placeholder -->
+        </div>
+      </a>
+
+      <!-- Card 3 — typographic/gradient NO-COVER fallback -->
+      <a
+        class="article-card"
+        href="/blog/tokyo-ryokan"
+        data-ux-id="list-card-fallback-cover"
+        data-pillar="biology,physics"
+        data-principle="ProcessingFluency,CoreWebVitals,VonRestorff"
+        data-hypothesis="A deliberate typographic fallback cover (gradient + italic title) is preferable to a broken image or gray box, maintaining visual rhythm and CLS=0 when no cover exists."
+        data-confidence="high"
+        data-metric="article_open_rate">
+        <!-- Intentional fallback: no img, gradient + italic display text -->
+        <div class="card-cover card-cover--fallback" style="background:linear-gradient(150deg,#1A2A3F 0%,#0A1520 100%)">
+          <span class="fallback-title" style="color:var(--gold-300)">Tokyo,<br>off-season</span>
+        </div>
+        <div class="card-body">
+          <div class="card-category">Places · Japan</div>
+          <h3>The Ryokan Protocol: How to Book Without the Waiting List</h3>
+          <div class="card-meta">
+            <span>Soo-Yeon Park · 6 min read</span>
+          </div>
+          <p class="card-excerpt">This card intentionally uses the typographic gradient fallback — no cover image. CLS remains 0 because the aspect-ratio box is reserved.</p>
+        </div>
+      </a>
+
+    </div><!-- /article-grid -->
+
+    <!-- Grid reveal motion note — distinct DOM node -->
+    <div
+      class="grid-motion-note"
+      data-ux-id="list-grid-reveal"
+      data-pillar="physics"
+      data-principle="MotionWithAJob,NaturalEasing,CoreWebVitals"
+      data-hypothesis="Subtle opacity + translateY reveal on card entrance (no scale/spring) communicates load sequence without distracting from editorial content, supporting scroll_depth."
+      data-confidence="med"
+      data-metric="scroll_depth">
+      &#9432; <strong>Grid reveal motion spec:</strong> opacity 0&rarr;1 + translateY 0&rarr;12px (no scale, no spring), 250&ndash;350 ms ease-out, row stagger ~60 ms. Reserved aspect-ratio boxes ensure CLS = 0 even before images load. Entrance deferred until card enters viewport (IntersectionObserver).
+    </div>
+
+  </div><!-- /wrap -->
+</section>
+
+<!-- ════════════════ CONCIERGE BAND ════════════════ -->
+<section
+  class="concierge-band"
+  data-ux-id="list-concierge-band-subordinate"
+  data-pillar="biology,physics,social"
+  data-principle="VonRestorff,VisualWeight,FoggBehaviorModel,Reciprocity,Authority"
+  data-hypothesis="A subordinate concierge band after the grid captures exiting readers without out-massing article targets, adding concierge clicks while holding article_open_rate."
+  data-confidence="med"
+  data-metric="concierge_cta_click_rate">
+  <div class="wrap">
+    <div class="concierge-inner">
+      <span class="eyebrow">The Concierge</span>
+      <h2>Reading is the easy part.</h2>
+      <p class="body-copy">
+        Our concierge has stayed in these places — tell us what you're planning and we'll handle the rest.
+      </p>
+      <a class="concierge-cta" href="/contact">Speak to a concierge</a>
+      <p class="concierge-reassurance">Real people, 24/7. No account, no obligation &mdash; a reply, not a sales pitch.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ NEWSLETTER ════════════════ -->
+<section
+  class="newsletter-section"
+  data-ux-id="list-newsletter-restrained"
+  data-pillar="social"
+  data-principle="Reciprocity,FoggBehaviorModel"
+  data-hypothesis="A single-field email opt-in framed as a gift raises newsletter_signup_rate without modal/popup interruption patterns."
+  data-confidence="low"
+  data-metric="newsletter_signup_rate">
+  <div class="wrap">
+    <div class="newsletter-inner">
+      <span class="eyebrow">The Journal, by email</span>
+      <p class="nl-body">New field notes a few times a month &mdash; only what our editors have vetted in person. No noise.</p>
+      <form class="nl-form" action="#" method="post">
+        <input type="email" name="email" placeholder="your@email.com" autocomplete="email" required>
+        <button type="submit">Subscribe</button>
+      </form>
+      <p class="nl-consent">No pop-ups. Unsubscribe any time. We do not sell your address.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ FOOTER PLACEHOLDER ════════════════ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">Natlaupa</div>
+      <div class="footer-links">
+        <a href="/properties">Properties</a>
+        <a href="/places">Places</a>
+        <a href="/blog">Journal</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Natlaupa. All rights reserved.</span>
+      <span>Newsletter subscription &amp; legal notices placeholder</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════════ STICKY CTA (quiet) ════════════════ -->
+<div
+  class="sticky-cta"
+  id="sticky-cta"
+  data-ux-id="list-sticky-cta-quiet"
+  data-pillar="physics"
+  data-principle="Fitts,CoreWebVitals,MotionWithAJob"
+  data-hypothesis="A persistent quiet concierge affordance (pill desktop / slim bar mobile) entered after hero scroll improves concierge reach without disrupting LCP or CLS."
+  data-confidence="med"
+  data-metric="cls">
+  <a class="sticky-cta-pill" href="/contact">
+    <span class="sticky-cta-dot"></span>
+    Speak to a concierge
+  </a>
+</div>
+
+<!-- ════════════════ ANNOTATION OVERLAY ════════════════ -->
+<button id="ux-toggle" onclick="UX.toggle()">Annotations: off</button>
+<aside id="ux-panel">
+  <h3>UX Scientists &mdash; Rationale</h3>
+  <div class="sub">Every flagged block traces to a named principle and a measurable hypothesis. Natlaupa blog-list v1.</div>
+  <div id="ux-list"></div>
+</aside>
+
+<script>
+// ── Sticky CTA entrance: defer until hero scrolls past viewport ──
+(function(){
+  const cta = document.getElementById('sticky-cta');
+  if(!cta) return;
+  const hero = document.querySelector('[data-ux-id="list-hero-oneglance"]');
+  function check(){
+    if(!hero){ cta.classList.add('visible'); return; }
+    const rect = hero.getBoundingClientRect();
+    if(rect.bottom < 0){ cta.classList.add('visible'); }
+    else { cta.classList.remove('visible'); }
+  }
+  window.addEventListener('scroll', check, {passive:true});
+  check();
+})();
+
+// ── Annotation overlay (verbatim from template, COLORS updated for Natlaupa pillars) ──
+const UX = (function(){
+  const COLORS={
+    biology:'#5BA17B',
+    physics:'#5B8FD6',
+    social:'#C2A24B',
+    synthesis:'#8493A3',
+    brand:'#C2A24B'
+  };
+  function pillarColor(p){return COLORS[(p||'synthesis').split(',')[0].trim()]||COLORS.synthesis;}
+  let on=false;
+  function build(){
+    document.querySelectorAll('.ux-marker').forEach(n=>n.remove());
+    const list=document.getElementById('ux-list'); list.innerHTML='';
+    const nodes=[...document.querySelectorAll('[data-ux-id]')];
+    nodes.forEach((el,i)=>{
+      const n=i+1, color=pillarColor(el.dataset.pillar);
+      const r=el.getBoundingClientRect();
+      const m=document.createElement('div'); m.className='ux-marker'; m.textContent=n;
+      m.style.background=color;
+      m.style.left=(window.scrollX+r.right)+'px';
+      m.style.top=(window.scrollY+r.top)+'px';
+      m.title=el.dataset.uxId||('decision '+n);
+      m.onclick=()=>document.getElementById('ux-row-'+n).scrollIntoView({behavior:'smooth',block:'center'});
+      document.body.appendChild(m);
+      const pills=(el.dataset.pillar||'').split(',').map(p=>p.trim()).filter(Boolean)
+        .map(p=>`<span class="pill" style="background:${COLORS[p]||COLORS.synthesis}">${p}</span>`).join('');
+      const row=document.createElement('div'); row.className='ux-item'; row.id='ux-row-'+n;
+      row.innerHTML=`
+        <div class="head">
+          <span class="num" style="background:${color}">${n}</span>
+          <span class="sec">${el.dataset.uxId||el.tagName||'block'}</span>
+          <span class="conf">conf: ${el.dataset.confidence||'—'}</span>
+        </div>
+        <div class="dir">${pills} ${el.dataset.principle||''}</div>
+        <div class="meta">${el.dataset.hypothesis||''}</div>
+        <div class="meta" style="margin-top:6px">metric: <strong>${el.dataset.metric||'—'}</strong></div>`;
+      list.appendChild(row);
+    });
+  }
+  function toggle(force){
+    on=(force===undefined)?!on:force;
+    document.body.classList.toggle('ux-on',on);
+    document.getElementById('ux-toggle').textContent='Annotations: '+(on?'on':'off');
+    if(on) build();
+  }
+  window.addEventListener('resize',()=>{if(on)build();});
+  window.addEventListener('scroll',()=>{if(on)build();});
+  // Auto-on for Puppeteer / DesignMind: load with ?annotations=1
+  if(new URLSearchParams(location.search).get('annotations')==='1'){
+    window.addEventListener('load',()=>toggle(true));
+  }
+  return {toggle};
+})();
+</script>
+</body>
+</html>

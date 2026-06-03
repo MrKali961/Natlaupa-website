@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Mentions Légales | Natlaupa",
   description: "Mentions légales obligatoires du site natlaupa.com conformément à la Loi pour la confiance dans l'économie numérique (LCEN).",
+  alternates: { canonical: "/mentions-legales" },
   robots: { index: true, follow: true },
 };
 

@@ -1,0 +1,193 @@
+[
+  {
+    "id": "list-hero-oneglance",
+    "surface": "blog-list",
+    "section": "hero",
+    "pillar": ["biology", "physics", "social"],
+    "principle": [
+      "DualProcess",
+      "VisualHierarchy",
+      "FirstImpressionCredibility",
+      "Unity",
+      "CoreWebVitals"
+    ],
+    "directive": "Render a text-only hero (eyebrow, Playfair H1, single Inter intro line) capped in height so the featured article peeks above the fold. No image, no button, no pop-out in the hero block itself. Target: hero bottom edge lands at ~75–80 vh so the featured card's top edge is visible without scrolling.",
+    "hypothesis": "A text-only one-glance hero that reveals the first article above the fold raises scroll-past-hero vs a tall image hero that hides all articles.",
+    "predicted_direction": "increase",
+    "primary_metric": "scroll_depth_past_hero",
+    "secondary_metrics": ["bounce_rate", "lcp_ms"],
+    "confidence": "high",
+    "status": "proposed"
+  },
+  {
+    "id": "list-featured-primacy-popout",
+    "surface": "blog-list",
+    "section": "featured",
+    "pillar": ["biology", "physics", "social"],
+    "principle": [
+      "SerialPosition",
+      "VonRestorff",
+      "PreAttentive",
+      "Fitts",
+      "VisualWeight",
+      "SocialProof"
+    ],
+    "directive": "Place one full-width featured article immediately below the hero in the primacy slot. Visually deviate it from the grid: large Playfair title, generous whitespace, gold left-border hairline, whole card is a single <a> link target. Label it 'Editor's Selection' (honest curation). Show a real cover image or a deliberate typographic fallback — never a gray placeholder. No 'Trending', view-counts, or engagement metrics in the label.",
+    "hypothesis": "A single isolated featured article in the primacy slot concentrates first fixation and clicks, raising article_open_rate vs a uniform grid.",
+    "predicted_direction": "increase",
+    "primary_metric": "article_open_rate",
+    "secondary_metrics": ["scroll_depth_past_hero", "time_on_page"],
+    "confidence": "high",
+    "status": "proposed"
+  },
+  {
+    "id": "list-n1-suppress-grid",
+    "surface": "blog-list",
+    "section": "featured",
+    "pillar": ["biology", "social"],
+    "principle": [
+      "ProcessingFluency",
+      "BannerBlindness",
+      "Scarcity"
+    ],
+    "directive": "When the published article count n=1, render only the featured unit and suppress the grid section entirely. No empty cells, no duplicate of the featured card in a grid row. Grid section renders at n>=3; filter/search bar renders at n>=7. This is a conditional server-side render decision, not a CSS hide.",
+    "hypothesis": "Suppressing the grid when only one article exists removes empty-cell noise and focuses attention on the single piece, decreasing bounce_rate vs rendering an empty or partially-filled grid.",
+    "predicted_direction": "decrease",
+    "primary_metric": "bounce_rate",
+    "secondary_metrics": ["article_open_rate"],
+    "confidence": "high",
+    "status": "proposed"
+  },
+  {
+    "id": "list-filter-conditional",
+    "surface": "blog-list",
+    "section": "filter",
+    "pillar": ["biology", "physics"],
+    "principle": [
+      "Hick",
+      "CognitiveLoad",
+      "ResponseTimeThresholds"
+    ],
+    "directive": "Render the search input and facet pills only when n>=7 published articles. Cap facets at 5 visible options. Keystroke-to-results feedback must be <100 ms (debounce 150 ms, optimistic local filter). On thin catalogues, omit the filter bar entirely — do not render a disabled/ghosted version in production (the disabled bar in the wireframe is a planning annotation only).",
+    "hypothesis": "Deferring search/filter until the catalogue reaches ~7 articles prevents choice paralysis on thin catalogues, raising article_open_rate vs rendering facets on sparse content.",
+    "predicted_direction": "increase",
+    "primary_metric": "article_open_rate",
+    "secondary_metrics": ["time_to_first_action"],
+    "confidence": "med",
+    "status": "proposed"
+  },
+  {
+    "id": "list-grid-cards",
+    "surface": "blog-list",
+    "section": "grid",
+    "pillar": ["biology", "physics"],
+    "principle": [
+      "Fitts",
+      "ProcessingFluency",
+      "BannerBlindness",
+      "Cowan",
+      "CoreWebVitals"
+    ],
+    "directive": "3-column responsive card grid (2-col at <=820 px, 1-col at <=560 px). Each card: (1) reserved aspect-ratio 16/10 cover box — never allow reflow when image loads (CLS target <0.1); (2) <=3 content chunks: Playfair title + one meta line folding author and read-time ('Camille Roux · 6 min read') + optional 1-line excerpt omitted cleanly when absent; (3) entire card is one <a> tap target with min touch target 48px. No title-only links. No gray placeholder boxes.",
+    "hypothesis": "Whole-card tap targets + reserved aspect-ratio cover boxes + designed coverless fallbacks raise article_open_rate and hold CLS<0.1 vs title-only links and gray placeholders.",
+    "predicted_direction": "increase",
+    "primary_metric": "article_open_rate",
+    "secondary_metrics": ["cls", "scroll_depth"],
+    "confidence": "high",
+    "status": "proposed"
+  },
+  {
+    "id": "list-card-fallback-cover",
+    "surface": "blog-list",
+    "section": "grid",
+    "pillar": ["biology", "physics"],
+    "principle": [
+      "ProcessingFluency",
+      "CoreWebVitals",
+      "VonRestorff"
+    ],
+    "directive": "When a published article has no cover image, render a deliberate typographic fallback: gradient background (deep-600 to deep-900) + italic Playfair Display title text at ~0.7 opacity in gold-300, sized to fill the reserved 16/10 box. This is a designed state, not a missing state. The aspect-ratio box is always reserved so CLS = 0 regardless of cover presence.",
+    "hypothesis": "A deliberate typographic fallback cover maintains visual rhythm and CLS=0 when no cover exists, supporting article_open_rate.",
+    "predicted_direction": "no_change",
+    "primary_metric": "article_open_rate",
+    "secondary_metrics": ["cls"],
+    "confidence": "high",
+    "status": "proposed"
+  },
+  {
+    "id": "list-concierge-band-subordinate",
+    "surface": "blog-list",
+    "section": "concierge",
+    "pillar": ["biology", "physics", "social"],
+    "principle": [
+      "VonRestorff",
+      "VisualWeight",
+      "FoggBehaviorModel",
+      "Reciprocity",
+      "Authority"
+    ],
+    "directive": "Place the concierge CTA band AFTER the article grid (recency position). Render on deep-700 background with restrained outlined CTA button — never a filled/heavy button that competes with article cards. Maintain isolated whitespace above and below. Copy: eyebrow 'THE CONCIERGE', headline 'Reading is the easy part. Our concierge has stayed in these places — tell us what you're planning and we'll handle the rest.', primary CTA 'Speak to a concierge', reassurance line 'Real people, 24/7. No account, no obligation — a reply, not a sales pitch.' The visual mass of this band must be measurably lower than the article card grid above it.",
+    "hypothesis": "A subordinate concierge band after the grid captures exiting readers without out-massing article targets, adding concierge clicks while holding article_open_rate.",
+    "predicted_direction": "increase",
+    "primary_metric": "concierge_cta_click_rate",
+    "secondary_metrics": ["article_open_rate"],
+    "confidence": "med",
+    "arbitration_note": "Social pillar wanted the concierge band higher in the page and louder (filled CTA, earlier placement). Physics and biology capped its visual mass below the article cards and placed it in the recency slot to protect article_open_rate as the primary metric. The concierge band is a secondary conversion path, not the page's purpose.",
+    "status": "proposed"
+  },
+  {
+    "id": "list-newsletter-restrained",
+    "surface": "blog-list",
+    "section": "newsletter",
+    "pillar": ["social"],
+    "principle": [
+      "Reciprocity",
+      "FoggBehaviorModel"
+    ],
+    "directive": "Single email input field framed as a gift: 'The Journal, by email — new field notes a few times a month.' No modal, no popup, no slide-in, no pre-checked consent boxes. Render visually subordinate to both the article grid and the concierge band. No dark-pattern language ('Don't miss out', countdown timers). Explicit privacy reassurance line below the field.",
+    "hypothesis": "A single-field email opt-in framed as a gift raises newsletter_signup_rate without modal/popup interruption patterns.",
+    "predicted_direction": "increase",
+    "primary_metric": "newsletter_signup_rate",
+    "secondary_metrics": ["bounce_rate"],
+    "confidence": "low",
+    "arbitration_note": "Popup and modal newsletter patterns were killed on the ethics floor: they are interruptive, add CLS risk, and conflict with the brand's 'no noise' positioning. The restrained inline form is the only permissible pattern here.",
+    "status": "proposed"
+  },
+  {
+    "id": "list-sticky-cta-quiet",
+    "surface": "blog-list",
+    "section": "sticky",
+    "pillar": ["physics"],
+    "principle": [
+      "Fitts",
+      "CoreWebVitals",
+      "MotionWithAJob"
+    ],
+    "directive": "Persistent quiet concierge affordance: desktop = compact pill bottom-right margin (bottom: 28px, right: 28px); mobile = slim bottom bar (~52–56 px, thumb arc, full-width). Rendered in initial HTML but opacity:0/pointer-events:none until hero scrolls past viewport (IntersectionObserver or scroll listener) to protect LCP and avoid CLS. Reserved body padding-bottom on mobile ensures the last card/footer are never obscured. Must coordinate with any existing site-wide floating WhatsApp button — if WhatsApp button is present, the sticky concierge pill and the WhatsApp button must be unified into one persistent prompt or visually separated with >=16 px gap and distinct icons. Do not stack two competing persistent prompts.",
+    "hypothesis": "A persistent quiet concierge affordance entered after hero scroll improves concierge reach without disrupting LCP or CLS.",
+    "predicted_direction": "no_change",
+    "primary_metric": "cls",
+    "secondary_metrics": ["concierge_cta_click_rate", "lcp_ms"],
+    "confidence": "med",
+    "arbitration_note": "Physics required entrance to be deferred (no load animation) to protect LCP. Ethics floor: no nagging — the pill must be quiet and non-animated after entrance. Existing WhatsApp float on the site means these two persistent prompts must be coordinated in the Next.js build to avoid duplication or z-index conflicts.",
+    "status": "proposed"
+  },
+  {
+    "id": "list-grid-reveal",
+    "surface": "blog-list",
+    "section": "grid",
+    "pillar": ["physics"],
+    "principle": [
+      "MotionWithAJob",
+      "NaturalEasing",
+      "CoreWebVitals"
+    ],
+    "directive": "On card entrance into viewport: animate opacity 0→1 and translateY 12px→0. Duration 250–350 ms, ease-out (no spring, no scale). Row stagger ~60 ms between cards. No scale transforms. Reserved aspect-ratio boxes guarantee CLS = 0 independent of image load state. Trigger via IntersectionObserver (threshold 0.15), not scroll event. Do not animate cards that are already in viewport on initial paint (no entrance animation on first paint).",
+    "hypothesis": "Subtle opacity + translateY reveal on card entrance communicates load sequence without distracting from editorial content, supporting scroll_depth.",
+    "predicted_direction": "increase",
+    "primary_metric": "scroll_depth",
+    "secondary_metrics": ["cls", "article_open_rate"],
+    "confidence": "med",
+    "status": "proposed"
+  }
+]

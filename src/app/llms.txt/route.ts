@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const BASE_URL = 'https://www.natlaupa.com';
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://natlaupa.theelitessolutions.cloud/api/v1';
 
 export const dynamic = 'force-dynamic';
 
