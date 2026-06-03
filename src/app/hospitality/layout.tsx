@@ -1,11 +1,14 @@
 import { Metadata } from 'next';
 
+const DESCRIPTION =
+  'Increase your hotel\'s visibility, direct bookings and commercial performance. Join Natlaupa\'s Founding Hotel Partner Program — strategic advisory, revenue optimization and premium networking. Test for 30 days for 99€, no commitment.';
+
 export const metadata: Metadata = {
-  title: 'Partner With Us',
-  description: 'Join Natlaupa\'s exclusive network of exceptional hotels and resorts. Connect extraordinary properties with travelers who seek nothing but the best.',
+  title: 'Founding Hotel Partner Program',
+  description: DESCRIPTION,
   openGraph: {
-    title: 'Hospitality | Partner With Natlaupa',
-    description: 'Join Natlaupa\'s exclusive network of exceptional hotels and resorts. Connect extraordinary properties with travelers who seek nothing but the best.',
+    title: 'Founding Hotel Partner Program | Natlaupa',
+    description: DESCRIPTION,
     url: 'https://www.natlaupa.com/hospitality',
     siteName: 'Natlaupa',
     type: 'website',
@@ -15,14 +18,14 @@ export const metadata: Metadata = {
         url: 'https://www.natlaupa.com/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Partner With Natlaupa - Hotel Partnership Program',
+        alt: 'Natlaupa Founding Hotel Partner Program',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Hospitality | Partner With Natlaupa',
-    description: 'Join Natlaupa\'s exclusive network of exceptional hotels and resorts. Connect extraordinary properties with travelers who seek nothing but the best.',
+    title: 'Founding Hotel Partner Program | Natlaupa',
+    description: DESCRIPTION,
     images: ['https://www.natlaupa.com/opengraph-image'],
   },
   alternates: {

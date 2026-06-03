@@ -28,6 +28,8 @@ const nextConfig = {
       { source: '/cookie-policy',      destination: '/politique-cookies',                permanent: true },
       { source: '/mediation',          destination: '/mediation-consommation',           permanent: true },
       { source: '/for-hotels',         destination: '/hospitality',                      permanent: true },
+      { source: '/hotel-partner',      destination: '/hospitality',                      permanent: true },
+      { source: '/founding-hotel-partner', destination: '/hospitality',                  permanent: true },
       { source: '/become-angel',       destination: '/join-the-private-club',            permanent: true },
     ];
   },

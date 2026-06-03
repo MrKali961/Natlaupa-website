@@ -77,6 +77,25 @@ export function blogPostingSchema(blog: ServerBlogFull) {
   return schema;
 }
 
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+/** FAQPage for a page whose Q&A text is server-rendered into the HTML
+ *  (here, native <details> blocks). Mark up only questions the page shows. */
+export function faqPage(items: FaqItem[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((it) => ({
+      '@type': 'Question',
+      name: it.question,
+      acceptedAnswer: { '@type': 'Answer', text: it.answer },
+    })),
+  };
+}
+
 /** Convenience: Home → optional Country → Hotel name. */
 export function hotelBreadcrumb(hotel: Hotel, idOrSlug: string) {
   const crumbs: Crumb[] = [{ name: 'Home', path: '/' }];

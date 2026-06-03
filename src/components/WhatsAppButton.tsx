@@ -11,9 +11,10 @@ const WhatsAppButton: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
   const pathname = usePathname();
 
-  // Blog routes render their own persistent concierge CTA (StickyConciergeCTA).
-  // Suppress this float there so there are not two competing persistent prompts.
-  if (pathname?.startsWith("/blog")) return null;
+  // Blog routes render their own persistent concierge CTA (StickyConciergeCTA);
+  // /hospitality renders its own StickyHotelCTA (+ WhatsApp inside its lead form).
+  // Suppress this float on both so there are not two competing persistent prompts.
+  if (pathname?.startsWith("/blog") || pathname === "/hospitality") return null;
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
