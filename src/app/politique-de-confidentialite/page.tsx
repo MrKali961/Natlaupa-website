@@ -23,7 +23,7 @@ export default function PolitiqueDeConfidentialite() {
             <p className="text-slate-400 text-sm">
               Natlaupa accorde une importance primordiale à la protection de vos données personnelles. La présente politique de confidentialité vous informe des conditions dans lesquelles vos données sont collectées, traitées et conservées, conformément au Règlement Général sur la Protection des Données (RGPD — Règlement UE 2016/679) et à la loi française Informatique et Libertés.
             </p>
-            <p className="text-slate-500 text-xs mt-3">Dernière mise à jour : Avril 2026</p>
+            <p className="text-slate-500 text-xs mt-3">Dernière mise à jour : 12 juin 2026</p>
           </div>
 
           <div className="space-y-12 text-slate-300 leading-relaxed">
@@ -161,6 +161,12 @@ export default function PolitiqueDeConfidentialite() {
                       <td className="px-4 py-3 text-slate-400">CCT</td>
                     </tr>
                     <tr>
+                      <td className="px-4 py-3 text-white">useSend (instance auto-hébergée) + Amazon Web Services SES</td>
+                      <td className="px-4 py-3 text-slate-400">Envoi d&apos;emails transactionnels et newsletters (infrastructure d&apos;envoi)</td>
+                      <td className="px-4 py-3 text-slate-400">UE (région eu-west-1, Irlande)</td>
+                      <td className="px-4 py-3 text-slate-400">Données hébergées dans l&apos;UE</td>
+                    </tr>
+                    <tr>
                       <td className="px-4 py-3 text-white">WhatsApp / Meta Platforms</td>
                       <td className="px-4 py-3 text-slate-400">Transmission candidatures/partenariat via WhatsApp</td>
                       <td className="px-4 py-3 text-slate-400">États-Unis</td>
@@ -250,7 +256,7 @@ export default function PolitiqueDeConfidentialite() {
 
             <div className="border-t border-white/10 pt-8">
               <p className="text-slate-500 text-xs">
-                Dernière mise à jour : Avril 2026. Natlaupa se réserve le droit de modifier la présente politique à tout moment. Toute modification sera publiée sur cette page avec une mise à jour de la date.
+                Dernière mise à jour : 12 juin 2026. Natlaupa se réserve le droit de modifier la présente politique à tout moment. Toute modification sera publiée sur cette page avec une mise à jour de la date.
               </p>
             </div>
           </div>
