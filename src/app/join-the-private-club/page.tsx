@@ -23,7 +23,7 @@ import Image from "next/image";
 import Footer from "@/components/Footer";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+  process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 const perks = [
   {
     icon: Users,
