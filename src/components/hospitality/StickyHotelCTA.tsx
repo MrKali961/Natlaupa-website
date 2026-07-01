@@ -1,15 +1,14 @@
 "use client";
 
-// Persistent booking CTA. Mobile: full-width bottom bar. Desktop: bottom-right
+// Persistent audit CTA. Mobile: full-width bottom bar. Desktop: bottom-right
 // pill (the global WhatsApp float is suppressed on /hospitality so they don't
 // collide). Appears after the hero scrolls past and recedes over the footer so
-// it never covers the final CTA. Links to Calendly when configured, else to the
-// inline #apply form. Click-tracked via GA (`cta_click`).
+// it never covers the final CTA. Drives the primary conversion — it ALWAYS
+// links to the inline #apply audit-request form so the label ("Request your
+// audit") and the action match. Click-tracked via GA (`cta_click`).
 import React, { useEffect, useState } from "react";
 import { CalendarClock } from "lucide-react";
 import { track } from "@/lib/analytics";
-
-const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL || "";
 
 export default function StickyHotelCTA() {
   const [visible, setVisible] = useState(false);
@@ -31,9 +30,9 @@ export default function StickyHotelCTA() {
     };
   }, []);
 
-  const href = CALENDLY_URL || "#apply";
-  const external = Boolean(CALENDLY_URL);
-  const onClick = () => track("cta_click", { cta: "sticky_book_call" });
+  const href = "#apply";
+  const external = false;
+  const onClick = () => track("cta_click", { cta: "sticky_request_audit" });
 
   return (
     <div
@@ -48,8 +47,8 @@ export default function StickyHotelCTA() {
       {/* Mobile bar */}
       <div className="md:hidden flex items-center gap-3 border-t border-gold/30 bg-deepBlue/95 backdrop-blur-sm px-4 py-3 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))]">
         <div className="flex-1 leading-tight">
-          <p className="text-white text-sm font-medium">30 days · 99€</p>
-          <p className="text-slate-400 text-[11px]">No commitment</p>
+          <p className="text-white text-sm font-medium">AI Digital Presence Audit</p>
+          <p className="text-slate-400 text-[11px]">Human-verified · no obligation</p>
         </div>
         <a
           href={href}
@@ -58,7 +57,7 @@ export default function StickyHotelCTA() {
           className="inline-flex items-center gap-2 bg-gold text-deepBlue px-5 py-3.5 font-bold uppercase tracking-widest text-xs"
         >
           <CalendarClock size={16} />
-          Book a call
+          Request your audit
         </a>
       </div>
 
@@ -70,7 +69,7 @@ export default function StickyHotelCTA() {
         className="hidden md:inline-flex items-center gap-2.5 bg-gold text-deepBlue px-6 py-3.5 rounded-full shadow-2xl font-bold uppercase tracking-widest text-xs hover:bg-softGold transition-colors"
       >
         <CalendarClock size={17} />
-        Book a 15-min call
+        Request your audit
       </a>
     </div>
   );
