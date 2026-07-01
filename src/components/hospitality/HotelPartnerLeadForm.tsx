@@ -1,9 +1,10 @@
 "use client";
 
-// Client island: the one canonical lead form (anchor target #apply).
-// Posts the exact `partnership-applications` payload the backend expects
-// (contactName, hotelName, email, phone, message) — message is defaulted when
-// blank so the API never 400s on a short quick-enquiry. WhatsApp is an
+// Client island: the audit-request form (anchor target #apply).
+// Posts the `audit-requests` payload the backend expects
+// (contactName, hotelName, email, phone, url, message, consent) — message is
+// defaulted when blank so the API never 400s on a short quick-enquiry, and the
+// prospect's site URL is captured so the audit can be scoped. WhatsApp is an
 // alternate submit path. A `generate_lead` GA event fires on success.
 import React, { useState } from "react";
 import Link from "next/link";
@@ -11,10 +12,10 @@ import { ArrowRight, Loader2, MessageCircle, ShieldCheck } from "lucide-react";
 import { track } from "@/lib/analytics";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://natlaupa.theelitessolutions.cloud/api/v1";
+  process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "https://natlaupa.theelitessolutions.cloud/api/v1";
 
 const DEFAULT_MESSAGE =
-  "Founding Hotel Partner Program — request for program details.";
+  "AI Digital Presence Audit — request for an audit.";
 
 interface ValidationError {
   field: string;
@@ -36,7 +37,11 @@ export default function HotelPartnerLeadForm() {
     hotelName: "",
     email: "",
     phone: "",
+    url: "",
     message: "",
+    // Honeypot: hidden from humans, must stay empty. The server silently drops
+    // any submission where this is filled (see audit-requests controller).
+    website2: "",
   });
 
   const onChange = (
@@ -50,12 +55,17 @@ export default function HotelPartnerLeadForm() {
     contactName: form.contactName,
     hotelName: form.hotelName,
     email: form.email,
-    phone: form.phone,
+    // Phone is optional; the server's phone regex rejects an empty string, so
+    // omit the field entirely when blank rather than sending "".
+    ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
+    url: form.url,
     message: form.message.trim() || DEFAULT_MESSAGE,
+    website2: form.website2,
+    consent,
   });
 
   const post = async () => {
-    const response = await fetch(`${API_URL}/partnership-applications`, {
+    const response = await fetch(`${API_URL}/audit-requests`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload()),
@@ -92,7 +102,7 @@ export default function HotelPartnerLeadForm() {
   };
 
   const reset = () =>
-    setForm({ contactName: "", hotelName: "", email: "", phone: "", message: "" });
+    setForm({ contactName: "", hotelName: "", email: "", phone: "", url: "", message: "", website2: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,16 +136,17 @@ export default function HotelPartnerLeadForm() {
       setError({ code: "CONSENT", message: "Veuillez accepter le traitement de vos données pour continuer." });
       return;
     }
-    if (!form.contactName || !form.hotelName || !form.email) {
-      setError({ code: "VALIDATION", message: "Please add your name, hotel and email first." });
+    if (!form.contactName || !form.hotelName || !form.email || !form.url) {
+      setError({ code: "VALIDATION", message: "Please add your name, hotel, email and website first." });
       return;
     }
-    const message = `🏨 *FOUNDING HOTEL PARTNER — ENQUIRY*
+    const message = `🏨 *AI DIGITAL PRESENCE AUDIT — REQUEST*
 
 *Contact:* ${form.contactName}
 *Hotel:* ${form.hotelName}
 *Email:* ${form.email}
 *Phone:* ${form.phone || "Not provided"}
+*Website:* ${form.url}
 
 *Message:*
 ${form.message.trim() || DEFAULT_MESSAGE}
@@ -159,10 +170,10 @@ Submitted via Natlaupa Website`;
         <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gold/15 flex items-center justify-center">
           <ShieldCheck className="text-gold" size={30} />
         </div>
-        <h2 className="font-serif text-2xl text-white mb-3">Request received</h2>
+        <h2 className="font-serif text-2xl text-white mb-3">Audit request received</h2>
         <p className="text-slate-400 text-sm leading-relaxed">
-          Thank you. Our hospitality team will be in touch within 48 hours to
-          arrange your 15-minute discovery call.
+          Thank you. Our team will be in touch within 48 hours to confirm scope
+          and begin your AI Digital Presence Audit.
         </p>
         <button
           type="button"
@@ -177,13 +188,27 @@ Submitted via Natlaupa Website`;
 
   return (
     <div className="border border-white/10 bg-white/[0.03] p-6 sm:p-8">
-      <h2 className="font-serif text-2xl text-white mb-1">Become a Founding Partner</h2>
+      <h2 className="font-serif text-2xl text-white mb-1">Request Your Audit</h2>
       <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-        Request program details or book your 15-minute discovery call. Response
-        within 48 hours.
+        Tell us about your property and we&apos;ll prepare your AI Digital
+        Presence Audit. Response within 48 hours.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Honeypot: off-screen, not tabbable, not autofilled. Real users never
+            see or fill it; bots that fill every field trip the server's silent drop. */}
+        <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}>
+          <label htmlFor="hp-website2">Do not fill this field</label>
+          <input
+            id="hp-website2"
+            type="text"
+            name="website2"
+            value={form.website2}
+            onChange={onChange}
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </div>
         {error && (
           <div role="alert" className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-sm space-y-1">
             <p className="font-medium">{error.message}</p>
@@ -264,6 +289,23 @@ Submitted via Natlaupa Website`;
               placeholder="+33 ..."
             />
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="hp-url" className="block text-[11px] uppercase tracking-widest text-gold mb-2">
+            Your website URL
+          </label>
+          <input
+            id="hp-url"
+            type="url"
+            name="url"
+            value={form.url}
+            onChange={onChange}
+            required
+            disabled={isSubmitting}
+            className="w-full bg-white/5 border border-white/10 p-3 text-sm text-white focus:border-gold focus:outline-none transition-colors disabled:opacity-50"
+            placeholder="https://your-hotel.com"
+          />
         </div>
 
         <div>

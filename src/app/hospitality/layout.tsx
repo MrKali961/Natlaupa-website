@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 
 const DESCRIPTION =
-  'Increase your hotel\'s visibility, direct bookings and commercial performance. Join Natlaupa\'s Founding Hotel Partner Program — strategic advisory, revenue optimization and premium networking. Test for 30 days for 99€, no commitment.';
+  'See exactly where your hotel loses guests across discovery, search and booking. Natlaupa\'s AI Digital Presence Audit grades your online presence against 13 dimensions, surfaces the bookings you\'re leaking, and hands you a ranked plan to recover them. Every audit is human-verified.';
 
 export const metadata: Metadata = {
-  title: 'Founding Hotel Partner Program',
+  title: 'AI Digital Presence Audit for Hotels',
   description: DESCRIPTION,
   openGraph: {
-    title: 'Founding Hotel Partner Program | Natlaupa',
+    title: 'AI Digital Presence Audit for Hotels | Natlaupa',
     description: DESCRIPTION,
     url: 'https://www.natlaupa.com/hospitality',
     siteName: 'Natlaupa',
@@ -18,13 +18,13 @@ export const metadata: Metadata = {
         url: 'https://www.natlaupa.com/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Natlaupa Founding Hotel Partner Program',
+        alt: 'Natlaupa AI Digital Presence Audit for Hotels',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Founding Hotel Partner Program | Natlaupa',
+    title: 'AI Digital Presence Audit for Hotels | Natlaupa',
     description: DESCRIPTION,
     images: ['https://www.natlaupa.com/opengraph-image'],
   },
