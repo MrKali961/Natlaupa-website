@@ -55,13 +55,6 @@ const curators = [
     region: "Luxury Travel Expert",
     image: "/sabine-ferekh.jpg",
     bio: "Driving growth through strategic partnerships and innovative luxury hospitality solutions."
-  },
-  {
-    name: "GAELLE KEHDI",
-    role: "Project Manager",
-    region: "Operations & Strategy",
-    image: "/gaelle-kehdi.jpg",
-    bio: "Orchestrating seamless experiences through meticulous planning and execution excellence."
   }
 ];
 
@@ -497,7 +490,7 @@ export default function About() {
               </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="grid gap-8 max-w-sm mx-auto">
               {curators.map((curator, index) => (
                 <motion.div
                   key={curator.name}
