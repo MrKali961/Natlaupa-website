@@ -5,7 +5,7 @@ const BASE_URL = 'https://www.natlaupa.com';
 // NEXT_PUBLIC_* is inlined at build time; if it is unset on the deploy target the
 // dynamic sitemap would silently collapse to static pages. Fall back to the real
 // production API base (never localhost) so discovery keeps working.
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://natlaupa.theelitessolutions.cloud/api/v1';
+const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://natlaupa.theelitessolutions.cloud/api/v1';
 
 // Force dynamic rendering - sitemap will be generated on request, not at build time
 export const dynamic = 'force-dynamic';

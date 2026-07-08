@@ -67,3 +67,10 @@ next-env.d.ts
 .next-build*.log
 .next-serve*.log
 .next-*.log
+
+# Playwright — regenerated per run; storageState holds live session tokens
+/test-results/
+/playwright-report/
+/blob-report/
+/e2e/.auth/
+/e2e/report/

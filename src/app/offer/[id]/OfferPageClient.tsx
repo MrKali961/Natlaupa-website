@@ -274,11 +274,13 @@ Submitted via Natlaupa Website`;
           <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
             {/* Left: Large Image */}
             <div className="relative h-full">
-              <img
-                src={offer.imageUrl}
-                alt={offer.title}
-                className="w-full h-full object-cover"
-              />
+              {offer.imageUrl && (
+                <img
+                  src={offer.imageUrl}
+                  alt={offer.title}
+                  className="w-full h-full object-cover"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-deepBlue/80 lg:to-deepBlue" />
             </div>
 
@@ -389,11 +391,13 @@ Submitted via Natlaupa Website`;
                   className="group block"
                 >
                   <div className="relative h-48 mb-4 overflow-hidden rounded-sm">
-                    <img
-                      src={offer.hotel.imageUrl}
-                      alt={offer.hotel.name}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
-                    />
+                    {offer.hotel.imageUrl && (
+                      <img
+                        src={offer.hotel.imageUrl}
+                        alt={offer.hotel.name}
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+                      />
+                    )}
                   </div>
                   <h4 className="font-serif text-2xl text-white group-hover:text-gold transition-colors mb-2">
                     {offer.hotel.name}

@@ -6,7 +6,7 @@
 
 import type { Hotel, Offer } from '@/lib/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 const REVALIDATE = 300; // 5 minutes, matches generateMetadata caching
 
 // ---------------------------------------------------------------------------

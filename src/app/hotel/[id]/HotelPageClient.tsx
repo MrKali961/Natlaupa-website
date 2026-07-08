@@ -166,11 +166,13 @@ Submitted via Natlaupa Website`;
       {/* Hero Section */}
       <div className="relative w-full" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
         <div className="absolute inset-0">
-          <img
-            src={hotel.imageUrl}
-            alt={hotel.name}
-            className="w-full h-full object-cover grayscale brightness-50"
-          />
+          {hotel.imageUrl && (
+            <img
+              src={hotel.imageUrl}
+              alt={hotel.name}
+              className="w-full h-full object-cover grayscale brightness-50"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/50 to-transparent" />
         </div>
 
