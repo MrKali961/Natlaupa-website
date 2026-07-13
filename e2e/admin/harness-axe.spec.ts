@@ -17,8 +17,10 @@ import AxeBuilder from '@axe-core/playwright';
  */
 
 /** Run axe on the current page state and assert ZERO violations. */
-async function expectNoAxeViolations(page: Page, state: string) {
-  const results = await new AxeBuilder({ page }).analyze();
+async function expectNoAxeViolations(page: Page, state: string, include?: string) {
+  const builder = new AxeBuilder({ page });
+  if (include) builder.include(include);
+  const results = await builder.analyze();
   // Filter 1 of max 2 — 'region' (best-practice "all content in landmarks"):
   // verified false positive for portaled popups. It fires only on the open
   // select listbox / dropdown menu, i.e. role="listbox" / role="menu" surfaces
@@ -62,6 +64,23 @@ for (const theme of ['light', 'dark'] as const) {
 
     test('base page', async ({ page }) => {
       await expectNoAxeViolations(page, `base /harness page [${theme}]`);
+    });
+
+    test('card grid section', async ({ page }) => {
+      // The base-page scan already covers the whole document; this SCOPED
+      // scan pins the CardGrid composition explicitly (stretched-link cards,
+      // sibling checkbox/kebab layering — the nested-interactive hotspot) so
+      // a regression there is named, not buried in a page-level diff.
+      const section = page.getByTestId('hx-cardgrid-section');
+      await expect(section).toBeVisible();
+      await expect(
+        section.getByTestId('card-grid-item').first()
+      ).toBeVisible();
+      await expectNoAxeViolations(
+        page,
+        `card grid section [${theme}]`,
+        '[data-testid="hx-cardgrid-section"]'
+      );
     });
 
     test('dialog open, then nested alert open', async ({ page }) => {

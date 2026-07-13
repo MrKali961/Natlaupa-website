@@ -427,6 +427,60 @@ test('form: empty submit shows messages + focuses first invalid; fixing fields (
 });
 
 // ---------------------------------------------------------------------------
+// CARD GRID — stretched-link card: tab order is checkbox → link → kebab
+// (checkbox and kebab are SIBLINGS layered above the link's ::after overlay,
+// never nested inside the anchor); the checkbox toggles the controlled
+// selection; the whole card body is the link's click target; the kebab opens
+// its menu without triggering the card navigation.
+// Harness testids: hx-cardgrid-rich / hx-cardgrid-compact wrap CardGrid
+// instances (card-grid-item / card-link / card-select), hx-card-kebab is the
+// per-card actions trigger.
+// ---------------------------------------------------------------------------
+test('card grid: tab order checkbox → stretched link → kebab; checkbox toggles selection; kebab stays local; card body navigates', async ({
+  page,
+}) => {
+  const rich = page.getByTestId('hx-cardgrid-rich');
+  const card = rich.getByTestId('card-grid-item').first();
+  const checkbox = card.getByTestId('card-select');
+  const link = card.getByTestId('card-link');
+  const kebab = card.getByTestId('hx-card-kebab');
+
+  // 1) Tab order per card: checkbox → stretched link → kebab (DOM order).
+  await checkbox.focus();
+  await expect(checkbox).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(link).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(kebab).toBeFocused();
+
+  // 2) Controlled selection: Space toggles the checkbox and the card reads
+  //    selected (data-selected tint channel); toggling back clears it.
+  await checkbox.focus();
+  await page.keyboard.press('Space');
+  await expect(card).toHaveAttribute('data-selected', 'true');
+  await expect(rich.getByText('Rich (1 selected)')).toBeVisible();
+  await page.keyboard.press('Space');
+  await expect(card).not.toHaveAttribute('data-selected', /.*/);
+  await expect(rich.getByText('Rich (0 selected)')).toBeVisible();
+
+  // 3) Kebab opens its menu WITHOUT navigating (sibling above the overlay).
+  const urlBefore = page.url();
+  await kebab.click();
+  await expect(page.getByRole('menu')).toBeVisible();
+  expect(page.url()).toBe(urlBefore);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('menu')).toBeHidden();
+  await expect(kebab).toBeFocused();
+
+  // 4) Stretched link: clicking the card itself activates the card link
+  //    (href = /harness#rich-stay-1) — the ::after overlay (a descendant of
+  //    the card) intercepts every non-interactive region, so the card-level
+  //    click IS the whole-card open gesture.
+  await card.click();
+  await expect(page).toHaveURL(/#rich-stay-1$/);
+});
+
+// ---------------------------------------------------------------------------
 // TOAST — Undo toast announces via the toaster's aria-live region and its
 // action is focusable.
 // ---------------------------------------------------------------------------

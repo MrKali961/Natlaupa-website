@@ -41,6 +41,20 @@ import { test, expect } from '@playwright/test';
 
 test.describe.configure({ mode: 'serial' });
 
+// CARD-GRID WAVE UPDATE: grid is now the DEFAULT list presentation
+// (ListShell `card` config, persisted per-list in
+// localStorage['natlaupa-view:<pathname>']). This pilot spec asserts the
+// TABLE contract (th[aria-sort], header checkbox, whole-row click), which
+// remains fully supported behind the view toggle — so pin the persisted view
+// to 'table' BEFORE the app boots. The grid contract has its own spec
+// (card-grid.spec.ts).
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem('natlaupa-view:/reservations', 'table');
+    window.localStorage.setItem('natlaupa-view:/hotels', 'table');
+  });
+});
+
 // One stamp → unique, collision-proof names across reruns.
 const stamp = Date.now();
 const hotelName = `E2E Pilot Hotel ${stamp}`;

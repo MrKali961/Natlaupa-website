@@ -12,8 +12,9 @@ import { test, expect, type Page } from '@playwright/test';
  *   then subsequent normal runs diff against those local baselines and MUST
  *   pass deterministically (maxDiffPixelRatio 0.02).
  *
- * Surfaces: / (dashboard cockpit), /reservations (list), a reservation detail
- * (reached through the first list row — data-driven, deterministic within a
+ * Surfaces: / (dashboard cockpit), /reservations (list — captures the CARD
+ * GRID default of the card-grid wave), a reservation detail (reached through
+ * the first card's stretched link — data-driven, deterministic within a
  * seeded session), /reservations/new (form), /hotels, /clients, /harness
  * (dev-only component playground).
  *
@@ -59,12 +60,14 @@ const SCREENSHOT_OPTS = {
  * images decoded, webfonts active. networkidle is best-effort only —
  * some pages (e.g. /audits-style pollers) never reach true idle.
  */
-async function settle(page: Page) {
+async function settle(page: Page, opts: { skeletonsExpected?: boolean } = {}) {
   await page.waitForLoadState('networkidle').catch(() => {});
-  await expect(
-    page.locator('[data-slot="skeleton"]'),
-    'all skeleton loaders must resolve before capture'
-  ).toHaveCount(0, { timeout: 20_000 });
+  if (!opts.skeletonsExpected) {
+    await expect(
+      page.locator('[data-slot="skeleton"]'),
+      'all skeleton loaders must resolve before capture'
+    ).toHaveCount(0, { timeout: 20_000 });
+  }
   await page
     .waitForFunction(
       () => Array.from(document.images).every((img) => img.complete),
@@ -143,16 +146,20 @@ for (const theme of THEMES) {
       ).toBeVisible();
       await settle(page);
 
-      // Data-driven navigation: the list-shell makes each row the open
-      // target (onRowClick → /reservations/:id). Deterministic within the
-      // seeded session — the sort order does not change between the
-      // baseline run and the verify run.
-      const firstRow = page.locator('tbody tr').first();
+      // Data-driven navigation: lists now default to the CARD GRID, where
+      // each card's stretched link is the open target (card-link →
+      // /reservations/:id). Deterministic within the seeded session — the
+      // sort order does not change between the baseline run and the verify
+      // run.
+      const firstCardLink = page
+        .getByTestId('card-grid-item')
+        .first()
+        .getByTestId('card-link');
       await expect(
-        firstRow,
+        firstCardLink,
         'seeded DB must contain at least one reservation (run the QA seed)'
       ).toBeVisible();
-      await firstRow.click();
+      await firstCardLink.click();
       await expect(page).toHaveURL(/\/reservations\/[^/]+$/);
       // The detail page's loading state titles itself "Reservation" with this
       // description — wait for the REAL record (h1 = reference) to replace it.
@@ -215,7 +222,11 @@ for (const theme of THEMES) {
         page.getByRole('heading', { level: 1, name: 'Component harness' })
       ).toBeVisible();
       await assertTheme(page, theme);
-      await settle(page);
+      // The harness DELIBERATELY renders a permanent CardGrid loading
+      // composition (hx-cardgrid-loading, isLoading fixed true) — its
+      // skeleton cards are a fixed-count, reduced-motion, deterministic
+      // surface, so the zero-skeleton settle gate does not apply here.
+      await settle(page, { skeletonsExpected: true });
       await expect(page).toHaveScreenshot(
         `harness-${theme}.png`,
         SCREENSHOT_OPTS
