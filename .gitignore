@@ -74,3 +74,6 @@ next-env.d.ts
 /blob-report/
 /e2e/.auth/
 /e2e/report/
+# Visual baselines are LOCAL-ONLY (pixel output is OS/GPU/font dependent);
+# first run generates them via --update-snapshots (see e2e/admin/visual-baselines.spec.ts)
+/e2e/**/*-snapshots/
