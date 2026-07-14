@@ -1,13 +1,10 @@
 "use client";
 
-// Client island: the audit-request form (anchor target #apply).
-// TEMPORARY: posts to the legacy `partnership-applications` endpoint, not
-// `audit-requests` — the audit backend isn't deployed to production yet
-// (pending migration + provider keys, see AI-DP-Audit memory). Switch the
-// fetch path back to `audit-requests` and `website` back to `url` once it is.
-// message is defaulted when blank so the API never 400s on a short
-// quick-enquiry. WhatsApp is an alternate submit path. A `generate_lead` GA
-// event fires on success.
+// Client island: the audit-request form (anchor target #apply). POSTs the lead
+// directly to the server's public `audit-requests` create endpoint, which feeds
+// the AI Digital Presence Audit pipeline. message is defaulted when blank so the
+// API never 400s on a short quick-enquiry. WhatsApp is an alternate submit path.
+// A `generate_lead` GA event fires on success.
 import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Loader2, MessageCircle, ShieldCheck } from "lucide-react";
@@ -60,15 +57,14 @@ export default function HotelPartnerLeadForm() {
     // Phone is optional; the server's phone regex rejects an empty string, so
     // omit the field entirely when blank rather than sending "".
     ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
-    // partnership-applications' schema field is `website`, not `url`.
-    website: form.url,
+    url: form.url,
     message: form.message.trim() || DEFAULT_MESSAGE,
     website2: form.website2,
     consent,
   });
 
   const post = async () => {
-    const response = await fetch(`${API_URL}/partnership-applications`, {
+    const response = await fetch(`${API_URL}/audit-requests`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload()),
