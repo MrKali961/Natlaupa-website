@@ -84,7 +84,8 @@ const ROUTES: RouteCase[] = [
   // tracker below. /finance stays here — its Stripe calls now degrade to 200.
   { path: '/finance', heading: 'Finance Dashboard' },
   { path: '/hotels', heading: 'Hotels' },
-  { path: '/rooms', heading: 'Rooms' },
+  // /rooms removed 2026-07-28 — the route file is gone (not merely
+  // un-navigable), so goto() would 404. Server /api/v1/rooms* is unchanged.
   { path: '/destinations', heading: 'Destinations' },
   { path: '/styles', heading: 'Hotel Styles' },
   { path: '/bookings', heading: 'Bookings' },
