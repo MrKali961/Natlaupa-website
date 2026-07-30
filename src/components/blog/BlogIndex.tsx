@@ -27,6 +27,11 @@ export default function BlogIndex({ blogs }: { blogs: ServerBlogFull[] }) {
   const showControls = blogs.length >= FILTER_THRESHOLD;
   const isFiltering = Boolean(query.trim()) || Boolean(activeTag);
 
+  const clearFilters = () => {
+    setQuery('');
+    setActiveTag(null);
+  };
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return blogs.filter((b) => {
@@ -68,8 +73,18 @@ export default function BlogIndex({ blogs }: { blogs: ServerBlogFull[] }) {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search the journal…"
-                    className="w-full bg-white/5 border border-white/10 pl-12 pr-4 py-3 text-white placeholder-slate-500 focus:border-gold focus:outline-none transition-colors"
+                    className="w-full bg-white/5 border border-white/10 pl-12 pr-11 py-3 text-white placeholder-slate-500 focus:border-gold focus:outline-none transition-colors"
                   />
+                  {query && (
+                    <button
+                      type="button"
+                      onClick={() => setQuery('')}
+                      aria-label="Clear search"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-gold transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
                 </div>
                 {allTags.length > 0 && (
                   <div className="flex flex-wrap justify-center gap-3">
@@ -88,6 +103,16 @@ export default function BlogIndex({ blogs }: { blogs: ServerBlogFull[] }) {
                     ))}
                   </div>
                 )}
+                {/* Reset is available whenever a filter is active — not only when the result
+                    set is empty, which previously left 1..n-hit searches with no way back. */}
+                {isFiltering && (
+                  <button
+                    onClick={clearFilters}
+                    className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-slate-400 hover:text-gold transition-colors"
+                  >
+                    <X size={13} /> Clear filters
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -98,13 +123,7 @@ export default function BlogIndex({ blogs }: { blogs: ServerBlogFull[] }) {
           <section className="py-28 px-4 text-center">
             <p className="text-slate-400 text-lg mb-4">No articles match your search.</p>
             {isFiltering && (
-              <button
-                onClick={() => {
-                  setQuery('');
-                  setActiveTag(null);
-                }}
-                className="inline-flex items-center gap-2 text-gold hover:underline"
-              >
+              <button onClick={clearFilters} className="inline-flex items-center gap-2 text-gold hover:underline">
                 <X size={14} /> Clear filters
               </button>
             )}
