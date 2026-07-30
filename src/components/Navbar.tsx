@@ -7,14 +7,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Search } from 'lucide-react';
 import { NAV_LINKS } from '@/lib/constants';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface SearchResult {
-  id: string;
-  name: string;
-  slug: string;
-  city: string;
-  country: string;
-}
+import { useHotelSearch, HOTEL_SEARCH_MIN_LENGTH } from '@/hooks/useHotelSearch';
+import HotelSearchDropdown from '@/components/search/HotelSearchDropdown';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,12 +16,15 @@ const Navbar: React.FC = () => {
   const [useDarkLogo, setUseDarkLogo] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const { results: searchResults, status: searchStatus, submitFirstResult } = useHotelSearch(searchQuery);
+  const trimmedQueryLength = searchQuery.trim().length;
+  const desktopDropdownOpen = isSearchOpen && trimmedQueryLength >= HOTEL_SEARCH_MIN_LENGTH;
+  const mobileDropdownOpen = trimmedQueryLength >= HOTEL_SEARCH_MIN_LENGTH;
 
   // Detect if background behind navbar is light or dark
   const detectBackgroundBrightness = useCallback(() => {
@@ -98,46 +95,11 @@ const Navbar: React.FC = () => {
     } else {
       document.body.style.overflow = '';
       setSearchQuery('');
-      setSearchResults([]);
     }
     return () => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
-
-  // Debounced search
-  useEffect(() => {
-    const query = searchQuery.trim();
-    if (query.length < 2) {
-      setSearchResults([]);
-      return;
-    }
-    setIsSearching(true);
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(`/api/hotels?search=${encodeURIComponent(query)}&limit=5`);
-        const data = await res.json();
-        if (res.ok) {
-          const items: Record<string, unknown>[] =
-            data.data?.items || data.data?.hotels || [];
-          setSearchResults(
-            items.map(h => ({
-              id: h.id as string,
-              name: h.name as string,
-              slug: h.slug as string,
-              city: (h.city as string) || '',
-              country: (h.country as string) || '',
-            }))
-          );
-        }
-      } catch {}
-      setIsSearching(false);
-    }, 300);
-    return () => {
-      clearTimeout(timer);
-      setIsSearching(false);
-    };
-  }, [searchQuery]);
 
   // Close desktop search on click outside
   useEffect(() => {
@@ -146,7 +108,6 @@ const Navbar: React.FC = () => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setIsSearchOpen(false);
         setSearchQuery('');
-        setSearchResults([]);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -160,7 +121,6 @@ const Navbar: React.FC = () => {
       if (e.key === 'Escape') {
         setIsSearchOpen(false);
         setSearchQuery('');
-        setSearchResults([]);
       }
     };
     document.addEventListener('keydown', handleKeyDown);
@@ -179,13 +139,18 @@ const Navbar: React.FC = () => {
     setIsSearchOpen(false);
     setIsOpen(false);
     setSearchQuery('');
-    setSearchResults([]);
+  };
+
+  const handleSearchEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    const slug = submitFirstResult();
+    if (slug) handleResultClick(slug);
   };
 
   const closeMobileMenu = () => {
     setIsOpen(false);
     setSearchQuery('');
-    setSearchResults([]);
   };
 
   const navbarClasses = scrolled
@@ -246,6 +211,7 @@ const Navbar: React.FC = () => {
                       type="text"
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
+                      onKeyDown={handleSearchEnter}
                       placeholder="Search hotels..."
                       className="w-[220px] bg-transparent border-b border-white/30 focus:border-white/60 text-white text-xs tracking-wide placeholder-white/30 outline-none pb-1 transition-colors duration-200"
                     />
@@ -257,7 +223,6 @@ const Navbar: React.FC = () => {
                   setIsSearchOpen(v => !v);
                   if (isSearchOpen) {
                     setSearchQuery('');
-                    setSearchResults([]);
                   }
                 }}
                 className="text-white/70 hover:text-white transition-colors py-4 flex items-center"
@@ -267,37 +232,13 @@ const Navbar: React.FC = () => {
               </button>
 
               {/* Desktop dropdown */}
-              <AnimatePresence>
-                {isSearchOpen && searchResults.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-full mt-1 w-[280px] bg-black/95 backdrop-blur-md border border-white/10 z-[60] overflow-hidden"
-                  >
-                    {searchResults.map(result => (
-                      <button
-                        key={result.id}
-                        onClick={() => handleResultClick(result.slug)}
-                        className="w-full text-left px-4 py-3 hover:bg-gold/10 transition-colors duration-150 border-b border-white/[0.06] last:border-0 group"
-                      >
-                        <div className="text-white text-xs font-semibold group-hover:text-gold transition-colors duration-150">
-                          {result.name}
-                        </div>
-                        <div className="text-white/40 text-[10px] mt-0.5 tracking-wide">
-                          {[result.city, result.country].filter(Boolean).join(', ')}
-                        </div>
-                      </button>
-                    ))}
-                    {isSearching && (
-                      <div className="px-4 py-3 text-white/30 text-[10px] tracking-widest uppercase">
-                        Searching…
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <HotelSearchDropdown
+                results={searchResults}
+                status={searchStatus}
+                open={desktopDropdownOpen}
+                onSelect={handleResultClick}
+                variant="desktop"
+              />
             </div>
 
             <Link
@@ -373,39 +314,24 @@ const Navbar: React.FC = () => {
                   type="text"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchEnter}
                   placeholder="Search hotels…"
                   className="flex-1 bg-transparent text-white font-serif italic text-base placeholder-white/25 outline-none"
                 />
                 {searchQuery && (
-                  <button onClick={() => { setSearchQuery(''); setSearchResults([]); }} className="text-white/30 hover:text-white/60 ml-2">
+                  <button onClick={() => setSearchQuery('')} className="text-white/30 hover:text-white/60 ml-2">
                     <X size={12} />
                   </button>
                 )}
               </div>
               {/* Mobile search results */}
-              {searchResults.length > 0 && (
-                <div className="mt-3 flex flex-col gap-0.5">
-                  {searchResults.map(result => (
-                    <button
-                      key={result.id}
-                      onClick={() => handleResultClick(result.slug)}
-                      className="text-left py-2 border-b border-white/[0.06] last:border-0 group"
-                    >
-                      <span className="font-serif italic text-lg text-white/80 group-hover:text-gold transition-colors duration-150 block">
-                        {result.name}
-                      </span>
-                      <span className="text-white/30 text-[10px] font-sans tracking-wide block">
-                        {[result.city, result.country].filter(Boolean).join(', ')}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-              {isSearching && (
-                <div className="mt-2 text-white/20 text-[10px] tracking-widest uppercase text-center">
-                  Searching…
-                </div>
-              )}
+              <HotelSearchDropdown
+                results={searchResults}
+                status={searchStatus}
+                open={mobileDropdownOpen}
+                onSelect={handleResultClick}
+                variant="mobile"
+              />
             </div>
 
             {NAV_LINKS.map((link) => (

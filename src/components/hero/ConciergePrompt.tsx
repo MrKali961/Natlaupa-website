@@ -1,16 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-
-interface SearchResult {
-  id: string;
-  name: string;
-  slug: string;
-  city: string;
-  country: string;
-}
+import { useHotelSearch, HOTEL_SEARCH_MIN_LENGTH } from '@/hooks/useHotelSearch';
+import HotelSearchDropdown from '@/components/search/HotelSearchDropdown';
 
 interface ConciergePromptProps {
   /** Called when the field is submitted empty — funnels into the gate. */
@@ -19,61 +13,29 @@ interface ConciergePromptProps {
 
 /**
  * The hero's primary intent path. A single concierge-styled search field
- * (not an OTA date/guest widget — Natlaupa is advisory). Reuses the proven
- * /api/hotels?search= debounced autocomplete. Submitting empty scrolls the
- * user into the experience-selector gate, so the field doubles as a funnel.
+ * (not an OTA date/guest widget — Natlaupa is advisory). Reuses the shared
+ * /api/hotels?search= debounced autocomplete via useHotelSearch. Submitting
+ * empty scrolls the user into the experience-selector gate, so the field
+ * doubles as a funnel.
  */
 const ConciergePrompt: React.FC<ConciergePromptProps> = ({ onScrollToGate }) => {
   const router = useRouter();
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Debounced search — mirrors the navbar implementation.
+  const { results, status, submitFirstResult } = useHotelSearch(query);
+
+  // Open as soon as the query is long enough — NOT only after a successful
+  // fetch — so the "Searching…" row is visible on the very first keystroke
+  // past the threshold, not just once results land.
   useEffect(() => {
-    const q = query.trim();
-    if (q.length < 2) {
-      setResults([]);
-      return;
-    }
-    setIsSearching(true);
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(
-          `/api/hotels?search=${encodeURIComponent(q)}&limit=5`
-        );
-        const data = await res.json();
-        if (res.ok) {
-          const items: Record<string, unknown>[] =
-            data.data?.items || data.data?.hotels || [];
-          setResults(
-            items.map(h => ({
-              id: h.id as string,
-              name: h.name as string,
-              slug: h.slug as string,
-              city: (h.city as string) || '',
-              country:
-                (h.country as string) ||
-                ((h.destination as { country?: string })?.country) ||
-                '',
-            }))
-          );
-          setOpen(true);
-        }
-      } catch {
-        /* silent — concierge field degrades to the scroll funnel */
-      }
-      setIsSearching(false);
-    }, 300);
-    return () => {
-      clearTimeout(timer);
-      setIsSearching(false);
-    };
+    if (query.trim().length >= HOTEL_SEARCH_MIN_LENGTH) setOpen(true);
   }, [query]);
 
-  // Click-outside + Escape close the dropdown.
+  // Click-outside + Escape close the dropdown. Text is deliberately preserved
+  // (divergence from Navbar, which clears on close) — this is the hero's
+  // primary funnel and re-typing a query the user already committed to is bad UX.
   useEffect(() => {
     if (!open) return;
     const onClick = (e: MouseEvent) => {
@@ -101,11 +63,12 @@ const ConciergePrompt: React.FC<ConciergePromptProps> = ({ onScrollToGate }) => 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim().length < 2) {
+    if (query.trim().length < HOTEL_SEARCH_MIN_LENGTH) {
       onScrollToGate();
       return;
     }
-    if (results.length > 0) go(results[0].slug);
+    const slug = submitFirstResult();
+    if (slug) go(slug);
   };
 
   return (
@@ -127,7 +90,9 @@ const ConciergePrompt: React.FC<ConciergePromptProps> = ({ onScrollToGate }) => 
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
-          onFocus={() => results.length > 0 && setOpen(true)}
+          onFocus={() => {
+            if (query.trim().length >= HOTEL_SEARCH_MIN_LENGTH) setOpen(true);
+          }}
           placeholder="Tell our concierge where you'd like to disappear to…"
           aria-label="Search hotels and destinations"
           className="flex-1 min-w-0 bg-transparent font-serif italic
@@ -136,7 +101,7 @@ const ConciergePrompt: React.FC<ConciergePromptProps> = ({ onScrollToGate }) => 
         />
         <button
           type="submit"
-          aria-label={query.trim().length < 2 ? 'Explore offers' : 'Search'}
+          aria-label={query.trim().length < HOTEL_SEARCH_MIN_LENGTH ? 'Explore offers' : 'Search'}
           className="flex-shrink-0 rounded-full px-5 py-2 md:px-7 md:py-2.5
                      bg-white text-zinc-900 font-sans text-[11px] md:text-xs
                      font-semibold uppercase tracking-[0.15em]
@@ -146,39 +111,13 @@ const ConciergePrompt: React.FC<ConciergePromptProps> = ({ onScrollToGate }) => 
         </button>
       </form>
 
-      {open && (results.length > 0 || isSearching) && (
-        <motion.div
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.18 }}
-          className="absolute left-0 right-0 top-full mt-2 text-left
-                     bg-black/95 backdrop-blur-md border border-white/10
-                     rounded-2xl overflow-hidden"
-        >
-          {results.map(r => (
-            <button
-              key={r.id}
-              type="button"
-              onClick={() => go(r.slug)}
-              className="w-full text-left px-5 py-3 hover:bg-gold/10
-                         transition-colors duration-150
-                         border-b border-white/[0.06] last:border-0 group"
-            >
-              <div className="text-white text-xs font-semibold group-hover:text-gold transition-colors duration-150">
-                {r.name}
-              </div>
-              <div className="text-white/40 text-[10px] mt-0.5 tracking-wide">
-                {[r.city, r.country].filter(Boolean).join(', ')}
-              </div>
-            </button>
-          ))}
-          {isSearching && (
-            <div className="px-5 py-3 text-white/30 text-[10px] tracking-widest uppercase">
-              Searching…
-            </div>
-          )}
-        </motion.div>
-      )}
+      <HotelSearchDropdown
+        results={results}
+        status={status}
+        open={open}
+        onSelect={go}
+        variant="hero"
+      />
     </motion.div>
   );
 };
