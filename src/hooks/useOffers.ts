@@ -14,7 +14,6 @@ interface OffersFilter {
 
 interface UseOffersResult {
   offers: Offer[];
-  experienceTypes: string[];
   isLoading: boolean;
   error: string | null;
   total: number;
@@ -64,7 +63,6 @@ function transformServerOffer(serverOffer: Record<string, unknown>): Offer {
 
 export function useOffers(filters?: OffersFilter): UseOffersResult {
   const [offers, setOffers] = useState<Offer[]>([]);
-  const [experienceTypes, setExperienceTypes] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
@@ -90,11 +88,8 @@ export function useOffers(filters?: OffersFilter): UseOffersResult {
       if (response.ok && data.offers) {
         const transformedOffers = data.offers.map(transformServerOffer);
         setOffers(transformedOffers);
-        setTotal(data.count || transformedOffers.length);
-
-        // Extract unique experience types
-        const types = [...new Set(transformedOffers.map((offer: any) => offer.experienceType))] as string[];
-        setExperienceTypes(types);
+        // The real match count, not the page length — data.count is the page length.
+        setTotal(data.total ?? transformedOffers.length);
       } else {
         setOffers([]);
         setTotal(0);
@@ -104,7 +99,6 @@ export function useOffers(filters?: OffersFilter): UseOffersResult {
       console.error('Error fetching offers:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch offers');
       setOffers([]);
-      setExperienceTypes([]);
       setTotal(0);
     } finally {
       setIsLoading(false);
@@ -117,7 +111,6 @@ export function useOffers(filters?: OffersFilter): UseOffersResult {
 
   return {
     offers,
-    experienceTypes,
     isLoading,
     error,
     total,

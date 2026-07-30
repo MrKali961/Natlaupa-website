@@ -5,6 +5,7 @@
  */
 
 import type { Hotel, Offer } from '@/lib/types';
+import { BLOG_PAGE_SIZE } from '@/lib/constants';
 
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 const REVALIDATE = 300; // 5 minutes, matches generateMetadata caching
@@ -258,7 +259,7 @@ export async function fetchBlogFull(slug: string): Promise<ServerBlogFull | null
 
 export async function fetchBlogsList(): Promise<ServerBlogFull[]> {
   const raw = await apiFetch<ServerBlogFull[] | { items?: ServerBlogFull[]; blogs?: ServerBlogFull[] }>(
-    '/blogs/public',
+    `/blogs/public?limit=${BLOG_PAGE_SIZE}`,
   );
   if (Array.isArray(raw)) return raw;
   if (raw && typeof raw === 'object') {

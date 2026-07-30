@@ -19,6 +19,11 @@ export const NAV_LINKS = [
   { name: "Contact", path: "/contact" },
 ];
 
+// Shared page size for /blog: the SSR fetch (server-api.ts) and the /api/blogs
+// proxy default must agree, or the card count jumps when the query-driven
+// path takes over (SSR 20 -> client-search default 10, or vice versa).
+export const BLOG_PAGE_SIZE = 20;
+
 export const FOOTER_LINKS = {
   explore: [
     { name: "Destinations", path: "/destinations" },

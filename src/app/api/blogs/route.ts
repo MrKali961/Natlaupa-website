@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { BLOG_PAGE_SIZE } from '@/lib/constants';
 
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const search = searchParams.get('search') || '';
     const tag = searchParams.get('tag') || '';
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const limit = parseInt(searchParams.get('limit') || String(BLOG_PAGE_SIZE));
     const page = parseInt(searchParams.get('page') || '1');
 
     // Build query params for server

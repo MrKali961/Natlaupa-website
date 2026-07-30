@@ -1,42 +1,87 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Search, SlidersHorizontal, X, Loader2 } from "lucide-react";
+import { Search, X, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useOffers } from "@/hooks/useOffers";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import OfferCard from "@/components/OfferCard";
 import Footer from "@/components/Footer";
 
+const ITEMS_PER_PAGE = 20;
+
+// Isolated in its own Suspense boundary so ONLY this (invisible) reader opts
+// into client rendering for useSearchParams. Seeds the search box exactly
+// once — it must not re-fire every time the URL is rewritten by the
+// debounced ?q= sync below.
+function OffersQuerySeed({ onSeed }: { onSeed: (q: string) => void }) {
+  const searchParams = useSearchParams();
+  const seeded = useRef(false);
+
+  useEffect(() => {
+    if (seeded.current) return;
+    seeded.current = true;
+    const q = searchParams.get("q");
+    if (q) onSeed(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return null;
+}
+
 export default function OffersPage() {
+  const router = useRouter();
+  const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedExperienceType, setSelectedExperienceType] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<"duration" | "title">("duration");
-  const [showFilters, setShowFilters] = useState(false);
 
-  // Fetch offers from server
-  const { offers, experienceTypes, isLoading } = useOffers();
+  const debouncedSearch = useDebouncedValue(searchQuery, 300);
+  const trimmedSearch = debouncedSearch.trim();
 
-  const filteredOffers = useMemo(() => {
-    return offers
-      .filter((offer) => {
-        const matchesSearch =
-          offer.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          offer.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          offer.hotel.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          offer.hotel.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          offer.hotel.country.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesExperienceType =
-          !selectedExperienceType || offer.experienceType === selectedExperienceType;
-        return matchesSearch && matchesExperienceType;
-      })
-      .sort((a, b) => {
-        if (sortBy === "title") return a.title.localeCompare(b.title);
-        return a.duration - b.duration;
-      });
-  }, [offers, searchQuery, selectedExperienceType, sortBy]);
+  // Fetch offers from the server — search is server-driven, not filtered in memory.
+  const { offers, total, isLoading } = useOffers({
+    search: trimmedSearch || undefined,
+    page,
+    limit: ITEMS_PER_PAGE,
+  });
+
+  // Keep ?q= in sync for deep-linking — no full navigation, no scroll jump.
+  useEffect(() => {
+    const url = trimmedSearch ? `${pathname}?q=${encodeURIComponent(trimmedSearch)}` : pathname;
+    router.replace(url, { scroll: false });
+  }, [trimmedSearch, pathname, router]);
+
+  // Reset to page 1 in the SAME handler that changes the search term — never
+  // in a useEffect keyed on the debounced value, which would fire a query for
+  // the old page against the new term before the reset lands.
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setPage(1);
+  };
+
+  // Client-side sort of the current page only — sorting isn't forwarded to the
+  // server in this pass, so it's scoped to whichever 20 offers are loaded.
+  const sortedOffers = useMemo(() => {
+    return [...offers].sort((a, b) => {
+      if (sortBy === "title") return a.title.localeCompare(b.title);
+      return a.duration - b.duration;
+    });
+  }, [offers, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+
+  const handlePageChange = (nextPage: number) => {
+    setPage(nextPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
+      <Suspense fallback={null}>
+        <OffersQuerySeed onSeed={handleSearchChange} />
+      </Suspense>
       <main className="bg-deepBlue min-h-screen">
         {/* Hero Section */}
         <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 border-b border-white/10">
@@ -60,7 +105,7 @@ export default function OffersPage() {
               </p>
             </motion.div>
 
-            {/* Search and Filters */}
+            {/* Search and Sort */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -76,79 +121,21 @@ export default function OffersPage() {
                   type="text"
                   placeholder="Search offers, hotels, locations..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 pl-12 pr-4 py-3 text-white placeholder-slate-500 focus:border-gold focus:outline-none transition-colors"
                 />
               </div>
 
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2 px-4 py-3 border border-white/10 text-white hover:border-gold hover:text-gold transition-colors"
-                >
-                  <SlidersHorizontal size={18} />
-                  <span className="text-sm uppercase tracking-widest">
-                    Filters
-                  </span>
-                </button>
-
-                <select
-                  title="Sort By"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                  className="bg-white/5 border border-white/10 px-4 py-3 text-white focus:border-gold focus:outline-none cursor-pointer"
-                >
-                  <option value="duration">Duration: Short to Long</option>
-                  <option value="title">Title: A to Z</option>
-                </select>
-              </div>
-            </motion.div>
-
-            {/* Filter Panel */}
-            {showFilters && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-6 p-6 bg-white/5 border border-white/10 rounded-sm"
+              <select
+                title="Sort By"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                className="bg-white/5 border border-white/10 px-4 py-3 text-white focus:border-gold focus:outline-none cursor-pointer"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-white font-serif text-lg">
-                    Filter by Experience Type
-                  </h3>
-                  {selectedExperienceType && (
-                    <button
-                      onClick={() => setSelectedExperienceType(null)}
-                      className="text-gold text-sm flex items-center gap-1 hover:underline"
-                    >
-                      <X size={14} />
-                      Clear
-                    </button>
-                  )}
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  {experienceTypes.map((experienceType) => (
-                    <button
-                      key={experienceType}
-                      onClick={() =>
-                        setSelectedExperienceType(
-                          selectedExperienceType === experienceType
-                            ? null
-                            : experienceType
-                        )
-                      }
-                      className={`px-4 py-2 text-sm uppercase tracking-widest border transition-colors ${
-                        selectedExperienceType === experienceType
-                          ? "bg-gold text-deepBlue border-gold"
-                          : "border-white/20 text-white hover:border-gold hover:text-gold"
-                      }`}
-                    >
-                      {experienceType}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
+                <option value="duration">Duration: Short to Long</option>
+                <option value="title">Title: A to Z</option>
+              </select>
+            </motion.div>
           </div>
         </section>
 
@@ -157,11 +144,18 @@ export default function OffersPage() {
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <p className="text-slate-400">
-                Showing{" "}
-                <span className="text-white font-bold">
-                  {filteredOffers.length}
-                </span>{" "}
-                {filteredOffers.length === 1 ? "offer" : "offers"}
+                {total > 0 ? (
+                  <>
+                    Showing{" "}
+                    <span className="text-white font-bold">
+                      {(page - 1) * ITEMS_PER_PAGE + 1}-{Math.min(page * ITEMS_PER_PAGE, total)}
+                    </span>{" "}
+                    of <span className="text-white font-bold">{total}</span>{" "}
+                    {total === 1 ? "offer" : "offers"}
+                  </>
+                ) : (
+                  "No offers found"
+                )}
               </p>
             </div>
 
@@ -170,26 +164,77 @@ export default function OffersPage() {
                 <Loader2 className="w-8 h-8 text-gold animate-spin mx-auto mb-4" />
                 <p className="text-slate-400">Loading offers...</p>
               </div>
-            ) : filteredOffers.length === 0 ? (
+            ) : sortedOffers.length === 0 ? (
               <div className="text-center py-24">
                 <p className="text-slate-400 text-lg">
                   No offers match your search criteria.
                 </p>
                 <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedExperienceType(null);
-                  }}
-                  className="mt-4 text-gold hover:underline"
+                  onClick={() => handleSearchChange("")}
+                  className="mt-4 text-gold hover:underline inline-flex items-center gap-2"
                 >
-                  Clear all filters
+                  <X size={14} />
+                  Clear search
                 </button>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredOffers.map((offer, index) => (
+                {sortedOffers.map((offer, index) => (
                   <OfferCard key={offer.id} offer={offer} index={index} />
                 ))}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {!isLoading && totalPages > 1 && (
+              <div className="mt-12 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 1}
+                  className="p-2 border border-white/10 rounded-sm text-white hover:border-gold hover:text-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:text-white"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+                    const showPage = p === 1 || p === totalPages || Math.abs(p - page) <= 1;
+                    const showEllipsis =
+                      (p === 2 && page > 3) || (p === totalPages - 1 && page < totalPages - 2);
+
+                    if (showEllipsis && !showPage) {
+                      return (
+                        <span key={p} className="px-2 text-slate-500">
+                          ...
+                        </span>
+                      );
+                    }
+
+                    if (!showPage) return null;
+
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => handlePageChange(p)}
+                        className={`w-10 h-10 border rounded-sm text-sm font-medium transition-colors ${
+                          page === p
+                            ? "bg-gold border-gold text-deepBlue"
+                            : "border-white/10 text-white hover:border-gold hover:text-gold"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPages}
+                  className="p-2 border border-white/10 rounded-sm text-white hover:border-gold hover:text-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:text-white"
+                >
+                  <ChevronRight size={20} />
+                </button>
               </div>
             )}
           </div>
