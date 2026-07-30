@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { fetchAll, isPubliclyListable } from '@/lib/fetch-all';
 
 const BASE_URL = 'https://www.natlaupa.com';
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://natlaupa.theelitessolutions.cloud/api/v1';
@@ -13,6 +14,8 @@ interface Hotel {
   country: string;
   category: string;
   description?: string;
+  isActive?: boolean;
+  deletedAt?: string | null;
 }
 
 interface Blog {
@@ -50,30 +53,7 @@ interface Country {
   count: number;
 }
 
-async function fetchData<T>(endpoint: string): Promise<T[]> {
-  try {
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      cache: 'no-store',
-    });
-    if (!response.ok) return [];
-    const json = await response.json();
-    const data = json.data;
-
-    if (Array.isArray(data)) return data;
-    if (data && typeof data === 'object') {
-      if (Array.isArray(data.items)) return data.items;
-      if (Array.isArray(data.hotels)) return data.hotels;
-      if (Array.isArray(data.blogs)) return data.blogs;
-      if (Array.isArray(data.offers)) return data.offers;
-      if (Array.isArray(data.destinations)) return data.destinations;
-      if (Array.isArray(data.styles)) return data.styles;
-      if (Array.isArray(data.countries)) return data.countries;
-    }
-    return [];
-  } catch {
-    return [];
-  }
-}
+const fetchCollection = <T,>(endpoint: string) => fetchAll<T>(API_URL, endpoint);
 
 function truncate(text: string, max: number): string {
   if (text.length <= max) return text;
@@ -81,14 +61,17 @@ function truncate(text: string, max: number): string {
 }
 
 export async function GET() {
-  const [hotels, blogs, offers, destinations, styles, countries] = await Promise.all([
-    fetchData<Hotel>('/hotels'),
-    fetchData<Blog>('/blogs/public'),
-    fetchData<Offer>('/offers/public'),
-    fetchData<Destination>('/hotel-destinations/public'),
-    fetchData<Style>('/hotel-styles/public'),
-    fetchData<Country>('/hotels/countries'),
+  const [allHotels, blogs, offers, destinations, styles, countries] = await Promise.all([
+    fetchCollection<Hotel>('/hotels'),
+    fetchCollection<Blog>('/blogs/public'),
+    fetchCollection<Offer>('/offers/public'),
+    fetchCollection<Destination>('/hotel-destinations/public'),
+    fetchCollection<Style>('/hotel-styles/public'),
+    fetchCollection<Country>('/hotels/countries'),
   ]);
+
+  // Only surface bookable hotels to AI answer engines — 19 of the 77 are deactivated.
+  const hotels = allHotels.filter(isPubliclyListable);
 
   const lines: string[] = [];
 

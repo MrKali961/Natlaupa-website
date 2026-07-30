@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { slugify } from '@/lib/slugify';
+import { fetchAll, isPubliclyListable } from '@/lib/fetch-all';
 
 const BASE_URL = 'https://www.natlaupa.com';
 // NEXT_PUBLIC_* is inlined at build time; if it is unset on the deploy target the
@@ -14,6 +15,8 @@ interface Hotel {
   id: string;
   slug?: string;
   updatedAt?: string;
+  isActive?: boolean;
+  deletedAt?: string | null;
 }
 
 interface Blog {
@@ -45,40 +48,7 @@ interface Country {
   count: number;
 }
 
-async function fetchData<T>(endpoint: string): Promise<T[]> {
-  try {
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      cache: 'no-store',
-    });
-    if (!response.ok) return [];
-    const json = await response.json();
-
-    // Handle different response formats
-    const data = json.data;
-
-    // If data is an array, return it
-    if (Array.isArray(data)) {
-      return data;
-    }
-
-    // If data is an object with a nested array (paginated response)
-    if (data && typeof data === 'object') {
-      // Check common pagination patterns
-      if (Array.isArray(data.items)) return data.items;
-      if (Array.isArray(data.hotels)) return data.hotels;
-      if (Array.isArray(data.blogs)) return data.blogs;
-      if (Array.isArray(data.offers)) return data.offers;
-      if (Array.isArray(data.destinations)) return data.destinations;
-      if (Array.isArray(data.styles)) return data.styles;
-      if (Array.isArray(data.countries)) return data.countries;
-    }
-
-    return [];
-  } catch (error) {
-    console.error(`Error fetching ${endpoint}:`, error);
-    return [];
-  }
-}
+const fetchCollection = <T,>(endpoint: string) => fetchAll<T>(API_URL, endpoint);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date().toISOString();
@@ -145,20 +115,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.7,
     },
+    // French legal pages — index,follow and self-canonical, but were absent from
+    // the sitemap entirely.
+    ...(
+      [
+        'cgu',
+        'mentions-legales',
+        'politique-de-confidentialite',
+        'politique-cookies',
+        'conditions-generales-service',
+        'mediation-consommation',
+      ] as const
+    ).map((slug) => ({
+      url: `${BASE_URL}/${slug}`,
+      lastModified: currentDate,
+      changeFrequency: 'yearly' as const,
+      priority: 0.3,
+    })),
   ];
 
-  // Fetch all dynamic content from API
+  // Fetch all dynamic content from API (every page, not just the first)
   const [hotels, blogs, offers, destinations, styles, countries] = await Promise.all([
-    fetchData<Hotel>('/hotels'),
-    fetchData<Blog>('/blogs/public'),
-    fetchData<Offer>('/offers/public'),
-    fetchData<Destination>('/hotel-destinations/public'),
-    fetchData<Style>('/hotel-styles/public'),
-    fetchData<Country>('/hotels/countries'),
+    fetchCollection<Hotel>('/hotels'),
+    fetchCollection<Blog>('/blogs/public'),
+    fetchCollection<Offer>('/offers/public'),
+    fetchCollection<Destination>('/hotel-destinations/public'),
+    fetchCollection<Style>('/hotel-styles/public'),
+    fetchCollection<Country>('/hotels/countries'),
   ]);
 
+  // Only advertise bookable hotels — 19 of the 77 are deactivated.
+  const activeHotels = hotels.filter(isPubliclyListable);
+
   // Dynamic hotel pages
-  const hotelPages: MetadataRoute.Sitemap = hotels.map((hotel) => ({
+  const hotelPages: MetadataRoute.Sitemap = activeHotels.map((hotel) => ({
     url: `${BASE_URL}/hotel/${hotel.slug || hotel.id}`,
     lastModified: hotel.updatedAt || currentDate,
     changeFrequency: 'weekly',
@@ -205,7 +195,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [
+  const allPages = [
     ...staticPages,
     ...hotelPages,
     ...blogPages,
@@ -214,4 +204,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...stylePages,
     ...countryPages,
   ];
+
+  // De-duplicate by URL, keeping the first occurrence.
+  //
+  // The `country` column is free text and contains trailing-whitespace variants
+  // ('France' and 'France ', 'Lebanon' and 'Lebanon ', 'United Kingdom' and
+  // 'United Kingdom '). slugify() collapses each pair to one slug, which would
+  // otherwise emit the same <loc> twice. The underlying data still needs cleaning
+  // in the admin — this only stops a malformed sitemap being published meanwhile.
+  const seen = new Set<string>();
+  return allPages.filter((page) => {
+    if (seen.has(page.url)) return false;
+    seen.add(page.url);
+    return true;
+  });
 }
