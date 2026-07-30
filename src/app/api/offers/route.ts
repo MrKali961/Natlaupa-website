@@ -30,8 +30,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // Parse query parameters
-    const type = (searchParams.get('type') || 'trending') as OfferType;
+    // No `type` means "the offers catalogue" — an unfiltered list. It must NOT default to
+    // a curated mode: /offers calls this with no arguments, and defaulting to `trending`
+    // silently narrowed the whole catalogue to a flag no offer currently carries.
+    const type = searchParams.get('type') as OfferType | null;
     const limit = parseInt(searchParams.get('limit') || '10');
 
     // Build query params for server
@@ -53,8 +55,7 @@ export async function GET(request: NextRequest) {
         params.append('isFeatured', 'true');
         break;
 
-      default:
-        params.append('isTrending', 'true');
+      // No type → catalogue: no curation filter at all.
     }
 
     // Fetch from server API (using public endpoint)
@@ -72,12 +73,19 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
+    const offers = data.data?.offers || [];
+    const pagination = data.data?.pagination;
 
     return NextResponse.json({
       success: true,
       type,
-      count: data.data?.offers?.length || 0,
-      offers: data.data?.offers || []
+      count: offers.length,
+      // The real match count, not the page length. `count` is kept for existing callers.
+      total: pagination?.total ?? offers.length,
+      page: pagination?.page ?? 1,
+      limit: pagination?.limit ?? limit,
+      totalPages: pagination?.totalPages ?? 1,
+      offers,
     });
   } catch (error) {
     console.error('Error fetching offers:', error);
