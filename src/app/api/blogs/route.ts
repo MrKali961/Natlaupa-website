@@ -20,13 +20,22 @@ export async function GET(request: NextRequest) {
     if (tag) params.append('tag', tag);
     params.append('limit', limit.toString());
     params.append('page', page.toString());
-    params.append('sortBy', 'publishedAt');
-    params.append('sortOrder', 'desc');
+    // Date order is the right default for browsing the index, but it is NOT user
+    // sort intent. Sending it while searching makes the server sort by date
+    // instead of relevance, so the best match for a query can land on page 3.
+    // Omit it when a term is present and let the search backend rank.
+    if (!search) {
+      params.append('sortBy', 'publishedAt');
+      params.append('sortOrder', 'desc');
+    }
 
-    // Fetch from server API (using public endpoint)
+    // Fetch from server API (using public endpoint). A search term is arbitrary
+    // user input, so caching it would mint a cache entry per one-off query; the
+    // unfiltered index is one URL and caches normally.
     const response = await fetch(`${API_URL}/blogs/public?${params.toString()}`, {
       headers: { 'Content-Type': 'application/json' },
-      next: { revalidate: 60 }, // Cache for 60 seconds
+      cache: search ? 'no-store' : undefined,
+      next: search ? undefined : { revalidate: 60 },
     });
 
     if (!response.ok) {
