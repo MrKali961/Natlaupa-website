@@ -10,6 +10,10 @@ interface OffersFilter {
   isFeatured?: boolean;
   limit?: number;
   page?: number;
+  // Omit sortBy to let the server rank by relevance. Sending one is read as explicit
+  // sort intent and overrides ranking, so it must never be filled in with a default.
+  sortBy?: 'createdAt' | 'title' | 'duration' | 'experienceType';
+  sortOrder?: 'asc' | 'desc';
 }
 
 interface UseOffersResult {
@@ -80,6 +84,8 @@ export function useOffers(filters?: OffersFilter): UseOffersResult {
       if (filters?.isFeatured !== undefined) params.append('isFeatured', String(filters.isFeatured));
       if (filters?.limit) params.append('limit', String(filters.limit));
       if (filters?.page) params.append('page', String(filters.page));
+      if (filters?.sortBy) params.append('sortBy', filters.sortBy);
+      if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder);
 
       // Fetch offers
       const response = await fetch(`/api/offers?${params.toString()}`);
@@ -103,7 +109,7 @@ export function useOffers(filters?: OffersFilter): UseOffersResult {
     } finally {
       setIsLoading(false);
     }
-  }, [filters?.search, filters?.experienceType, filters?.isTrending, filters?.isFeatured, filters?.limit, filters?.page]);
+  }, [filters?.search, filters?.experienceType, filters?.isTrending, filters?.isFeatured, filters?.limit, filters?.page, filters?.sortBy, filters?.sortOrder]);
 
   useEffect(() => {
     fetchOffers();

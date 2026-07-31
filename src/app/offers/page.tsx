@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Search, X, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,6 +10,8 @@ import OfferCard from "@/components/OfferCard";
 import Footer from "@/components/Footer";
 
 const ITEMS_PER_PAGE = 20;
+
+type SortOption = "relevance" | "duration" | "title";
 
 // Isolated in its own Suspense boundary so ONLY this (invisible) reader opts
 // into client rendering for useSearchParams. Seeds the search box exactly
@@ -35,16 +37,25 @@ export default function OffersPage() {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [sortBy, setSortBy] = useState<"duration" | "title">("duration");
+  // null means the user has not touched the control, so the sensible default
+  // depends on context: best-match while searching, shortest-first while browsing.
+  // Once they choose, their choice sticks across both.
+  const [sortChoice, setSortChoice] = useState<SortOption | null>(null);
 
   const debouncedSearch = useDebouncedValue(searchQuery, 300);
   const trimmedSearch = debouncedSearch.trim();
+  const sortBy = sortChoice ?? (trimmedSearch ? "relevance" : "duration");
 
-  // Fetch offers from the server — search is server-driven, not filtered in memory.
+  // Fetch offers from the server — search AND sort are both server-driven. Sorting
+  // in memory would only order the current page, which is wrong the moment there is
+  // more than one. "relevance" sends no sortBy at all: that is what lets the search
+  // backend rank, and any value here would override it.
   const { offers, total, isLoading } = useOffers({
     search: trimmedSearch || undefined,
     page,
     limit: ITEMS_PER_PAGE,
+    sortBy: sortBy === "relevance" ? undefined : sortBy,
+    sortOrder: sortBy === "relevance" ? undefined : "asc",
   });
 
   // Keep ?q= in sync for deep-linking — no full navigation, no scroll jump.
@@ -61,14 +72,12 @@ export default function OffersPage() {
     setPage(1);
   };
 
-  // Client-side sort of the current page only — sorting isn't forwarded to the
-  // server in this pass, so it's scoped to whichever 20 offers are loaded.
-  const sortedOffers = useMemo(() => {
-    return [...offers].sort((a, b) => {
-      if (sortBy === "title") return a.title.localeCompare(b.title);
-      return a.duration - b.duration;
-    });
-  }, [offers, sortBy]);
+  // Changing the sort reorders the whole result set, so the current page number is
+  // meaningless against the new order — reset it in the same handler, as with search.
+  const handleSortChange = (value: SortOption) => {
+    setSortChoice(value);
+    setPage(1);
+  };
 
   const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
 
@@ -129,9 +138,10 @@ export default function OffersPage() {
               <select
                 title="Sort By"
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                onChange={(e) => handleSortChange(e.target.value as SortOption)}
                 className="bg-white/5 border border-white/10 px-4 py-3 text-white focus:border-gold focus:outline-none cursor-pointer"
               >
+                <option value="relevance">Best match</option>
                 <option value="duration">Duration: Short to Long</option>
                 <option value="title">Title: A to Z</option>
               </select>
@@ -164,7 +174,7 @@ export default function OffersPage() {
                 <Loader2 className="w-8 h-8 text-gold animate-spin mx-auto mb-4" />
                 <p className="text-slate-400">Loading offers...</p>
               </div>
-            ) : sortedOffers.length === 0 ? (
+            ) : offers.length === 0 ? (
               <div className="text-center py-24">
                 <p className="text-slate-400 text-lg">
                   No offers match your search criteria.
@@ -179,7 +189,7 @@ export default function OffersPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {sortedOffers.map((offer, index) => (
+                {offers.map((offer, index) => (
                   <OfferCard key={offer.id} offer={offer} index={index} />
                 ))}
               </div>

@@ -34,34 +34,44 @@ export async function GET(request: NextRequest) {
     // a curated mode: /offers calls this with no arguments, and defaulting to `trending`
     // silently narrowed the whole catalogue to a flag no offer currently carries.
     const type = searchParams.get('type') as OfferType | null;
+    const search = searchParams.get('search')?.trim() || '';
     const limit = parseInt(searchParams.get('limit') || '10');
 
     // Build query params for server
     const params = new URLSearchParams();
-    params.append('limit', limit.toString());
+    params.set('limit', limit.toString());
+
+    // The catalogue's own filters. These have to be forwarded or /offers' search
+    // box sends a request and gets back the same unfiltered page every time.
+    for (const key of ['search', 'page', 'experienceType', 'isTrending', 'isFeatured', 'sortBy', 'sortOrder']) {
+      const value = searchParams.get(key);
+      if (value) params.set(key, value);
+    }
 
     switch (type) {
       case 'seasonal':
         // Get offers matching current season's experience type
-        const experienceType = getSeasonalExperienceType();
-        params.append('experienceType', experienceType);
+        params.set('experienceType', searchParams.get('experienceType') || getSeasonalExperienceType());
         break;
 
       case 'trending':
-        params.append('isTrending', 'true');
+        params.set('isTrending', 'true');
         break;
 
       case 'for-you':
-        params.append('isFeatured', 'true');
+        params.set('isFeatured', 'true');
         break;
 
       // No type → catalogue: no curation filter at all.
     }
 
-    // Fetch from server API (using public endpoint)
+    // Fetch from server API (using public endpoint). A search term is arbitrary
+    // user input, so caching it would mint a cache entry per one-off query; the
+    // curated modes are a small fixed set of URLs and cache normally.
     const response = await fetch(`${API_URL}/offers/public?${params.toString()}`, {
       headers: { 'Content-Type': 'application/json' },
-      next: { revalidate: 60 }, // Cache for 60 seconds
+      cache: search ? 'no-store' : undefined,
+      next: search ? undefined : { revalidate: 60 },
     });
 
     if (!response.ok) {
