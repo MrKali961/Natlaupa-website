@@ -60,6 +60,11 @@ function transformHotel(s: Record<string, any>): Hotel {
     ctaPhrase: s.ctaPhrase,
     galleryImages: images.map((i) => i.url),
     reviews: s.reviews || [],
+    // Preserved so the detail route can refuse to render retired inventory.
+    // `/hotels/slug/:slug` returns deactivated hotels with isActive: false, and
+    // dropping the field here is what let those pages render at 200 / index,follow.
+    isActive: s.isActive,
+    deletedAt: s.deletedAt ?? null,
   };
 }
 

@@ -24,6 +24,16 @@ export interface Hotel {
   lat?: number;
   lng?: number;
   amenities?: string[];
+  /**
+   * Publication state from the admin API.
+   *
+   * Needed on this type because `/hotels/slug/:slug` serves deactivated hotels exactly
+   * like live ones — only the `/hotels` listing filters them. Without it, the detail
+   * route cannot tell retired inventory apart and renders it at HTTP 200 with
+   * `index, follow`.
+   */
+  isActive?: boolean;
+  deletedAt?: string | null;
 }
 
 export interface Destination {
