@@ -16,6 +16,15 @@ export interface Hotel {
   rating: number;
   imageUrl: string;
   category: string;
+  /**
+   * Stored slug of the hotel style behind `category`.
+   *
+   * `category` is the style's display name, which is not a URL. Slugifying it guesses
+   * wrong whenever the name contains punctuation the DB slug drops — 'Wellness &
+   * Rejuvenation' has slug 'wellness-rejuvenation', so a name-derived
+   * '/styles/wellness-&-rejuvenation' 404s. Link off this field or not at all.
+   */
+  categorySlug?: string;
   isTrending: boolean;
   description?: string;
   ctaPhrase?: string;

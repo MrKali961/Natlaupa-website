@@ -6,6 +6,7 @@
 
 import type { Hotel, Offer } from '@/lib/types';
 import { BLOG_PAGE_SIZE } from '@/lib/constants';
+import { isValidSlug } from '@/lib/slugify';
 
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 const REVALIDATE = 300; // 5 minutes, matches generateMetadata caching
@@ -33,7 +34,7 @@ async function apiFetch<T>(path: string): Promise<T | null> {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function transformHotel(s: Record<string, any>): Hotel {
-  const style = s.style as { id?: string; name?: string } | null;
+  const style = s.style as { id?: string; name?: string; slug?: string } | null;
   const dest = s.destination as { name?: string; country?: string } | null;
   const images = (s.images as { url: string; isPrimary?: boolean }[]) || [];
   const amenities = (s.amenities as { name: string }[]) || [];
@@ -52,6 +53,7 @@ function transformHotel(s: Record<string, any>): Hotel {
       images[0]?.url ||
       '',
     category: style?.name || 'Luxury',
+    categorySlug: style?.slug,
     isTrending: s.isFeatured || false,
     lat: s.latitude,
     lng: s.longitude,
@@ -206,6 +208,7 @@ export async function fetchStyleBySlug(slug: string): Promise<ServerStyle | null
 // ---------------------------------------------------------------------------
 
 export async function fetchOfferBySlug(slug: string): Promise<Offer | null> {
+  if (!isValidSlug(slug)) return null;
   const raw = await apiFetch<Record<string, any>>(`/offers/slug/${slug}`);
   return raw ? transformOffer(raw) : null;
 }
@@ -228,6 +231,7 @@ export interface ServerBlog {
 }
 
 export async function fetchBlogBySlug(slug: string): Promise<ServerBlog | null> {
+  if (!isValidSlug(slug)) return null;
   return apiFetch<ServerBlog>(`/blogs/slug/${slug}`);
 }
 
@@ -259,6 +263,7 @@ export interface ServerBlogFull {
 }
 
 export async function fetchBlogFull(slug: string): Promise<ServerBlogFull | null> {
+  if (!isValidSlug(slug)) return null;
   return apiFetch<ServerBlogFull>(`/blogs/slug/${slug}`);
 }
 

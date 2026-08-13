@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { MapPin, ArrowRight, Building2 } from 'lucide-react';
 import Footer from '@/components/Footer';
+import { slugify } from '@/lib/slugify';
 
 interface CountryData {
   country: string;
@@ -35,7 +36,7 @@ export default function CountriesPage() {
               .filter((c: CountryData) => c.hotelCount > 0)
               .map((c: CountryData) => ({
                 name: c.country,
-                slug: c.country.toLowerCase().replace(/\s+/g, '-'),
+                slug: slugify(c.country),
                 hotelCount: c.hotelCount,
                 imageUrl: c.sampleImage || 'https://picsum.photos/600/400?random=50',
               }))

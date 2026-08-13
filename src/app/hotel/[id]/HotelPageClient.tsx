@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import MasonryGallery from '@/components/MasonryGallery';
 import type { Hotel } from '@/lib/types';
 import { submitHotelInquiry } from '@/lib/api-client';
+import { slugify } from '@/lib/slugify';
 
 export default function HotelPageClient({ hotel }: { hotel: Hotel }) {
   const router = useRouter();
@@ -289,17 +290,21 @@ Submitted via Natlaupa Website`;
               <h3 className="text-lg font-serif text-white mb-6">Explore More</h3>
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href={`/countries/${hotel.country.toLowerCase().replace(/\s+/g, '-')}`}
+                  href={`/countries/${slugify(hotel.country)}`}
                   className="px-4 py-2 border border-white/20 text-sm text-white hover:border-gold hover:text-gold transition-colors"
                 >
                   More in {hotel.country}
                 </Link>
-                <Link
-                  href={`/styles/${hotel.category.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="px-4 py-2 border border-white/20 text-sm text-white hover:border-gold hover:text-gold transition-colors"
-                >
-                  More {hotel.category}
-                </Link>
+                {/* Gated on the stored slug: hotels with no style fall back to the
+                    invented category 'Luxury', which is not a style page either. */}
+                {hotel.categorySlug && (
+                  <Link
+                    href={`/styles/${hotel.categorySlug}`}
+                    className="px-4 py-2 border border-white/20 text-sm text-white hover:border-gold hover:text-gold transition-colors"
+                  >
+                    More {hotel.category}
+                  </Link>
+                )}
               </div>
             </div>
           </motion.div>

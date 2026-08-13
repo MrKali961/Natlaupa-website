@@ -15,6 +15,16 @@ export function slugify(text: string): string {
 }
 
 /**
+ * Checks whether a route param is a usable slug.
+ * Route params are always strings, so a link built from a missing slug arrives
+ * as the literal 'null'/'undefined' and sails past a plain falsy check — which
+ * is what put `/blogs/slug/null` & co. on the upstream API.
+ */
+export function isValidSlug(slug: string | null | undefined): boolean {
+  return !!slug && slug !== 'null' && slug !== 'undefined';
+}
+
+/**
  * Checks if a string is a CUID (database ID)
  */
 export function isCuid(str: string): boolean {

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { slugify } from '@/lib/slugify';
 
 type Props = {
   params: Promise<{ country: string }>;
@@ -6,14 +7,17 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { country } = await params;
-  const countryName = decodeURIComponent(country).replace(/-/g, ' ');
+  // Normalise through slugify so legacy spellings (e.g. '/countries/morocco-',
+  // emitted by the old inline rule) self-canonicalize to the sitemap URL.
+  const countrySlug = slugify(decodeURIComponent(country));
+  const countryName = countrySlug.replace(/-/g, ' ');
   const capitalizedCountry = countryName.split(' ').map(word =>
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ');
 
   const title = `Luxury Hotels in ${capitalizedCountry} | Natlaupa`;
   const description = `Discover luxury hotels and exclusive accommodations in ${capitalizedCountry}. Curated collection of premium stays for discerning travelers.`;
-  const canonicalUrl = `https://www.natlaupa.com/countries/${country}`;
+  const canonicalUrl = `https://www.natlaupa.com/countries/${countrySlug}`;
 
   return {
     title,

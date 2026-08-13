@@ -7,6 +7,7 @@ import { ArrowLeft, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import HotelCard from '@/components/HotelCard';
 import Footer from '@/components/Footer';
 import { Hotel } from '@/lib/types';
+import { slugify } from '@/lib/slugify';
 
 interface CountryPageClientProps {
   hotels: Hotel[];
@@ -112,7 +113,7 @@ export default function CountryPageClient({ hotels, matchedCountry, allCountries
               {allCountries.filter(c => c !== matchedCountry).map(c => (
                 <Link
                   key={c}
-                  href={`/countries/${c.toLowerCase().replace(/\s+/g, '-')}`}
+                  href={`/countries/${slugify(c)}`}
                   className="px-3 sm:px-4 py-1.5 sm:py-2 border border-white/20 text-white hover:border-gold hover:text-gold transition-colors text-xs sm:text-sm uppercase tracking-wider sm:tracking-widest"
                 >
                   {c}

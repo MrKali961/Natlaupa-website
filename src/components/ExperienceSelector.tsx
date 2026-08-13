@@ -201,7 +201,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
 
   // Fetch featured destinations (countries) and styles directly from API
   const [destinations, setDestinations] = useState<Destination[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string; imageUrl: string; count: number }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string; slug: string; imageUrl: string; count: number }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -240,7 +240,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
 
         // Process featured styles (top 4 by hotel count)
         if (stylesRes.ok && stylesData.data?.items) {
-          const styles = stylesData.data.items as Array<{ id: string; name: string; imageUrl?: string; hotelCount: number; isActive: boolean }>;
+          const styles = stylesData.data.items as Array<{ id: string; name: string; slug: string; imageUrl?: string; hotelCount: number; isActive: boolean }>;
           // Filter active styles, sort by hotel count, take top 4
           const featuredStyles = styles
             .filter(s => s.isActive)
@@ -249,6 +249,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
             .map(s => ({
               id: s.id,
               name: s.name,
+              slug: s.slug,
               imageUrl: s.imageUrl || 'https://picsum.photos/600/400',
               count: s.hotelCount,
             }));
@@ -1125,9 +1126,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                           }`}
                         >
                           <Link
-                            href={`/styles/${cat.name
-                              .toLowerCase()
-                              .replace(/\s+/g, "-")}`}
+                            href={`/styles/${cat.slug}`}
                             className="block group"
                           >
                             <div className="relative overflow-hidden rounded-sm border border-white/10 hover:border-gold/30 transition-all duration-500">

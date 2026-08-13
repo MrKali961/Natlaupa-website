@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isValidSlug } from '@/lib/slugify';
 
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -10,7 +11,9 @@ export async function GET(
   try {
     const { slug } = await params;
 
-    if (!slug) {
+    // 'null'/'undefined' arrive as literal strings and would otherwise be
+    // forwarded upstream as /blogs/slug/null.
+    if (!isValidSlug(slug)) {
       return NextResponse.json(
         { error: 'Blog slug is required' },
         { status: 400 }

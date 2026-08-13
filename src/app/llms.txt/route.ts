@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchAll, isPubliclyListable } from '@/lib/fetch-all';
+import { slugify } from '@/lib/slugify';
 
 const BASE_URL = 'https://www.natlaupa.com';
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://natlaupa.theelitessolutions.cloud/api/v1';
@@ -128,7 +129,7 @@ export async function GET() {
     lines.push('## Countries');
     lines.push('');
     for (const { country, count } of countries) {
-      const slug = country.toLowerCase().replace(/\s+/g, '-');
+      const slug = slugify(country);
       lines.push(`- [${country}](${BASE_URL}/countries/${slug}): ${count} luxury hotel${count !== 1 ? 's' : ''}`);
     }
     lines.push('');

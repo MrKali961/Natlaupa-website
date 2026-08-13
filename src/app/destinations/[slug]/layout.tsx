@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { isValidSlug } from '@/lib/slugify';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -8,6 +9,15 @@ const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+
+  // The page below already 404s on an unknown slug, but generateMetadata runs
+  // regardless — without this it still issues /hotel-destinations/slug/null.
+  if (!isValidSlug(slug)) {
+    return {
+      title: 'Destination Not Found | Natlaupa',
+      description: 'The requested destination could not be found.',
+    };
+  }
 
   try {
     const response = await fetch(`${API_URL}/hotel-destinations/slug/${slug}`, {

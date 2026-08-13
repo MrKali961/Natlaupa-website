@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isValidSlug } from '@/lib/slugify';
 
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -9,7 +10,9 @@ export async function GET(
   try {
     const { id } = await params;
 
-    if (!id) {
+    // 'null'/'undefined' arrive as literal strings and would otherwise be
+    // forwarded upstream as /offers/slug/null.
+    if (!isValidSlug(id)) {
       return NextResponse.json(
         { error: 'Offer ID or slug is required' },
         { status: 400 }
