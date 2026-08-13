@@ -3,10 +3,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Heart,
-  Compass,
-  Palette,
-  Leaf,
   Sparkles,
   ArrowRight,
   Check,
@@ -15,6 +11,13 @@ import {
 import Link from "next/link";
 import { trackMoodSelection, hasConsent } from "@/services/trackingService";
 import { getIconForStyle, getColorForStyle, getDefaultImageUrl } from "@/utils/moodHelpers";
+
+interface MoodCopy {
+  tagline: string;
+  description: string;
+  keywords: string[];
+  hotelMatchingReason: string;
+}
 
 interface Mood {
   id: string;
@@ -27,12 +30,7 @@ interface Mood {
   description: string;
   imageUrl: string;
   hotelCount?: number;
-  aiContent?: {
-    tagline: string;
-    description: string;
-    keywords: string[];
-    hotelMatchingReason: string;
-  };
+  aiContent?: MoodCopy;
 }
 
 interface Hotel {
@@ -45,84 +43,65 @@ interface Hotel {
   personalizedReason?: string;
 }
 
-const FALLBACK_MOODS: Mood[] = [
-  {
-    id: "romantic",
-    name: "Riviera Lifestyle",
-    slug: "riviera-lifestyle",
+/**
+ * Hand-authored editorial copy, keyed by the style's stored slug.
+ *
+ * The backend generates this copy with Gemini and silently substitutes a mechanical
+ * template when generation is unavailable, so curated copy always outranks whatever the
+ * API returns. Styles with no entry here fall through to the API's copy.
+ */
+const CURATED_COPY: Record<string, MoodCopy> = {
+  "riviera-lifestyle": {
     tagline: "For two hearts seeking solitude",
-    icon: Heart,
-    color: "from-rose-500/20 to-pink-500/20",
-    keywords: ["intimate", "couple", "honeymoon", "private"],
     description:
       "Secluded villas, candlelit dinners, and sunsets designed for two.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
-    aiContent: {
-      tagline: "For two hearts seeking solitude",
-      description: "Secluded villas, candlelit dinners, and sunsets designed for two.",
-      keywords: ["intimate", "couple", "honeymoon", "private"],
-      hotelMatchingReason: "Perfect romantic escape at {hotelName}",
-    },
+    keywords: ["intimate", "couple", "honeymoon", "private"],
+    hotelMatchingReason: "Perfect romantic escape at {hotelName}",
   },
-  {
-    id: "adventure",
-    name: "Wellness & Rejuvenation",
-    slug: "wellness-rejuvenation",
-    tagline: "For the bold and curious",
-    icon: Compass,
-    color: "from-orange-500/20 to-amber-500/20",
-    keywords: ["active", "nature", "exploration", "outdoor"],
-    description: "Wake up to mountains, dive into oceans, and chase horizons.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800",
-    aiContent: {
-      tagline: "For the bold and curious",
-      description: "Wake up to mountains, dive into oceans, and chase horizons.",
-      keywords: ["active", "nature", "exploration", "outdoor"],
-      hotelMatchingReason: "Perfect adventure experience at {hotelName}",
-    },
-  },
-  {
-    id: "cultural",
-    name: "Global Power Hub",
-    slug: "global-power-hub",
-    tagline: "For the curious soul",
-    icon: Palette,
-    color: "from-purple-500/20 to-indigo-500/20",
-    keywords: ["historic", "art", "heritage", "local"],
-    description: "Stay where history whispers and art speaks volumes.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800",
-    aiContent: {
-      tagline: "For the curious soul",
-      description: "Stay where history whispers and art speaks volumes.",
-      keywords: ["historic", "art", "heritage", "local"],
-      hotelMatchingReason: "Perfect cultural experience at {hotelName}",
-    },
-  },
-  {
-    id: "wellness",
-    name: "Timeless Elegance",
-    slug: "timeless-elegance",
+  "wellness-rejuvenation": {
     tagline: "For body and mind renewal",
-    icon: Leaf,
-    color: "from-emerald-500/20 to-teal-500/20",
-    keywords: ["spa", "wellness", "retreat", "peaceful"],
     description: "Spas, meditation gardens, and the sound of silence.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800",
-    aiContent: {
-      tagline: "For body and mind renewal",
-      description: "Spas, meditation gardens, and the sound of silence.",
-      keywords: ["spa", "wellness", "retreat", "peaceful"],
-      hotelMatchingReason: "Perfect wellness retreat at {hotelName}",
-    },
+    keywords: ["spa", "wellness", "retreat", "peaceful"],
+    hotelMatchingReason: "Perfect wellness retreat at {hotelName}",
   },
-];
+  "timeless-elegance": {
+    tagline: "For those who prefer the classics",
+    description:
+      "Paris and Évian, where heritage is quietly kept rather than staged.",
+    keywords: ["heritage", "classic", "refined", "iconic"],
+    hotelMatchingReason: "A study in enduring elegance at {hotelName}",
+  },
+  "urban-prestige": {
+    tagline: "For the address that needs no explanation",
+    description:
+      "London, New York, Dubai — the corner of the city everyone can name.",
+    keywords: ["landmark", "city", "prestige", "iconic"],
+    hotelMatchingReason: "One of the city's great addresses at {hotelName}",
+  },
+  "global-power-hub": {
+    tagline: "For those always between time zones",
+    description:
+      "Dubai, Istanbul, New York, where the deal and the departure gate align.",
+    keywords: ["business", "connected", "metropolitan", "premium"],
+    hotelMatchingReason: "Built for momentum at {hotelName}",
+  },
+  "contemporary-cool": {
+    tagline: "For the design-led and easily bored",
+    description:
+      "Amsterdam and the sharper corners of Barcelona — modern, never stuffy.",
+    keywords: ["design", "modern", "creative", "urban"],
+    hotelMatchingReason: "Design-forward and refreshingly unstuffy at {hotelName}",
+  },
+  "alpine-escape": {
+    tagline: "For thin air and long descents",
+    description: "Courchevel in season: first tracks at dawn, firelight by four.",
+    keywords: ["ski", "mountain", "alpine", "winter"],
+    hotelMatchingReason: "Ski-in seclusion at {hotelName}",
+  },
+};
 
 const MoodMatcher: React.FC = () => {
-  const [moods, setMoods] = useState<Mood[]>(FALLBACK_MOODS);
+  const [moods, setMoods] = useState<Mood[]>([]);
   const [moodsLoading, setMoodsLoading] = useState(true);
   const [moodsError, setMoodsError] = useState<string | null>(null);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
@@ -153,25 +132,38 @@ const MoodMatcher: React.FC = () => {
         const styles = data.data?.styles || [];
 
         // Transform backend styles to Mood format
-        const transformedMoods: Mood[] = styles.map((style: any, index: number) => ({
-          id: style.id,
-          name: style.name,
-          slug: style.slug,
-          tagline: style.aiContent.tagline,
-          icon: getIconForStyle(style.name),
-          color: getColorForStyle(style.name, index),
-          keywords: style.aiContent.keywords,
-          description: style.aiContent.description,
-          imageUrl: style.imageUrl || getDefaultImageUrl(style.name),
-          hotelCount: style.hotelCount,
-          aiContent: style.aiContent, // Include full AI content for hotel matching
-        }));
+        const transformedMoods: Mood[] = styles.map((style: any, index: number) => {
+          // Curated copy wins as a whole block when the style has one; the API still owns
+          // identity, imagery and counts so the section tracks styles added in the admin.
+          // A style with neither curated copy nor aiContent still has to render, so fall
+          // back to its own name rather than reading .tagline off undefined.
+          const copy: MoodCopy = CURATED_COPY[style.slug] ??
+            style.aiContent ?? {
+              tagline: style.name,
+              description: '',
+              keywords: [],
+              hotelMatchingReason: 'A considered stay at {hotelName}',
+            };
+
+          return {
+            id: style.id,
+            name: style.name,
+            slug: style.slug,
+            tagline: copy.tagline,
+            icon: getIconForStyle(style.name),
+            color: getColorForStyle(style.name, index),
+            keywords: copy.keywords,
+            description: copy.description,
+            imageUrl: style.imageUrl || getDefaultImageUrl(style.name),
+            hotelCount: style.hotelCount,
+            aiContent: copy, // Include full copy block for hotel matching
+          };
+        });
 
         setMoods(transformedMoods);
       } catch (error) {
         console.error('Error fetching moods:', error);
         setMoodsError('Unable to load mood options');
-        // Keep FALLBACK_MOODS as fallback (already set in initial state)
       } finally {
         setMoodsLoading(false);
       }
