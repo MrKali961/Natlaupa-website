@@ -122,10 +122,13 @@ function transformOffer(s: Record<string, any>): Offer {
 // ---------------------------------------------------------------------------
 
 export async function fetchHotelBySlug(slug: string): Promise<Hotel | null> {
+  if (!isValidSlug(slug)) return null;
   const raw = await apiFetch<Record<string, any>>(`/hotels/slug/${slug}`);
   return raw ? transformHotel(raw) : null;
 }
 
+// No isValidSlug guard here on purpose: the only caller reaches this behind isCuid(id),
+// and 'null'/'undefined' are not CUIDs, so the junk value cannot arrive.
 export async function fetchHotelById(id: string): Promise<Hotel | null> {
   const raw = await apiFetch<Record<string, any>>(`/hotels/${id}`);
   return raw ? transformHotel(raw) : null;
@@ -199,6 +202,7 @@ export async function fetchStyles(): Promise<ServerStyle[]> {
 }
 
 export async function fetchStyleBySlug(slug: string): Promise<ServerStyle | null> {
+  if (!isValidSlug(slug)) return null;
   const raw = await apiFetch<ServerStyle>(`/hotel-styles/slug/${slug}`);
   return raw || null;
 }

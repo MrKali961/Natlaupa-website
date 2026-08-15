@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { isPubliclyListable } from '@/lib/fetch-all';
+import { isCuid, isValidSlug } from '@/lib/slugify';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -26,13 +27,17 @@ const RETIRED_METADATA: Metadata = {
 
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
-// Check if a string is a CUID (database ID)
-function isCuid(str: string): boolean {
-  return /^c[a-z0-9]{24}$/.test(str) || /^h\d+$/.test(str);
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
+
+  // The page below already 404s on an unknown id, but generateMetadata runs
+  // regardless — without this it still issues /hotels/slug/null.
+  if (!isValidSlug(id)) {
+    return {
+      title: 'Hotel Not Found',
+      description: 'The requested hotel could not be found.',
+    };
+  }
 
   try {
     // Determine if it's an ID or slug and use the appropriate endpoint

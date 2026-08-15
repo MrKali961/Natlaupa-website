@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { isValidSlug } from '@/lib/slugify';
 
 type Props = {
   params: Promise<{ style: string }>;
@@ -8,6 +9,15 @@ const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { style } = await params;
+
+  // Without this the un-slugify fallback below would happily title the page
+  // "Null Hotels", after issuing /hotel-styles/slug/null upstream.
+  if (!isValidSlug(style)) {
+    return {
+      title: 'Style Not Found | Natlaupa',
+      description: 'The requested hotel style could not be found.',
+    };
+  }
 
   try {
     const response = await fetch(`${API_URL}/hotel-styles/slug/${style}`, {
