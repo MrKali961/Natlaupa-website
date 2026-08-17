@@ -7,6 +7,7 @@
 import type { Hotel, Offer } from '@/lib/types';
 import { BLOG_PAGE_SIZE } from '@/lib/constants';
 import { isValidSlug } from '@/lib/slugify';
+import { fetchAll } from '@/lib/fetch-all';
 
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 const REVALIDATE = 300; // 5 minutes, matches generateMetadata caching
@@ -178,9 +179,25 @@ export interface ServerDestination {
   country?: string | null;
 }
 
+/**
+ * Every destination, paginated.
+ *
+ * 🔴 This used a single unpaginated `apiFetch` and returned only `raw.items` — i.e. PAGE 1.
+ * The endpoint's default page size is 20, and there are 32 destinations, so
+ * `destinations.find(d => d.slug === slug)` in `destinations/[slug]/page.tsx` missed every
+ * destination past the first page and called `notFound()`.
+ *
+ * Measured on production 2026-08-17: 12 of the 32 destination URLs advertised in sitemap.xml
+ * returned 404 — including Paris, London, Dubai, Barcelona, Cannes and New York City. Exactly
+ * 20 resolved, which is what pinned the cause to the default page size.
+ *
+ * This is the SAME defect class as the original sitemap bug (plan 2.3): a surface reading page 1
+ * of a paginated endpoint and silently treating it as the whole collection. `fetchAll` exists
+ * precisely so no two surfaces can disagree about what the collection contains — the sitemap
+ * already used it, this getter did not, and the two drifted. Use it here too.
+ */
 export async function fetchDestinations(): Promise<ServerDestination[]> {
-  const raw = await apiFetch<{ items: ServerDestination[] }>('/hotel-destinations/public');
-  return raw?.items || [];
+  return fetchAll<ServerDestination>(API_URL, '/hotel-destinations/public');
 }
 
 // ---------------------------------------------------------------------------
@@ -196,9 +213,14 @@ export interface ServerStyle {
   hotelCount: number;
 }
 
+/**
+ * Every style, paginated. Same latent defect as fetchDestinations() above — single unpaginated
+ * page-1 read — but not yet biting: there are only 8 styles against a default page size of 20,
+ * so all 8 currently resolve. Fixed alongside rather than left as a trap that fires silently on
+ * the 21st style, at which point styles 21+ would 404 while the sitemap advertised them.
+ */
 export async function fetchStyles(): Promise<ServerStyle[]> {
-  const raw = await apiFetch<{ items: ServerStyle[] }>('/hotel-styles/public');
-  return raw?.items || [];
+  return fetchAll<ServerStyle>(API_URL, '/hotel-styles/public');
 }
 
 export async function fetchStyleBySlug(slug: string): Promise<ServerStyle | null> {
