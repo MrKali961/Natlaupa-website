@@ -292,18 +292,32 @@ test.describe('SEO regression guards (shipped fixes)', () => {
   });
 
   test('S07: every hotel in the sitemap is reachable and indexable', async ({ request }) => {
+    // ~84 sequential GETs (up to 168 with retries) exceeds the 45s config default.
+    test.setTimeout(180_000);
+
     // The positive half of the retirement fix. A URL advertised in the sitemap that 404s, or
     // that serves noindex, is the sitemap and the page disagreeing about what is public — the
     // exact class of bug the shared isPubliclyListable predicate exists to prevent.
     const hotels = (await sitemapPaths(request)).filter((p) => p.startsWith('/hotel/'));
     expect(hotels.length, 'no hotel URLs in the sitemap at all').toBeGreaterThan(0);
 
-    const sample = hotels.sort().filter((_, i) => i % Math.max(1, Math.floor(hotels.length / 5)) === 0);
+    // ⚠️ CHECKS EVERY HOTEL, NOT A SAMPLE — and that is the whole point.
+    //
+    // An earlier version strode through and checked 5 of 84. It reported GREEN over a 404 that
+    // had been measured by hand minutes earlier (/hotel/saifi-suites-hotel), because the stride
+    // landed on indexes 0/28/56 and never reached an 's'-prefixed slug. Sampling hides exactly
+    // the failure mode this test exists to catch. 84 GETs is cheap; a false green is not.
+    //
+    // Retry once before failing. That same saifi-suites 404 did NOT reproduce on re-probe — it
+    // was a transient ISR/cold-start miss, not a defect. Without the retry this test flakes on
+    // cold caches and gets deleted for being unreliable, which costs more than one extra request.
     const bad: string[] = [];
-    for (const path of sample.slice(0, 5)) {
-      const res = await request.get(path);
+    for (const path of hotels) {
+      let res = await request.get(path);
+      if (res.status() !== 200) res = await request.get(path);
+
       if (res.status() !== 200) {
-        bad.push(`${path}: sitemap advertises it, page returns ${res.status()}`);
+        bad.push(`${path}: sitemap advertises it, page returns ${res.status()} (twice)`);
         continue;
       }
       const robots = robotsMeta(await res.text());

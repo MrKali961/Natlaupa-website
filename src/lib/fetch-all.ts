@@ -48,23 +48,55 @@ function extractItems(data: Record<string, unknown>): unknown[] | null {
   return null;
 }
 
+/** Caching policy for a fetchAll call. See the `caching` note on fetchAll below. */
+export interface FetchAllOptions {
+  /**
+   * ISR revalidation window in seconds. Omit for `cache: 'no-store'`, which is what
+   * /sitemap.xml and /llms.txt want — a stale sitemap is worse than a slow one.
+   *
+   * 🔴 PAGE RENDER PATHS MUST PASS THIS. A `no-store` fetch inside a server component opts
+   * the whole route out of Next's full route cache and re-hits the backend on every request.
+   * `server-api.ts` passes 300 to match the `REVALIDATE` its own `apiFetch` already uses, so
+   * routing a page through fetchAll does not quietly convert it to dynamic rendering.
+   */
+  revalidate?: number;
+}
+
 /**
  * Fetch every page of a collection.
  *
  * Handles both plain-array responses and the
- * `{ items, total, page, limit, totalPages, hasMore }` envelope. On error it returns
- * whatever was collected so far rather than throwing, so one failing collection
- * cannot empty an entire sitemap.
+ * `{ items, total, page, limit, totalPages, hasMore }` envelope.
+ *
+ * ⚠️ DEGRADATION MODE, and it is a trap worth knowing: on error this returns whatever was
+ * collected SO FAR rather than throwing, so one failing collection cannot empty an entire
+ * sitemap. But that means if page 1 succeeds and page 2 fails, callers get page 1 — which is
+ * indistinguishable from the unpaginated page-1 bug this helper exists to prevent (12 of 32
+ * Natlaupa destination URLs 404'd that way). The `console.error` above each `break` is the only
+ * signal. If you are debugging a partial collection, check the server logs before assuming the
+ * pagination itself is wrong.
+ *
+ * Caching: defaults to `no-store`. Pass `{ revalidate }` from any page render path.
  */
-export async function fetchAll<T>(apiUrl: string, endpoint: string): Promise<T[]> {
+export async function fetchAll<T>(
+  apiUrl: string,
+  endpoint: string,
+  options?: FetchAllOptions
+): Promise<T[]> {
   const collected: T[] = [];
+  // Default preserved deliberately so sitemap.ts and llms.txt/route.ts are byte-identical
+  // in behaviour to before this parameter existed.
+  const cachePolicy: RequestInit & { next?: { revalidate: number } } =
+    typeof options?.revalidate === 'number'
+      ? { next: { revalidate: options.revalidate } }
+      : { cache: 'no-store' };
 
   try {
     for (let page = 1; page <= MAX_PAGES; page++) {
       const separator = endpoint.includes('?') ? '&' : '?';
       const response = await fetch(
         `${apiUrl}${endpoint}${separator}page=${page}&limit=${PAGE_SIZE}`,
-        { cache: 'no-store' }
+        cachePolicy
       );
       if (!response.ok) {
         // Loud on purpose. A silently-empty collection is how the original bug hid.

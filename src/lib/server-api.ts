@@ -221,7 +221,14 @@ export interface ServerDestination {
  * already used it, this getter did not, and the two drifted. Use it here too.
  */
 export async function fetchDestinations(): Promise<ServerDestination[]> {
-  return fetchAll<ServerDestination>(API_URL, '/hotel-destinations/public');
+  // { revalidate: REVALIDATE } is load-bearing, not decoration. fetchAll defaults to
+  // `cache: 'no-store'` because it was written for /sitemap.xml, and a no-store fetch inside a
+  // server component opts the whole route out of Next's full route cache and re-hits the backend
+  // on every request. This getter runs in destinations/[slug]/page.tsx, so it must keep the same
+  // 300s ISR window apiFetch already used — the fix here is the pagination, not the caching.
+  return fetchAll<ServerDestination>(API_URL, '/hotel-destinations/public', {
+    revalidate: REVALIDATE,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -244,7 +251,8 @@ export interface ServerStyle {
  * the 21st style, at which point styles 21+ would 404 while the sitemap advertised them.
  */
 export async function fetchStyles(): Promise<ServerStyle[]> {
-  return fetchAll<ServerStyle>(API_URL, '/hotel-styles/public');
+  // Same ISR-preserving revalidate as fetchDestinations above — see the note there.
+  return fetchAll<ServerStyle>(API_URL, '/hotel-styles/public', { revalidate: REVALIDATE });
 }
 
 export async function fetchStyleBySlug(slug: string): Promise<ServerStyle | null> {
