@@ -92,6 +92,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      // The inventory hub. Priority above the taxonomy hubs on purpose: this is the only page that
+      // links directly to every bookable hotel, and until it existed all 58 were sitemap-only with
+      // no internal link path from anywhere.
+      //
+      // Pages 2+ are intentionally NOT listed here. Google discovers paginated sets by following the
+      // numbered <a> links in the page body, and listing them here would duplicate PER_PAGE into a
+      // second file that could silently drift out of step with the page's own arithmetic.
+      url: `${BASE_URL}/hotels`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
       url: `${BASE_URL}/offers`,
       lastModified: currentDate,
       changeFrequency: 'weekly',

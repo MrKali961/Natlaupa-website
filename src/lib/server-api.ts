@@ -155,6 +155,30 @@ export async function fetchHotelsByStyle(styleId: string): Promise<Hotel[]> {
   return (raw?.items || []).map(transformHotel);
 }
 
+/**
+ * Every bookable hotel, for the `/hotels` index.
+ *
+ * Deliberately built on `fetchAll` rather than `apiFetch`. The `/hotels` endpoint paginates with a
+ * DEFAULT limit of 10 and returns inactive records first — a single unpaginated request yields 10
+ * hotels, all of them deactivated. That exact bug is why the sitemap advertised 0 of 58 bookable
+ * hotels, and `fetchAll` is the shared fix.
+ *
+ * Filtering uses `isPubliclyListable`, the same predicate the sitemap, llms.txt and the
+ * `/hotel/[id]` detail route use, so no public surface can disagree about what is bookable. That
+ * matters more than usual here: a hotel this page lists but the detail route rejects would send a
+ * visitor to a 404.
+ *
+ * Returns [] on failure. `fetchAll` swallows transport errors by design (returning whatever it
+ * collected so it cannot empty an entire sitemap), so an empty result is genuinely ambiguous
+ * between "API is down" and "no hotels exist" — the caller must treat [] as "unavailable", not
+ * as "none".
+ */
+export async function fetchListableHotels(): Promise<Hotel[]> {
+  const { fetchAll, isPubliclyListable } = await import('@/lib/fetch-all');
+  const raw = await fetchAll<Record<string, any>>(API_URL, '/hotels');
+  return raw.filter((h) => isPubliclyListable(h)).map(transformHotel);
+}
+
 // ---------------------------------------------------------------------------
 // Country fetchers
 // ---------------------------------------------------------------------------

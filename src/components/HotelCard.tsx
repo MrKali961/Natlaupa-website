@@ -9,17 +9,23 @@ import { Hotel } from '@/types';
 interface HotelCardProps {
   hotel: Hotel;
   index?: number;
+  /**
+   * Scroll-reveal animation. Defaults to true, preserving every existing call site.
+   *
+   * Pass `false` on pages whose purpose is being read by machines. framer-motion serialises
+   * `initial={{ opacity: 0, y: 30 }}` as `style="opacity:0;transform:translateY(30px)"` into the
+   * server-rendered HTML, so a grid of these ships every card invisible until hydration. Google
+   * executes JS and would still see them, but the AI retrieval agents this site explicitly invites
+   * in robots.ts (OAI-SearchBot, ChatGPT-User, PerplexityBot) largely do not.
+   *
+   * The staggered `delay: index * 0.1` is also wrong at grid scale: card 24 would wait 2.4s.
+   */
+  animate?: boolean;
 }
 
-export default function HotelCard({ hotel, index = 0 }: HotelCardProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
-    >
-      <Link href={`/hotel/${hotel.slug || hotel.id}`} className="group/hotel block">
+export default function HotelCard({ hotel, index = 0, animate = true }: HotelCardProps) {
+  const inner = (
+    <Link href={`/hotel/${hotel.slug || hotel.id}`} className="group/hotel block">
         <div className="relative overflow-hidden rounded-sm border border-white/10 hover-capable:hover:border-gold/30 transition-colors duration-300">
           <div className="relative h-64 overflow-hidden">
             <img
@@ -63,7 +69,19 @@ export default function HotelCard({ hotel, index = 0 }: HotelCardProps) {
             </div>
           </div>
         </div>
-      </Link>
+    </Link>
+  );
+
+  if (!animate) return inner;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1 }}
+    >
+      {inner}
     </motion.div>
   );
 }
