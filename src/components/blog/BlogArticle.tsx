@@ -55,7 +55,7 @@ export default function BlogArticle({ blog }: { blog: ServerBlogFull }) {
 
   return (
     <>
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         {/* Breadcrumb — matches the BreadcrumbList JSON-LD, server-rendered */}
         <nav
           aria-label="Breadcrumb"
@@ -201,7 +201,7 @@ export default function BlogArticle({ blog }: { blog: ServerBlogFull }) {
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-3 bg-gold text-deepBlue px-10 py-5 font-semibold uppercase tracking-[0.15em] text-sm hover:bg-softGold transition-colors"
+              className="inline-flex items-center gap-3 bg-gold text-noir px-10 py-5 font-semibold uppercase tracking-[0.15em] text-sm hover:bg-softGold transition-colors"
             >
               <MessageCircle size={18} />
               Plan your stay

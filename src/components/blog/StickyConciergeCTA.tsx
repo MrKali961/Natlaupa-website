@@ -42,7 +42,7 @@ export default function StickyConciergeCTA() {
     >
       <Link
         href="/contact"
-        className="group flex items-center justify-center gap-3 bg-gold text-deepBlue px-6 py-4 sm:rounded-full sm:px-7 sm:shadow-2xl hover:bg-softGold transition-colors duration-300"
+        className="group flex items-center justify-center gap-3 bg-gold text-noir px-6 py-4 sm:rounded-full sm:px-7 sm:shadow-2xl hover:bg-softGold transition-colors duration-300"
       >
         <MessageCircle size={18} strokeWidth={2} />
         <span className="text-sm font-semibold uppercase tracking-[0.15em]">Speak to a concierge</span>

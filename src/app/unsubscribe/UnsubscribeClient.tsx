@@ -141,7 +141,7 @@ export default function UnsubscribeClient() {
           <button
             onClick={handleTokenUnsubscribe}
             disabled={state === "loading"}
-            className="w-full bg-gold text-deepBlue font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-gold text-noir font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {state === "loading" ? (
               <>
@@ -174,14 +174,14 @@ export default function UnsubscribeClient() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-deepBlue border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
+              className="w-full bg-noir border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
               placeholder="votre@email.com"
             />
           </div>
           <button
             type="submit"
             disabled={state === "loading"}
-            className="w-full bg-gold text-deepBlue font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-gold text-noir font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {state === "loading" ? (
               <>

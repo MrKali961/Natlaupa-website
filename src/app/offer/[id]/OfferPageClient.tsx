@@ -257,12 +257,12 @@ Submitted via Natlaupa Website`;
 
   return (
     <>
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         {/* Back Button */}
         <div className="fixed top-8 left-8 z-50">
           <Link
             href="/offers"
-            className="flex items-center gap-2 bg-deepBlue/80 backdrop-blur-sm text-white px-4 py-2 rounded-full border border-white/20 hover:border-gold transition-colors"
+            className="flex items-center gap-2 bg-noir/80 backdrop-blur-sm text-white px-4 py-2 rounded-full border border-white/20 hover:border-gold transition-colors"
           >
             <ArrowLeft size={16} />
             <span className="text-sm uppercase tracking-wider">All Offers</span>
@@ -281,7 +281,7 @@ Submitted via Natlaupa Website`;
                   className="w-full h-full object-cover"
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-deepBlue/80 lg:to-deepBlue" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-noir/80 lg:to-noir" />
             </div>
 
             {/* Right: Offer Details Overlay */}
@@ -336,7 +336,7 @@ Submitted via Natlaupa Website`;
 
                   <button
                     onClick={() => setIsContactModalOpen(true)}
-                    className="bg-gold text-deepBlue px-10 py-4 font-bold uppercase tracking-widest hover:bg-white transition-colors inline-flex items-center gap-3"
+                    className="bg-gold text-noir px-10 py-4 font-bold uppercase tracking-widest hover:bg-white transition-colors inline-flex items-center gap-3"
                   >
                     Reserve This Experience
                     <Send size={18} />
@@ -367,7 +367,7 @@ Submitted via Natlaupa Website`;
         </section>
 
         {/* At A Glance - 3 Column Grid */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-deepBlue">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-noir">
           <div className="max-w-7xl mx-auto">
             <h2 className="font-serif text-4xl text-white text-center mb-16">
               At A Glance
@@ -514,7 +514,7 @@ Submitted via Natlaupa Website`;
         </section>
 
         {/* Experience Breakdown - Accordion */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-deepBlue">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-noir">
           <div className="max-w-4xl mx-auto">
             <h2 className="font-serif text-4xl text-white text-center mb-16">
               Experience Breakdown
@@ -679,7 +679,7 @@ Submitted via Natlaupa Website`;
         )}
 
         {/* Floating CTA Bar - Bottom Sticky */}
-        <div className="fixed bottom-0 left-0 right-0 bg-deepBlue/95 backdrop-blur-sm border-t border-white/10 p-4 z-40">
+        <div className="fixed bottom-0 left-0 right-0 bg-noir/95 backdrop-blur-sm border-t border-white/10 p-4 z-40">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="hidden md:block">
               <p className="text-white font-serif text-lg">{offer.title}</p>
@@ -689,7 +689,7 @@ Submitted via Natlaupa Website`;
             </div>
             <button
               onClick={() => setIsContactModalOpen(true)}
-              className="bg-gold text-deepBlue px-8 py-3 font-bold uppercase tracking-widest hover:bg-white transition-colors w-full md:w-auto"
+              className="bg-gold text-noir px-8 py-3 font-bold uppercase tracking-widest hover:bg-white transition-colors w-full md:w-auto"
             >
               Reserve This Experience
             </button>
@@ -712,7 +712,7 @@ Submitted via Natlaupa Website`;
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-deepBlue border border-white/20 rounded-sm p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-noir border border-white/20 rounded-sm p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-serif text-3xl text-white">
@@ -859,7 +859,7 @@ Submitted via Natlaupa Website`;
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
+                      className="flex-1 bg-gold text-noir px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
                     >
                       {isSubmitting ? (
                         <>

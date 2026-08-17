@@ -274,7 +274,7 @@ const MoodMatcher: React.FC = () => {
   };
 
   return (
-    <section className="py-24 bg-deepBlue relative overflow-hidden">
+    <section className="py-24 bg-noir relative overflow-hidden">
       {/* Background Gradient based on selected mood */}
       <AnimatePresence>
         {selectedMood && (
@@ -362,7 +362,7 @@ const MoodMatcher: React.FC = () => {
                     animate={{ scale: 1 }}
                     className="absolute top-3 right-3 w-6 h-6 rounded-full bg-gold flex items-center justify-center"
                   >
-                    <Check size={14} className="text-deepBlue" />
+                    <Check size={14} className="text-noir" />
                   </motion.div>
                 )}
 
@@ -375,7 +375,7 @@ const MoodMatcher: React.FC = () => {
                   <Icon
                     size={24}
                     className={
-                      isSelected || isHovered ? "text-deepBlue" : "text-gold"
+                      isSelected || isHovered ? "text-noir" : "text-gold"
                     }
                   />
                 </div>
@@ -415,7 +415,7 @@ const MoodMatcher: React.FC = () => {
                     alt={activeMood.name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-deepBlue/80 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-noir/80 to-transparent" />
                   <div className="absolute bottom-8 left-8 right-8">
                     <div className="flex items-center gap-2 text-gold mb-3">
                       <activeMood.icon size={20} />
@@ -442,7 +442,7 @@ const MoodMatcher: React.FC = () => {
                   </p>
                   <Link
                     href={`/styles/${activeMood.slug}`}
-                    className="inline-flex items-center gap-3 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
+                    className="inline-flex items-center gap-3 bg-gold text-noir px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
                   >
                     View Curated Selection
                     <ArrowRight size={18} />
@@ -487,12 +487,12 @@ const MoodMatcher: React.FC = () => {
                           alt={hotel.name}
                           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-deepBlue to-transparent opacity-60" />
-                        <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full">
+                        <div className="absolute inset-0 bg-gradient-to-t from-noir to-transparent opacity-60" />
+                        <div className="absolute top-4 left-4 bg-gold/90 text-noir px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full">
                           {activeMood?.name} Match
                         </div>
                         {hotel.moodScore && hotel.moodScore > 0.8 && (
-                          <div className="absolute top-4 right-4 bg-white/90 text-deepBlue px-2 py-1 text-xs font-bold rounded-full">
+                          <div className="absolute top-4 right-4 bg-white/90 text-noir px-2 py-1 text-xs font-bold rounded-full">
                             {Math.round(hotel.moodScore * 100)}% Match
                           </div>
                         )}

@@ -251,7 +251,7 @@ const Navbar: React.FC = () => {
             </Link>
             <Link
               href="/join-the-private-club"
-              className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-4 bg-gold text-deepBlue hover:bg-gold/90 transition-all duration-300"
+              className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-4 bg-gold text-noir hover:bg-gold/90 transition-all duration-300"
             >
               Join the Private Club
             </Link>

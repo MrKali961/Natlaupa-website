@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Instrument_Sans, Playfair_Display } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import Navbar from '@/components/Navbar';
@@ -10,9 +10,25 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import CustomScrollbar from '@/components/CustomScrollbar';
 import StructuredData from '@/components/StructuredData';
 
-const inter = Inter({
+/**
+ * Body typeface.
+ *
+ * Was Inter. Playfair Display was already carrying the display tier on its own while the body tier
+ * used the single most common default on the web -- the pairing read as "a real display face plus
+ * whatever". Instrument Sans is the deliberate choice: it is designed for body and UI text, so it
+ * holds up at the small sizes this site leans on (a lot of text-sm on near-black), and its open
+ * apertures and generous x-height survive light-on-dark better than a geometric face would.
+ *
+ * ONE-LINE SWAP. To try a different face, change the import and this call -- nothing else references
+ * the family by name. The CSS variable is deliberately `--font-body`, not `--font-<facename>`, so a
+ * future change does not have to touch tailwind.config.ts as well.
+ *
+ * Considered and rejected: Jost (geometric, very French, but geometric sans is weak for long
+ * paragraphs at small sizes) and Work Sans (safe, but adds no character over Inter).
+ */
+const bodyFont = Instrument_Sans({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-body',
   display: 'swap',
 });
 
@@ -100,7 +116,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${bodyFont.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head>
         {/* Google Consent Mode v2 - Must be set BEFORE any Google tags load */}
         <Script id="google-consent-default" strategy="beforeInteractive">
@@ -146,7 +162,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="flex flex-col min-h-screen bg-deepBlue text-slate-100 font-sans selection:bg-gold selection:text-deepBlue overflow-x-hidden">
+      <body className="flex flex-col min-h-screen bg-noir text-slate-100 font-sans selection:bg-gold selection:text-noir overflow-x-hidden">
         <StructuredData />
         <SmoothScrollProvider>
           <LatestOfferStrip />

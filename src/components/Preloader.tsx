@@ -24,7 +24,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
       initial={{ y: 0 }}
       animate={exit ? { y: '-100%' } : { y: 0 }}
       transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }} // Custom bezier for "curtain" effect
-      className="fixed inset-0 z-[9999] bg-deepBlue flex items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-[9999] bg-noir flex items-center justify-center overflow-hidden"
     >
       <div className="flex flex-col items-center justify-center relative z-10">
         

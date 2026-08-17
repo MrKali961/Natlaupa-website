@@ -143,7 +143,7 @@ export default function BlogCard({ blog, index = 0, featured = false }: BlogCard
             <TypographicCover title={blog.title} />
           )}
           {tag && (
-            <span className="absolute top-4 left-4 bg-deepBlue/70 backdrop-blur-sm text-gold px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em]">
+            <span className="absolute top-4 left-4 bg-noir/70 backdrop-blur-sm text-gold px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em]">
               {tag}
             </span>
           )}

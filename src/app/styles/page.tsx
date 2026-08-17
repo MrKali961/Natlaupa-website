@@ -84,7 +84,7 @@ export default function StylesPage() {
 
   return (
     <>
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         {/* Hero Section */}
         <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 border-b border-white/10">
           <div className="max-w-7xl mx-auto text-center">
@@ -132,11 +132,11 @@ export default function StylesPage() {
                             alt={style.name}
                             className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-deepBlue md:block hidden" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-transparent to-transparent md:hidden" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-noir md:block hidden" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-noir via-transparent to-transparent md:hidden" />
                         </div>
 
-                        <div className="p-6 md:p-8 flex flex-col justify-center bg-deepBlue">
+                        <div className="p-6 md:p-8 flex flex-col justify-center bg-noir">
                           <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mb-4">
                             <style.Icon className="text-gold" size={24} />
                           </div>
@@ -206,7 +206,7 @@ export default function StylesPage() {
                         onClick={() => handlePageChange(page)}
                         className={`w-10 h-10 border rounded-sm text-sm font-medium transition-colors ${
                           currentPage === page
-                            ? 'bg-gold border-gold text-deepBlue'
+                            ? 'bg-gold border-gold text-noir'
                             : 'border-white/10 text-white hover:border-gold hover:text-gold'
                         }`}
                       >
@@ -264,14 +264,14 @@ export default function StylesPage() {
             >
               <Link
                 href="/offers"
-                className="inline-flex items-center justify-center gap-3 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
+                className="inline-flex items-center justify-center gap-3 bg-gold text-noir px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
               >
                 Browse All
                 <ArrowRight size={18} />
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center gap-3 border border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-deepBlue transition-colors"
+                className="inline-flex items-center justify-center gap-3 border border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-noir transition-colors"
               >
                 Contact Concierge
                 <ArrowRight size={18} />

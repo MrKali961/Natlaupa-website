@@ -255,7 +255,7 @@ const ConciergeRecommendations: React.FC = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-3 px-6 py-3 rounded-full border transition-all duration-300 ${
                   isActive
-                    ? 'bg-gold text-deepBlue border-gold'
+                    ? 'bg-gold text-noir border-gold'
                     : 'bg-white/5 text-white border-white/10 hover-capable:hover:border-gold/50'
                 }`}
               >
@@ -309,29 +309,29 @@ const ConciergeRecommendations: React.FC = () => {
                               alt={offer.title}
                               className="w-full h-full object-cover grayscale group-hover/hotel:grayscale-0 transition-all duration-700 group-hover/hotel:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-transparent to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-noir via-transparent to-transparent" />
 
                             {/* Duration Badge */}
                             <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
-                              <Clock size={12} className="text-deepBlue" />
-                              <span className="text-deepBlue text-xs font-bold">{offer.duration} Days</span>
+                              <Clock size={12} className="text-noir" />
+                              <span className="text-noir text-xs font-bold">{offer.duration} Days</span>
                             </div>
 
                             {/* Tab-specific Badge */}
                             {activeTab === 'seasonal' && (
-                              <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 rounded-full flex items-center gap-1">
+                              <div className="absolute top-4 left-4 bg-gold/90 text-noir px-3 py-1 rounded-full flex items-center gap-1">
                                 <SeasonIcon size={12} />
                                 <span className="text-xs font-bold uppercase">{seasonData.name} Pick</span>
                               </div>
                             )}
                             {activeTab === 'trending' && (
-                              <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 rounded-full flex items-center gap-1">
+                              <div className="absolute top-4 left-4 bg-gold/90 text-noir px-3 py-1 rounded-full flex items-center gap-1">
                                 <TrendingUp size={12} />
                                 <span className="text-xs font-bold uppercase">Trending</span>
                               </div>
                             )}
                             {activeTab === 'for-you' && (
-                              <div className="absolute top-4 left-4 bg-gold/90 text-deepBlue px-3 py-1 rounded-full flex items-center gap-1">
+                              <div className="absolute top-4 left-4 bg-gold/90 text-noir px-3 py-1 rounded-full flex items-center gap-1">
                                 <Sparkles size={12} />
                                 <span className="text-xs font-bold uppercase">Featured</span>
                               </div>
@@ -430,7 +430,7 @@ const ConciergeRecommendations: React.FC = () => {
                   {/* View All CTA */}
                   <Link
                     href="/offers"
-                    className="flex items-center justify-center gap-2 w-full py-4 border border-gold text-gold hover-capable:hover:bg-gold hover-capable:hover:text-deepBlue transition-all duration-300 rounded-sm font-bold uppercase tracking-widest text-sm"
+                    className="flex items-center justify-center gap-2 w-full py-4 border border-gold text-gold hover-capable:hover:bg-gold hover-capable:hover:text-noir transition-all duration-300 rounded-sm font-bold uppercase tracking-widest text-sm"
                   >
                     <span>View All Recommendations</span>
                     <ArrowRight size={16} />

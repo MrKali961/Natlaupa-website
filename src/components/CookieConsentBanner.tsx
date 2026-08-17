@@ -171,7 +171,7 @@ const CookieConsentBanner: React.FC = () => {
                         </button>
                         <button
                           onClick={handleAcceptAll}
-                          className="px-5 py-3 text-sm font-bold text-deepBlue bg-gold rounded-sm hover:bg-white transition-all"
+                          className="px-5 py-3 text-sm font-bold text-noir bg-gold rounded-sm hover:bg-white transition-all"
                         >
                           Accept All
                         </button>
@@ -244,7 +244,7 @@ const CookieConsentBanner: React.FC = () => {
                                     <span
                                       className={`absolute top-1 w-4 h-4 rounded-full transition-all ${
                                         isEnabled
-                                          ? 'left-7 bg-deepBlue'
+                                          ? 'left-7 bg-noir'
                                           : 'left-1 bg-white'
                                       }`}
                                     />
@@ -268,7 +268,7 @@ const CookieConsentBanner: React.FC = () => {
                       </button>
                       <button
                         onClick={handleSaveCustom}
-                        className="px-6 py-3 text-sm font-bold text-deepBlue bg-gold rounded-sm hover:bg-white transition-all flex items-center gap-2"
+                        className="px-6 py-3 text-sm font-bold text-noir bg-gold rounded-sm hover:bg-white transition-all flex items-center gap-2"
                       >
                         <Check size={16} />
                         Save Preferences

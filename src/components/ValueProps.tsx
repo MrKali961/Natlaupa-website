@@ -97,7 +97,7 @@ const ValueProps: React.FC = () => {
   }, []);
 
   return (
-    <section ref={containerRef} className="bg-deepBlue relative z-10 pt-24 pb-0">
+    <section ref={containerRef} className="bg-noir relative z-10 pt-24 pb-0">
       
       {/* Intro Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 md:mb-24">
@@ -129,7 +129,7 @@ const ValueProps: React.FC = () => {
             
             {/* Left: Cinematic Image (Parallax) */}
             <div className="w-full md:w-1/2 h-[50vh] md:h-full relative overflow-hidden">
-                <div className="absolute inset-0 bg-deepBlue z-10 opacity-20 group-hover:opacity-0 transition-opacity duration-700" />
+                <div className="absolute inset-0 bg-noir z-10 opacity-20 group-hover:opacity-0 transition-opacity duration-700" />
                 <img 
                     src={f.img} 
                     alt={f.title}
@@ -138,7 +138,7 @@ const ValueProps: React.FC = () => {
             </div>
 
             {/* Right: Content */}
-            <div className="w-full md:w-1/2 bg-deepBlue flex flex-col justify-center px-6 py-12 md:px-24 relative z-20">
+            <div className="w-full md:w-1/2 bg-noir flex flex-col justify-center px-6 py-12 md:px-24 relative z-20">
                 
                 {/* ID & Category */}
                 <div className="overflow-hidden mb-4 md:mb-6 flex items-center space-x-4">

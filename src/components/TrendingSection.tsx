@@ -11,7 +11,7 @@ const TrendingSection: React.FC = () => {
 
   if (isLoading) {
     return (
-      <section className="py-24 bg-deepBlue">
+      <section className="py-24 bg-noir">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Loader2 className="w-8 h-8 text-gold animate-spin mx-auto" />
         </div>
@@ -24,7 +24,7 @@ const TrendingSection: React.FC = () => {
   }
 
   return (
-    <section className="py-24 bg-deepBlue overflow-hidden">
+    <section className="py-24 bg-noir overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-12">
           <div className="flex items-center space-x-3">
@@ -54,7 +54,7 @@ const TrendingSection: React.FC = () => {
                   />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center">
                     <Star size={12} className="text-gold fill-gold mr-1" />
-                    <span className="text-deepBlue text-xs font-bold">{hotel.rating}</span>
+                    <span className="text-noir text-xs font-bold">{hotel.rating}</span>
                   </div>
                 </div>
                 <div className="p-8 flex flex-col flex-grow">
@@ -66,7 +66,7 @@ const TrendingSection: React.FC = () => {
                   </div>
 
                   <div className="pt-6 border-t border-white/5 mt-auto">
-                    <button className="w-full text-center py-3 border border-white/20 text-white/90 text-xs font-bold uppercase tracking-[0.2em] group-hover/trend:bg-gold group-hover/trend:text-deepBlue group-hover/trend:border-gold transition-all duration-300">
+                    <button className="w-full text-center py-3 border border-white/20 text-white/90 text-xs font-bold uppercase tracking-[0.2em] group-hover/trend:bg-gold group-hover/trend:text-noir group-hover/trend:border-gold transition-all duration-300">
                       {hotel.ctaPhrase || "Discover More"}
                     </button>
                   </div>

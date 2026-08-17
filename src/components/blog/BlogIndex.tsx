@@ -122,7 +122,7 @@ export default function BlogIndex({ blogs }: { blogs: ServerBlogFull[] }) {
       <Suspense fallback={null}>
         <BlogQuerySeed onSeed={setQuery} />
       </Suspense>
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         {/* Hero — text-only, one-glance; H1 is the LCP element (server-rendered) */}
         <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 border-b border-white/10">
           <div className="max-w-7xl mx-auto text-center">
@@ -165,7 +165,7 @@ export default function BlogIndex({ blogs }: { blogs: ServerBlogFull[] }) {
                         onClick={() => setActiveTag(activeTag === tag ? null : tag)}
                         className={`px-4 py-2 text-xs uppercase tracking-[0.15em] border transition-colors ${
                           activeTag === tag
-                            ? 'bg-gold text-deepBlue border-gold'
+                            ? 'bg-gold text-noir border-gold'
                             : 'border-white/20 text-slate-300 hover:border-gold hover:text-gold'
                         }`}
                       >
@@ -243,7 +243,7 @@ export default function BlogIndex({ blogs }: { blogs: ServerBlogFull[] }) {
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-3 border border-gold text-gold px-8 py-4 font-medium uppercase tracking-[0.15em] text-sm hover:bg-gold hover:text-deepBlue transition-colors"
+              className="inline-flex items-center gap-3 border border-gold text-gold px-8 py-4 font-medium uppercase tracking-[0.15em] text-sm hover:bg-gold hover:text-noir transition-colors"
             >
               <MessageCircle size={17} />
               Speak to a concierge

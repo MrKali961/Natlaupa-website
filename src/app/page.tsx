@@ -23,7 +23,7 @@ export default function Home() {
   };
 
   return (
-    <main className="bg-deepBlue min-h-screen">
+    <main className="bg-noir min-h-screen">
       <Hero />
       <ExperienceSelector onSelection={handleSelection} />
 

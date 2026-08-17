@@ -163,7 +163,7 @@ export default function About() {
 
   return (
     <>
-      <main className="bg-deepBlue min-h-screen overflow-hidden">
+      <main className="bg-noir min-h-screen overflow-hidden">
         {/* Hero Section */}
         <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
           {/* Background with gradient overlay */}
@@ -172,7 +172,7 @@ export default function About() {
               className="absolute inset-0 bg-cover bg-center"
               style={{ backgroundImage: 'url(https://picsum.photos/1920/1080?random=100)' }}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-deepBlue/80 via-deepBlue/60 to-deepBlue" />
+            <div className="absolute inset-0 bg-gradient-to-b from-noir/80 via-noir/60 to-noir" />
           </div>
 
           {/* Animated Compass */}
@@ -416,7 +416,7 @@ export default function About() {
         </section>
 
         {/* Testimonials */}
-        <section className="py-24 px-4 bg-gradient-to-b from-deepBlue via-midnight/50 to-deepBlue">
+        <section className="py-24 px-4 bg-gradient-to-b from-noir via-midnight/50 to-noir">
           <div className="max-w-4xl mx-auto">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -506,7 +506,7 @@ export default function About() {
                       alt={curator.name}
                       className="w-full aspect-[4/5] object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-noir via-transparent to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6">
                       <p className="text-gold text-sm mb-1">{curator.region}</p>
                     </div>
@@ -518,7 +518,7 @@ export default function About() {
                     href={`https://wa.me/33775743875?text=${encodeURIComponent(`Hello, I would like to connect with ${curator.name} from Natlaupa.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-gold/10 border border-gold/30 rounded-full text-gold text-sm font-medium hover:bg-gold hover:text-deepBlue transition-all duration-300"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gold/10 border border-gold/30 rounded-full text-gold text-sm font-medium hover:bg-gold hover:text-noir transition-all duration-300"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Contact Team Member
@@ -536,7 +536,7 @@ export default function About() {
               className="absolute inset-0 bg-cover bg-center opacity-20"
               style={{ backgroundImage: 'url(https://picsum.photos/1920/800?random=150)' }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/80 to-deepBlue" />
+            <div className="absolute inset-0 bg-gradient-to-t from-noir via-noir/80 to-noir" />
           </div>
 
           <motion.div
@@ -554,7 +554,7 @@ export default function About() {
             </p>
             <a
               href="/contact"
-              className="inline-flex items-center gap-2 bg-gold text-deepBlue px-8 py-4 rounded-sm font-medium hover:bg-softGold transition-colors duration-300"
+              className="inline-flex items-center gap-2 bg-gold text-noir px-8 py-4 rounded-sm font-medium hover:bg-softGold transition-colors duration-300"
             >
               Start Your Journey
               <Compass className="w-5 h-5" />

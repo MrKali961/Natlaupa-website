@@ -27,21 +27,21 @@ export default function HotelCard({ hotel, index = 0 }: HotelCardProps) {
               alt={hotel.name}
               className="w-full h-full object-cover grayscale group-hover/hotel:grayscale-0 group-hover/hotel:scale-110 transition-all duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-noir via-transparent to-transparent" />
 
             {hotel.isTrending && (
-              <div className="absolute top-4 left-4 bg-gold text-deepBlue px-3 py-1 text-xs font-bold uppercase tracking-widest">
+              <div className="absolute top-4 left-4 bg-gold text-noir px-3 py-1 text-xs font-bold uppercase tracking-widest">
                 Trending
               </div>
             )}
 
-            <div className="absolute top-4 right-4 flex items-center bg-deepBlue/80 backdrop-blur-sm px-2 py-1 rounded-sm">
+            <div className="absolute top-4 right-4 flex items-center bg-noir/80 backdrop-blur-sm px-2 py-1 rounded-sm">
               <Star className="text-gold fill-gold" size={12} />
               <span className="ml-1 text-white text-xs font-bold">{hotel.rating}</span>
             </div>
           </div>
 
-          <div className="p-6 bg-deepBlue">
+          <div className="p-6 bg-noir">
             <div className="flex items-center text-gold text-xs uppercase tracking-widest mb-2">
               <span>{hotel.category}</span>
             </div>

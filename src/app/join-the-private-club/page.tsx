@@ -263,7 +263,7 @@ Submitted via Natlaupa Website`;
 
   return (
     <>
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         {/* Hero Section */}
         <section className="pt-32 pb-24 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
@@ -306,7 +306,7 @@ Submitted via Natlaupa Website`;
             >
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center justify-center gap-3 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
+                className="inline-flex items-center justify-center gap-3 bg-gold text-noir px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
               >
                 Apply Now
                 <ArrowRight size={18} />
@@ -314,7 +314,7 @@ Submitted via Natlaupa Website`;
               <a
                 href="/brochure-angel.pdf"
                 download
-                className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-deepBlue transition-colors"
+                className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-noir transition-colors"
               >
                 <Download size={18} />
                 Download Brochure
@@ -388,7 +388,7 @@ Submitted via Natlaupa Website`;
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="group relative p-8 border border-white/10 rounded-sm bg-deepBlue/50 hover:border-gold/30 transition-colors duration-500 overflow-hidden"
+                className="group relative p-8 border border-white/10 rounded-sm bg-noir/50 hover:border-gold/30 transition-colors duration-500 overflow-hidden"
               >
                 <div className="absolute top-0 left-0 w-px h-16 bg-gradient-to-b from-gold/60 to-transparent" />
                 <div className="absolute top-0 left-0 w-16 h-px bg-gradient-to-r from-gold/60 to-transparent" />
@@ -417,7 +417,7 @@ Submitted via Natlaupa Website`;
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="group relative p-8 border border-white/10 rounded-sm bg-deepBlue/50 hover:border-gold/30 transition-colors duration-500 overflow-hidden"
+                className="group relative p-8 border border-white/10 rounded-sm bg-noir/50 hover:border-gold/30 transition-colors duration-500 overflow-hidden"
               >
                 <div className="absolute top-0 left-0 w-px h-16 bg-gradient-to-b from-gold/60 to-transparent" />
                 <div className="absolute top-0 left-0 w-16 h-px bg-gradient-to-r from-gold/60 to-transparent" />
@@ -468,7 +468,7 @@ Submitted via Natlaupa Website`;
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="p-8 border border-white/10 rounded-sm bg-deepBlue/50"
+                  className="p-8 border border-white/10 rounded-sm bg-noir/50"
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0">
@@ -553,7 +553,7 @@ Submitted via Natlaupa Website`;
                       alt={angel.name}
                       className="w-full aspect-[4/5] object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-deepBlue/80 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-noir/80 via-transparent to-transparent" />
                   </div>
                   <h3 className="font-serif text-2xl text-white mb-2">
                     {angel.name}
@@ -571,7 +571,7 @@ Submitted via Natlaupa Website`;
         </section>
 
         {/* Ambassadors Section */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-deepBlue border-t border-white/10">
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-noir border-t border-white/10">
           <div className="max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -656,7 +656,7 @@ Submitted via Natlaupa Website`;
         </section>
 
         {/* Community Section */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-midnight/50 to-deepBlue">
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-midnight/50 to-noir">
           <div className="max-w-2xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0 }}
@@ -711,14 +711,14 @@ Submitted via Natlaupa Website`;
             >
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center justify-center gap-3 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
+                className="inline-flex items-center justify-center gap-3 bg-gold text-noir px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
               >
                 Start Your Journey
                 <ArrowRight size={18} />
               </button>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center gap-3 border border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-deepBlue transition-colors"
+                className="inline-flex items-center justify-center gap-3 border border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-noir transition-colors"
               >
                 Learn More
               </Link>
@@ -742,7 +742,7 @@ Submitted via Natlaupa Website`;
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-deepBlue border border-white/10 p-8 md:p-10 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="relative bg-noir border border-white/10 p-8 md:p-10 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto"
               data-lenis-prevent
             >
               <button
@@ -918,7 +918,7 @@ Submitted via Natlaupa Website`;
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
+                        className="flex-1 bg-gold text-noir px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
                       >
                         {isSubmitting ? (
                           <>
@@ -962,7 +962,7 @@ Submitted via Natlaupa Website`;
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="fixed bottom-8 right-8 z-40 bg-gold text-deepBlue p-4 rounded-full shadow-2xl hover:bg-white transition-colors group"
+            className="fixed bottom-8 right-8 z-40 bg-gold text-noir p-4 rounded-full shadow-2xl hover:bg-white transition-colors group"
             title="Download Brochure"
           >
             <Download size={24} className="group-hover:animate-bounce" />
