@@ -21,15 +21,16 @@ html, body {
   overflow-y: auto;
   background-color: #000000;
   color: #f8fafc;
-  /* Hide scrollbar visually but keep functionality */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
 }
 
-/* Hide scrollbar for Webkit (Chrome/Safari) */
-::-webkit-scrollbar {
-  display: none;
-}
+/* Scrollbars are deliberately VISIBLE.
+   They used to be suppressed sitewide (scrollbar-width: none, -ms-overflow-style: none and
+   ::-webkit-scrollbar { display: none }), which removed the only signal telling a visitor how
+   much page is left. That mattered least on the old homepage, which gated its content behind
+   ExperienceSelector and had almost nothing to scroll. Now that every section renders
+   unconditionally the page is several times longer, so the scroll affordance is load-bearing:
+   without it a visitor cannot tell there is anything below the first screen — the same failure
+   the gate itself caused. Do not re-hide these. */
 
 /* iOS touch optimizations */
 html, body {
