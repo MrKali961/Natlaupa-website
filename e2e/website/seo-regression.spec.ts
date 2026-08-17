@@ -434,19 +434,32 @@ test.describe('Defects with an owner (delete the test.fail when one deploys)', (
     expect(offenders, `\n${offenders.join('\n')}`).toEqual([]);
   });
 
-  test('D04: French routes declare lang="fr"', async ({ request }) => {
-    test.fail(
-      true,
-      'OPEN — plan item 6.8b, no branch yet. All 6 French legal routes render under the root ' +
-        'layout\'s hardcoded <html lang="en">. Measured 2026-08-17. Delete this line once fixed.',
-    );
-
+  // ⚠️ NO test.fail() — fixed in this branch (plan 6.8b). Fails until it deploys, which is the
+  // proof the deploy worked. All 6 routes previously rendered under the root layout's hardcoded
+  // <html lang="en"> while containing French text ("Les présentes", "Conformément", "données
+  // personnelles"). Measured 2026-08-17.
+  //
+  // ⚠️ ACCEPTS EITHER <html lang="fr"> OR a subtree lang="fr", and that is deliberate — the
+  // assertion matches what is achievable, not an ideal that would force a worse change. In the
+  // App Router only the ROOT layout can render <html>, and a server layout cannot read the
+  // pathname, so per-route <html lang> means a SECOND root layout in a route group: duplicating
+  // the html/body shell, fonts and providers for six static pages. A subtree `lang` on <main> is
+  // valid HTML, scopes the declaration precisely to the French content, and is what screen
+  // readers and translation tools actually read for pronunciation. That is the fix that shipped.
+  test('D04: French routes declare their content as French', async ({ request }) => {
     const wrong: string[] = [];
     for (const path of FRENCH_ROUTES) {
       const res = await request.get(path);
       if (res.status() !== 200) continue;
-      const lang = htmlLang(await res.text());
-      if (!/^fr/i.test(lang)) wrong.push(`${path}: lang="${lang}"`);
+      const html = await res.text();
+
+      // Either the document declares French, or the element wrapping the content does.
+      const documentIsFrench = /^fr/i.test(htmlLang(html));
+      const subtreeIsFrench = /<(?:main|article|section|div)[^>]*\slang="fr[^"]*"/i.test(html);
+
+      if (!documentIsFrench && !subtreeIsFrench) {
+        wrong.push(`${path}: <html lang="${htmlLang(html)}"> and no lang="fr" wrapper`);
+      }
     }
     expect(wrong, `\n${wrong.join('\n')}`).toEqual([]);
   });
