@@ -11,7 +11,14 @@ export const metadata: Metadata = {
 export default function PolitiqueDeConfidentialite() {
   return (
     <>
-      <main className="bg-noir min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+      {/* lang="fr" because this page is written in French while the root layout hardcodes
+          <html lang="en">. In the App Router only the ROOT layout can render <html>, and a
+          server layout cannot read the pathname, so per-route <html lang> would mean a second
+          root layout in a route group — duplicating the html/body shell, fonts and providers
+          for six static pages. A subtree lang is valid HTML, correctly scopes the declaration
+          to the French content, and is what screen readers and translation tools actually
+          read for pronunciation. Same pattern already used for the homepage disclosure. */}
+      <main lang="fr" className="bg-noir min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="mb-16">
