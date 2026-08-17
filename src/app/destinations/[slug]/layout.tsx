@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { isValidSlug } from '@/lib/slugify';
+import { buildTitle, buildDescription, stripBrandSuffix } from '@/lib/seo-meta';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // regardless — without this it still issues /hotel-destinations/slug/null.
   if (!isValidSlug(slug)) {
     return {
-      title: 'Destination Not Found | Natlaupa',
+      title: 'Destination Not Found',
       description: 'The requested destination could not be found.',
     };
   }
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!response.ok) {
       return {
-        title: 'Destination Not Found | Natlaupa',
+        title: 'Destination Not Found',
         description: 'The requested destination could not be found.',
       };
     }
@@ -36,21 +37,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!destination) {
       return {
-        title: 'Destination Not Found | Natlaupa',
+        title: 'Destination Not Found',
         description: 'The requested destination could not be found.',
       };
     }
 
-    const title = `Luxury Hotels in ${destination.name} | Natlaupa`;
-    const description = destination.description || `Discover luxury hotels and exclusive accommodations in ${destination.name}. Curated collection of premium stays for discerning travelers.`;
+    // 🔴 Both SERP fields were unbounded here. Measured on production 2026-08-17:
+    // destination descriptions reached 355 chars, offers 160, styles 158 — all past Google's
+    // ~155 limit, and the page `title` carried a literal '| Natlaupa' that the root layout's
+    // `template: '%s | Natlaupa'` then appended a SECOND time. seo-meta.ts bounds both.
+    const rawTitle = `Luxury Hotels in ${destination.name}`;
+    const rawDescription = destination.description || `Discover luxury hotels and exclusive accommodations in ${destination.name}. Curated collection of premium stays for discerning travelers.`;
+    // Bounds only — the fallback CHAIN above is deliberately unchanged, so this does
+    // not alter which copy is shown, just how much of it survives truncation.
+    const description = buildDescription(rawDescription);
+    // Social cards have no 60-char limit; give them the full text.
+    const socialTitle = stripBrandSuffix(rawTitle);
     const imageUrl = destination.imageUrl;
     const canonicalUrl = `https://www.natlaupa.com/destinations/${destination.slug}`;
 
     return {
-      title,
+      title: { absolute: buildTitle(rawTitle) },
       description,
       openGraph: {
-        title,
+        title: socialTitle,
         description,
         url: canonicalUrl,
         siteName: 'Natlaupa',
@@ -60,7 +70,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       twitter: {
         card: 'summary_large_image',
-        title,
+        title: socialTitle,
         description,
         images: imageUrl ? [imageUrl] : [],
       },
@@ -75,7 +85,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } catch (error) {
     console.error('Error fetching destination for metadata:', error);
     return {
-      title: 'Destination Not Found | Natlaupa',
+      title: 'Destination Not Found',
       description: 'The requested destination could not be found.',
     };
   }

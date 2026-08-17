@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About Us',
-  description: 'Natlaupa is a network of hotel experts specializing in personalized luxury travel. We partner with the world\'s finest destinations to deliver advantageous rates, 24/7 support, and unforgettable journeys.',
+  description: 'A network of hotel experts in personalised luxury travel, delivering advantageous rates and 24/7 support at the world\'s finest destinations.',
   alternates: {
     canonical: 'https://www.natlaupa.com/about',
   },
   openGraph: {
     title: 'About Us | Natlaupa',
-    description: 'Natlaupa is a network of hotel experts specializing in personalized luxury travel. We partner with the world\'s finest destinations to deliver advantageous rates, 24/7 support, and unforgettable journeys.',
+    description: 'A network of hotel experts in personalised luxury travel, delivering advantageous rates and 24/7 support at the world\'s finest destinations.',
     url: 'https://www.natlaupa.com/about',
     siteName: 'Natlaupa',
     type: 'website',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'About Us | Natlaupa',
-    description: 'Natlaupa is a network of hotel experts specializing in personalized luxury travel. We partner with the world\'s finest destinations to deliver advantageous rates, 24/7 support, and unforgettable journeys.',
+    description: 'A network of hotel experts in personalised luxury travel, delivering advantageous rates and 24/7 support at the world\'s finest destinations.',
     images: ['https://www.natlaupa.com/opengraph-image'],
   },
 };

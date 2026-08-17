@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     default: 'Natlaupa | Redefining the Art of Stay',
     template: '%s | Natlaupa',
   },
-  description: 'Experience luxury accommodations worldwide with personalized AI-powered travel concierge. Discover handpicked hotels, resorts, and unique stays curated for discerning travelers.',
+  description: 'Handpicked luxury hotels, resorts and unique stays worldwide, with a personal travel concierge to match you to the right one.',
   keywords: ['luxury hotels', 'travel', 'boutique hotels', 'luxury accommodations', 'travel concierge', 'premium stays', 'vacation', 'resorts'],
   authors: [{ name: 'Natlaupa' }],
   creator: 'Natlaupa',

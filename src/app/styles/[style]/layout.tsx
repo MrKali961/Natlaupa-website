@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { isValidSlug } from '@/lib/slugify';
+import { buildTitle, buildDescription, stripBrandSuffix } from '@/lib/seo-meta';
 
 type Props = {
   params: Promise<{ style: string }>;
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // "Null Hotels", after issuing /hotel-styles/slug/null upstream.
   if (!isValidSlug(style)) {
     return {
-      title: 'Style Not Found | Natlaupa',
+      title: 'Style Not Found',
       description: 'The requested hotel style could not be found.',
     };
   }
@@ -52,16 +53,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
-    const title = `${styleData.name} Hotels & Resorts | Natlaupa`;
-    const description = styleData.description || `Explore our curated collection of ${styleData.name} hotels. Luxury accommodations for discerning travelers.`;
+    // 🔴 Both SERP fields were unbounded here. Measured on production 2026-08-17:
+    // destination descriptions reached 355 chars, offers 160, styles 158 — all past Google's
+    // ~155 limit, and the page `title` carried a literal '| Natlaupa' that the root layout's
+    // `template: '%s | Natlaupa'` then appended a SECOND time. seo-meta.ts bounds both.
+    const rawTitle = `${styleData.name} Hotels & Resorts`;
+    const rawDescription = styleData.description || `Explore our curated collection of ${styleData.name} hotels. Luxury accommodations for discerning travelers.`;
+    // Bounds only — the fallback CHAIN above is deliberately unchanged, so this does
+    // not alter which copy is shown, just how much of it survives truncation.
+    const description = buildDescription(rawDescription);
+    // Social cards have no 60-char limit; give them the full text.
+    const socialTitle = stripBrandSuffix(rawTitle);
     const imageUrl = styleData.imageUrl;
     const canonicalUrl = `https://www.natlaupa.com/styles/${styleData.slug}`;
 
     return {
-      title,
+      title: { absolute: buildTitle(rawTitle) },
       description,
       openGraph: {
-        title,
+        title: socialTitle,
         description,
         url: canonicalUrl,
         siteName: 'Natlaupa',
@@ -71,7 +81,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       twitter: {
         card: 'summary_large_image',
-        title,
+        title: socialTitle,
         description,
         images: imageUrl ? [imageUrl] : [],
       },
