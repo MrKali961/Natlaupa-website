@@ -23,14 +23,48 @@ html, body {
   color: #f8fafc;
 }
 
-/* Scrollbars are deliberately VISIBLE.
-   They used to be suppressed sitewide (scrollbar-width: none, -ms-overflow-style: none and
-   ::-webkit-scrollbar { display: none }), which removed the only signal telling a visitor how
-   much page is left. That mattered least on the old homepage, which gated its content behind
-   ExperienceSelector and had almost nothing to scroll. Now that every section renders
-   unconditionally the page is several times longer, so the scroll affordance is load-bearing:
-   without it a visitor cannot tell there is anything below the first screen — the same failure
-   the gate itself caused. Do not re-hide these. */
+/* Scrollbar affordance — deliberately different per breakpoint. Read this before changing it.
+
+   The native scrollbar is hidden at >=768px because `CustomScrollbar` (mounted unconditionally in
+   the root layout) draws a gold 4px draggable bar at `fixed top-0 right-1`. Restoring the native
+   bar there would show TWO scrollbars side by side.
+
+   But `CustomScrollbar` is `hidden md:block`, so below 768px it renders nothing. Suppressing the
+   native bar sitewide therefore left phones with NO scroll affordance at all — no indication that
+   anything exists below the first screen, which is the same failure the ExperienceSelector gate
+   caused and which matters more now that the homepage renders every section instead of one.
+
+   So: hidden on desktop (custom bar covers it), restored on mobile (nothing else does). Styled to
+   match the custom bar so the two breakpoints look like one design decision. */
+html, body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  html, body {
+    scrollbar-width: thin;
+    -ms-overflow-style: auto;
+  }
+
+  ::-webkit-scrollbar {
+    display: initial;
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.5); /* gold/50, matching CustomScrollbar's thumb */
+    border-radius: 999px;
+  }
+}
 
 /* iOS touch optimizations */
 html, body {
