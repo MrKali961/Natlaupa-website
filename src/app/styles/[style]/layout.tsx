@@ -79,7 +79,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         canonical: canonicalUrl,
       },
       robots: {
-        index: true,
+        // A style page with no hotels is programmatic thin content: a title, a boilerplate
+        // description and nothing to browse. It competes with the style pages that do have
+        // inventory and gives a searcher nothing.
+        //
+        // FAILS OPEN, and the `=== 0` test is the reason: only an explicit zero from the API
+        // deindexes. A missing or non-numeric hotelCount leaves the page indexed, so a schema change
+        // or a partial response can never silently deindex live pages. Same philosophy as
+        // isPubliclyListable's `!== false`.
+        index: styleData.hotelCount !== 0,
         follow: true,
       },
     };

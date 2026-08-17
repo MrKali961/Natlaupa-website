@@ -326,11 +326,17 @@ export default function About() {
               </p>
             </motion.div>
 
-            {/* Client placeholder note */}
-            <div className="max-w-3xl mx-auto mb-12 bg-yellow-500/10 border border-yellow-500/30 rounded p-3 text-yellow-300 text-xs">
-              ⚠️ Le client doit préciser ici le modèle tarifaire exact (gratuit pour les voyageurs ? commission ? abonnement hôtel ?) avant mise en ligne.
-            </div>
+            {/*
+              An internal note to the client used to render HERE, in a yellow callout, on the page
+              that explains pricing -- reading "Le client doit preciser ici le modele tarifaire exact
+              ... avant mise en ligne." Alongside it, two bracketed placeholder spans sat inside the
+              cards below. All three shipped to every visitor of a live selling site.
 
+              Removed rather than filled in: the actual pricing model is a client decision that has
+              not been made (plan item 0.5). The surrounding sentences are complete without them, so
+              the page now reads as finished copy that is simply silent on price, instead of
+              advertising its own unfinished state. Add the pricing answer here when it arrives.
+            */}
             <div className="grid md:grid-cols-3 gap-8">
               {/* Pour les voyageurs */}
               <motion.div
@@ -343,7 +349,7 @@ export default function About() {
                 <p className="text-gold text-xs font-medium tracking-widest uppercase mb-4">Pour les voyageurs</p>
                 <h3 className="font-serif text-xl text-white mb-4">Accès exclusif &amp; conseils personnalisés</h3>
                 <p className="text-slate-400 leading-relaxed text-sm">
-                  Accédez à une sélection exclusive d&apos;hôtels de luxe, bénéficiez de conseils personnalisés et de tarifs avantageux négociés par nos experts. <span className="text-yellow-400/80">[TODO : Gratuit / Commission incluse / autre — à préciser]</span>
+                  Accédez à une sélection exclusive d&apos;hôtels de luxe, bénéficiez de conseils personnalisés et de tarifs avantageux négociés par nos experts.
                 </p>
               </motion.div>
 
@@ -358,7 +364,7 @@ export default function About() {
                 <p className="text-gold text-xs font-medium tracking-widest uppercase mb-4">Pour les hôtels</p>
                 <h3 className="font-serif text-xl text-white mb-4">Visibilité &amp; clientèle haut de gamme</h3>
                 <p className="text-slate-400 leading-relaxed text-sm">
-                  Rejoignez notre réseau de partenaires et bénéficiez d&apos;une visibilité auprès d&apos;une clientèle haut de gamme. <span className="text-yellow-400/80">[TODO : Abonnement / Commission / autre — à préciser]</span>
+                  Rejoignez notre réseau de partenaires et bénéficiez d&apos;une visibilité auprès d&apos;une clientèle haut de gamme.
                 </p>
               </motion.div>
 
