@@ -26,6 +26,10 @@ export const BLOG_PAGE_SIZE = 20;
 
 export const FOOTER_LINKS = {
   explore: [
+    // First in the list deliberately: /hotels is the only route that links to every bookable hotel,
+    // and the footer renders on every page, so this is what gives the inventory an internal link
+    // path. Before it existed the 58 active hotels were reachable from the sitemap alone.
+    { name: "All Hotels", path: "/hotels" },
     { name: "Destinations", path: "/destinations" },
     { name: "All Offers", path: "/offers" },
     { name: "Countries", path: "/countries" },
