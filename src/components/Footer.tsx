@@ -325,7 +325,7 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Powered By Section */}
-      <div className="bg-deepBlue py-6">
+      <div className="bg-noir py-6">
         <div className="max-w-6xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0 }}

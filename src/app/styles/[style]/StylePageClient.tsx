@@ -31,7 +31,7 @@ export default function StylePageClient({ style, hotels, allStyles }: StylePageP
 
   return (
     <>
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         {/* Hero Section */}
         <div className="relative h-[60vh] w-full">
           <div className="absolute inset-0">
@@ -40,7 +40,7 @@ export default function StylePageClient({ style, hotels, allStyles }: StylePageP
               alt={style.name}
               className="w-full h-full object-cover grayscale brightness-50"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-noir via-noir/50 to-transparent" />
           </div>
 
           {/* Back Button */}

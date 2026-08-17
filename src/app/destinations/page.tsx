@@ -83,7 +83,7 @@ export default function DestinationsPage() {
 
   return (
     <>
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         {/* Hero Section */}
         <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 border-b border-white/10">
           <div className="max-w-7xl mx-auto text-center">
@@ -130,7 +130,7 @@ export default function DestinationsPage() {
                           alt={destination.name}
                           className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/50 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-noir via-noir/50 to-transparent" />
 
                         <div className="absolute inset-0 flex flex-col justify-end p-6">
                           <div className="flex items-center text-gold text-xs uppercase tracking-widest mb-2">
@@ -196,7 +196,7 @@ export default function DestinationsPage() {
                         onClick={() => handlePageChange(page)}
                         className={`w-10 h-10 border rounded-sm text-sm font-medium transition-colors ${
                           currentPage === page
-                            ? 'bg-gold border-gold text-deepBlue'
+                            ? 'bg-gold border-gold text-noir'
                             : 'border-white/10 text-white hover:border-gold hover:text-gold'
                         }`}
                       >
@@ -261,7 +261,7 @@ export default function DestinationsPage() {
             >
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-3 border border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-deepBlue transition-colors"
+                className="inline-flex items-center gap-3 border border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-noir transition-colors"
               >
                 Contact Concierge
                 <ArrowRight size={18} />

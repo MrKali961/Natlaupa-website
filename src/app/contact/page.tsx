@@ -57,7 +57,7 @@ export default function Contact() {
 
   return (
     <>
-      <main className="bg-deepBlue min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
+      <main className="bg-noir min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
           {/* Contact Info */}
           <motion.div
@@ -143,7 +143,7 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full bg-deepBlue border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
+                    className="w-full bg-noir border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
                     placeholder="John Doe"
                   />
                 </div>
@@ -157,7 +157,7 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full bg-deepBlue border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
+                    className="w-full bg-noir border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -170,7 +170,7 @@ export default function Contact() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full bg-deepBlue border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
+                    className="w-full bg-noir border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
                     placeholder="+1 (555) 000-0000"
                   />
                 </div>
@@ -184,7 +184,7 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     rows={5}
-                    className="w-full bg-deepBlue border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
+                    className="w-full bg-noir border border-white/10 p-3 text-white focus:border-gold focus:outline-none transition-colors"
                     placeholder="How can we assist you?"
                   />
                 </div>
@@ -195,7 +195,7 @@ export default function Contact() {
                       name="subscribeNewsletter"
                       checked={formData.subscribeNewsletter}
                       onChange={handleChange}
-                      className="form-checkbox h-4 w-4 text-gold bg-deepBlue border-white/10 focus:ring-gold focus:ring-2 focus:outline-none transition-colors rounded"
+                      className="form-checkbox h-4 w-4 text-gold bg-noir border-white/10 focus:ring-gold focus:ring-2 focus:outline-none transition-colors rounded"
                     />
                     <span className="ml-2">
                       Subscribe to our newsletter for exclusive offers
@@ -217,7 +217,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gold text-deepBlue font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full bg-gold text-noir font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>

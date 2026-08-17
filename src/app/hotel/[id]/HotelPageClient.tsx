@@ -163,7 +163,7 @@ Submitted via Natlaupa Website`;
     : (hotel.rating ?? 0).toFixed(1);
 
   return (
-    <div className="bg-deepBlue min-h-screen text-slate-100">
+    <div className="bg-noir min-h-screen text-slate-100">
       {/* Hero Section */}
       <div className="relative w-full" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
         <div className="absolute inset-0">
@@ -174,7 +174,7 @@ Submitted via Natlaupa Website`;
               className="w-full h-full object-cover grayscale brightness-50"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-noir via-noir/50 to-transparent" />
         </div>
 
         {/* Back Button - Navigate to previous page */}
@@ -205,7 +205,7 @@ Submitted via Natlaupa Website`;
               {hotel.isTrending && (
                 <>
                   <span className="text-white/30">|</span>
-                  <span className="bg-gold text-deepBlue px-2 py-0.5 text-xs font-bold uppercase">Trending</span>
+                  <span className="bg-gold text-noir px-2 py-0.5 text-xs font-bold uppercase">Trending</span>
                 </>
               )}
             </div>
@@ -226,7 +226,7 @@ Submitted via Natlaupa Website`;
 
       {/* Gallery Section */}
       {hotel.galleryImages && hotel.galleryImages.length > 0 && (
-        <div className="bg-deepBlue border-b border-white/5 relative z-10">
+        <div className="bg-noir border-b border-white/5 relative z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
             <h3 className="font-serif text-2xl text-white mb-8">Visual Narrative</h3>
             <MasonryGallery
@@ -319,7 +319,7 @@ Submitted via Natlaupa Website`;
 
               <button
                 onClick={() => setIsContactModalOpen(true)}
-                className="w-full bg-gold text-deepBlue py-4 font-bold uppercase tracking-widest hover:bg-white transition-colors duration-300"
+                className="w-full bg-gold text-noir py-4 font-bold uppercase tracking-widest hover:bg-white transition-colors duration-300"
               >
                 Contact Concierge
               </button>
@@ -363,7 +363,7 @@ Submitted via Natlaupa Website`;
                 href={`https://www.google.com/maps/search/?api=1&query=${hotel.lat},${hotel.lng}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex items-center gap-2 px-4 py-2 border border-gold text-gold hover:bg-gold hover:text-deepBlue transition-colors text-sm uppercase tracking-widest"
+                className="hidden md:flex items-center gap-2 px-4 py-2 border border-gold text-gold hover:bg-gold hover:text-noir transition-colors text-sm uppercase tracking-widest"
               >
                 <Navigation size={16} />
                 Get Directions
@@ -386,7 +386,7 @@ Submitted via Natlaupa Website`;
                 <div className="absolute inset-0 pointer-events-none border border-gold/20" />
               </div>
 
-              <div className="p-4 bg-deepBlue flex items-center justify-between">
+              <div className="p-4 bg-noir flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
                     <MapPin className="text-gold" size={20} />
@@ -443,7 +443,7 @@ Submitted via Natlaupa Website`;
                 </div>
                 <p className="text-slate-300 italic mb-6 leading-relaxed">&quot;{review.comment}&quot;</p>
                 <div className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-deepBlue border border-gold/30 flex items-center justify-center text-gold text-xs font-bold mr-3">
+                  <div className="w-8 h-8 rounded-full bg-noir border border-gold/30 flex items-center justify-center text-gold text-xs font-bold mr-3">
                     {review.user.charAt(0)}
                   </div>
                   <span className="text-white text-xs font-bold uppercase tracking-widest">{review.user}</span>
@@ -456,7 +456,7 @@ Submitted via Natlaupa Website`;
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-deepBlue border border-dashed border-white/10 p-8 rounded-sm flex flex-col justify-center items-center text-center group hover:border-gold/50 transition-colors cursor-pointer"
+              className="bg-noir border border-dashed border-white/10 p-8 rounded-sm flex flex-col justify-center items-center text-center group hover:border-gold/50 transition-colors cursor-pointer"
               onClick={() => setIsContactModalOpen(true)}
             >
               <MessageSquare size={32} className="text-slate-500 mb-4 group-hover:text-gold transition-colors" />
@@ -491,7 +491,7 @@ Submitted via Natlaupa Website`;
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-deepBlue border border-white/10 p-8 md:p-10 w-full max-w-lg shadow-2xl max-h-[85vh] overflow-y-auto"
+              className="relative bg-noir border border-white/10 p-8 md:p-10 w-full max-w-lg shadow-2xl max-h-[85vh] overflow-y-auto"
               data-lenis-prevent
             >
               <button
@@ -585,7 +585,7 @@ Submitted via Natlaupa Website`;
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
+                        className="flex-1 bg-gold text-noir px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
                       >
                         {isSubmitting ? (
                           <>

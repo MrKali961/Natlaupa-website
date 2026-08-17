@@ -212,7 +212,7 @@ export default function Hospitality() {
         ]}
       />
 
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         {/* Breadcrumb — mirrors the BreadcrumbList JSON-LD */}
         <nav aria-label="Breadcrumb" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 md:pt-32">
           <ol className="flex items-center gap-2 text-xs text-slate-400 uppercase tracking-[0.15em]">
@@ -257,7 +257,7 @@ export default function Hospitality() {
                 <a
                   href="#apply"
                   data-cta="hero_request_audit"
-                  className="inline-flex items-center justify-center gap-3 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-softGold transition-colors"
+                  className="inline-flex items-center justify-center gap-3 bg-gold text-noir px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-softGold transition-colors"
                 >
                   Request Your Audit
                   <ArrowRight size={18} />
@@ -266,7 +266,7 @@ export default function Hospitality() {
                   href={bookHref}
                   {...bookProps}
                   data-cta="hero_book_call"
-                  className="inline-flex items-center justify-center gap-3 border border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-deepBlue transition-colors"
+                  className="inline-flex items-center justify-center gap-3 border border-gold text-gold px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold hover:text-noir transition-colors"
                 >
                   <CalendarClock size={18} />
                   Book a 15-Minute Call
@@ -501,7 +501,7 @@ export default function Hospitality() {
         </section>
 
         {/* SECTION 9 — Final CTA */}
-        <section className="border-t border-white/10 bg-gradient-to-b from-midnight/40 to-deepBlue">
+        <section className="border-t border-white/10 bg-gradient-to-b from-midnight/40 to-noir">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
             <span className="text-gold text-xs uppercase tracking-[0.35em] block mb-6">The Audit</span>
             <h2 className="font-serif text-3xl md:text-5xl text-white leading-tight mb-6">
@@ -515,7 +515,7 @@ export default function Hospitality() {
               <a
                 href="#apply"
                 data-cta="final_request_audit"
-                className="inline-flex items-center justify-center gap-3 bg-gold text-deepBlue px-10 py-5 font-bold uppercase tracking-[0.15em] text-sm hover:bg-softGold transition-colors"
+                className="inline-flex items-center justify-center gap-3 bg-gold text-noir px-10 py-5 font-bold uppercase tracking-[0.15em] text-sm hover:bg-softGold transition-colors"
               >
                 Request Your Audit
                 <ArrowRight size={18} />
@@ -524,7 +524,7 @@ export default function Hospitality() {
                 href={bookHref}
                 {...bookProps}
                 data-cta="final_book_call"
-                className="inline-flex items-center justify-center gap-3 border border-gold text-gold px-10 py-5 font-bold uppercase tracking-[0.15em] text-sm hover:bg-gold hover:text-deepBlue transition-colors"
+                className="inline-flex items-center justify-center gap-3 border border-gold text-gold px-10 py-5 font-bold uppercase tracking-[0.15em] text-sm hover:bg-gold hover:text-noir transition-colors"
               >
                 <CalendarClock size={18} />
                 Book a 15-Minute Call

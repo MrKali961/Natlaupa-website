@@ -91,7 +91,7 @@ export default function OffersPage() {
       <Suspense fallback={null}>
         <OffersQuerySeed onSeed={handleSearchChange} />
       </Suspense>
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         {/* Hero Section */}
         <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 border-b border-white/10">
           <div className="max-w-7xl mx-auto">
@@ -228,7 +228,7 @@ export default function OffersPage() {
                         onClick={() => handlePageChange(p)}
                         className={`w-10 h-10 border rounded-sm text-sm font-medium transition-colors ${
                           page === p
-                            ? "bg-gold border-gold text-deepBlue"
+                            ? "bg-gold border-gold text-noir"
                             : "border-white/10 text-white hover:border-gold hover:text-gold"
                         }`}
                       >

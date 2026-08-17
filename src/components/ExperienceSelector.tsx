@@ -430,7 +430,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
   // Show loading state while data is being fetched
   if (isLoading) {
     return (
-      <div className="bg-deepBlue min-h-screen flex items-center justify-center">
+      <div className="bg-noir min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 text-gold animate-spin" />
           <span className="text-gold text-sm uppercase tracking-[0.3em]">
@@ -444,7 +444,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
   return (
     <div
       ref={containerRef}
-      className="bg-deepBlue relative z-20 overflow-hidden"
+      className="bg-noir relative z-20 overflow-hidden"
     >
       {/* Blackout Curtain for Smooth Transition with Loading Indicator */}
       <AnimatePresence>
@@ -455,7 +455,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="fixed inset-0 bg-deepBlue z-[100] flex items-center justify-center"
+            className="fixed inset-0 bg-noir z-[100] flex items-center justify-center"
           >
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -481,7 +481,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 20, x: "-50%" }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="fixed bottom-8 left-1/2 z-[110] bg-deepBlue/95 backdrop-blur-md border border-gold/30 px-6 py-4 rounded-sm shadow-2xl"
+            className="fixed bottom-8 left-1/2 z-[110] bg-noir/95 backdrop-blur-md border border-gold/30 px-6 py-4 rounded-sm shadow-2xl"
           >
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-gold animate-pulse" />
@@ -1062,15 +1062,15 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                                   alt={dest.name}
                                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/50 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-noir via-noir/50 to-transparent" />
                                 <div className="absolute top-6 right-6 flex flex-col gap-3">
-                                  <div className="bg-deepBlue/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
+                                  <div className="bg-noir/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
                                     <Clock size={14} className="text-gold" />
                                     <span className="text-white text-sm font-light">
                                       {liveTimes[dest.id] || "--:--"}
                                     </span>
                                   </div>
-                                  <div className="bg-deepBlue/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
+                                  <div className="bg-noir/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
                                     <ThermometerSun
                                       size={14}
                                       className="text-gold"
@@ -1136,7 +1136,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                                   alt={cat.name}
                                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-deepBlue via-deepBlue/30 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-noir via-noir/30 to-transparent" />
                               </div>
                               <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
                                 <motion.div
@@ -1175,7 +1175,7 @@ const ExperienceSelector: React.FC<ExperienceSelectorProps> = ({
                       href={mode === "destination" ? "/destinations" : "/styles"}
                       className="block group"
                     >
-                      <div className="relative h-[40vh] overflow-hidden rounded-sm border border-dashed border-white/20 hover:border-gold/50 transition-all duration-500 bg-gradient-to-br from-midnight to-deepBlue flex items-center justify-center">
+                      <div className="relative h-[40vh] overflow-hidden rounded-sm border border-dashed border-white/20 hover:border-gold/50 transition-all duration-500 bg-gradient-to-br from-midnight to-noir flex items-center justify-center">
                         <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         <div className="text-center z-10">
                           <div className="w-20 h-20 rounded-full border-2 border-gold/30 group-hover:border-gold flex items-center justify-center mx-auto mb-6 transition-all duration-500 group-hover:scale-110">

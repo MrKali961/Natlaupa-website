@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function PolitiqueDeConfidentialite() {
   return (
     <>
-      <main className="bg-deepBlue min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+      <main className="bg-noir min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="mb-16">

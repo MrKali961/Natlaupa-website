@@ -29,7 +29,7 @@ const Hero: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-deepBlue flex flex-col"
+      className="relative w-full overflow-hidden bg-noir flex flex-col"
       style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
     >
       <HeroBackground progress={scrollYProgress} />

@@ -7,7 +7,7 @@ import { Home, ArrowLeft, Search } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <main className="bg-deepBlue min-h-screen flex items-center justify-center px-4">
+    <main className="bg-noir min-h-screen flex items-center justify-center px-4">
       <div className="max-w-2xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -34,7 +34,7 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-3 bg-gold text-deepBlue px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
+              className="inline-flex items-center gap-3 bg-gold text-noir px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-colors"
             >
               <Home size={18} />
               Back to Home

@@ -17,12 +17,14 @@ const config: Config = {
     extend: {
       colors: {
         midnight: '#121212',
-        deepBlue: '#000000',
+        noir: '#000000',
         gold: '#D4AF37',
         softGold: '#F3E5AB',
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
+        // --font-body is face-agnostic on purpose: swapping the body typeface is a one-line change
+        // in layout.tsx and does not need a matching edit here.
+        sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
         serif: ['var(--font-playfair)', 'Playfair Display', 'serif'],
       },
     },

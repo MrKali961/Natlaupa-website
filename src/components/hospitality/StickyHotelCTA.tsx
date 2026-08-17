@@ -45,7 +45,7 @@ export default function StickyHotelCTA() {
       }`}
     >
       {/* Mobile bar */}
-      <div className="md:hidden flex items-center gap-3 border-t border-gold/30 bg-deepBlue/95 backdrop-blur-sm px-4 py-3 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))]">
+      <div className="md:hidden flex items-center gap-3 border-t border-gold/30 bg-noir/95 backdrop-blur-sm px-4 py-3 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))]">
         <div className="flex-1 leading-tight">
           <p className="text-white text-sm font-medium">AI Digital Presence Audit</p>
           <p className="text-slate-400 text-[11px]">Human-verified · no obligation</p>
@@ -54,7 +54,7 @@ export default function StickyHotelCTA() {
           href={href}
           {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           onClick={onClick}
-          className="inline-flex items-center gap-2 bg-gold text-deepBlue px-5 py-3.5 font-bold uppercase tracking-widest text-xs"
+          className="inline-flex items-center gap-2 bg-gold text-noir px-5 py-3.5 font-bold uppercase tracking-widest text-xs"
         >
           <CalendarClock size={16} />
           Request your audit
@@ -66,7 +66,7 @@ export default function StickyHotelCTA() {
         href={href}
         {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
         onClick={onClick}
-        className="hidden md:inline-flex items-center gap-2.5 bg-gold text-deepBlue px-6 py-3.5 rounded-full shadow-2xl font-bold uppercase tracking-widest text-xs hover:bg-softGold transition-colors"
+        className="hidden md:inline-flex items-center gap-2.5 bg-gold text-noir px-6 py-3.5 rounded-full shadow-2xl font-bold uppercase tracking-widest text-xs hover:bg-softGold transition-colors"
       >
         <CalendarClock size={17} />
         Request your audit

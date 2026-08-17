@@ -22,7 +22,7 @@ function UnsubscribeFallback() {
 export default function UnsubscribePage() {
   return (
     <>
-      <main className="bg-deepBlue min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+      <main className="bg-noir min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md mx-auto">
           <div className="bg-midnight/50 border border-white/5 rounded-sm p-8 md:p-10 backdrop-blur-sm">
             <Suspense fallback={<UnsubscribeFallback />}>
