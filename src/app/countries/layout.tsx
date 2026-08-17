@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Countries',
-  description: 'Discover Natlaupa\'s luxury hotel portfolio by country. Explore handpicked properties across the world\'s most sought-after destinations — each country offering its own signature blend of culture and indulgence.',
+  description: 'Explore our luxury hotel portfolio country by country, with handpicked properties across the world\'s most sought-after destinations.',
   alternates: {
     canonical: 'https://www.natlaupa.com/countries',
   },
   openGraph: {
     title: 'Countries | Natlaupa',
-    description: 'Discover Natlaupa\'s luxury hotel portfolio by country. Explore handpicked properties across the world\'s most sought-after destinations — each country offering its own signature blend of culture and indulgence.',
+    description: 'Explore our luxury hotel portfolio country by country, with handpicked properties across the world\'s most sought-after destinations.',
     url: 'https://www.natlaupa.com/countries',
     siteName: 'Natlaupa',
     type: 'website',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Countries | Natlaupa',
-    description: 'Discover Natlaupa\'s luxury hotel portfolio by country. Explore handpicked properties across the world\'s most sought-after destinations — each country offering its own signature blend of culture and indulgence.',
+    description: 'Explore our luxury hotel portfolio country by country, with handpicked properties across the world\'s most sought-after destinations.',
     images: ['https://www.natlaupa.com/opengraph-image'],
   },
 };

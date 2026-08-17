@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { isPubliclyListable } from '@/lib/fetch-all';
 import { isCuid, isValidSlug } from '@/lib/slugify';
+import { buildTitle, buildDescription, stripBrandSuffix } from '@/lib/seo-meta';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -17,9 +18,12 @@ type Props = {
  * page.tsx started returning 404 for them.
  */
 const RETIRED_METADATA: Metadata = {
-  // No ' | Natlaupa' suffix here — the root layout's title template appends it. The
-  // other not-found returns in this file predate that template and render
-  // "Hotel Not Found | Natlaupa | Natlaupa"; not fixed here to keep this change scoped.
+  // No ' | Natlaupa' suffix here — the root layout's title template appends it. The other
+  // not-found returns in this file DID carry the literal suffix and rendered
+  // "Hotel Not Found | Natlaupa | Natlaupa"; all three are now de-duplicated to match this one.
+  // 12 such page-level titles were fixed across the four dynamic layouts. The hub layouts'
+  // '| Natlaupa' literals were deliberately LEFT ALONE — those are openGraph/twitter titles,
+  // which the template does not touch, so their brand suffix is correct.
   title: 'Hotel Not Found',
   description: 'This hotel is no longer available.',
   robots: { index: false, follow: false },
@@ -52,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!response.ok) {
       return {
-        title: 'Hotel Not Found | Natlaupa',
+        title: 'Hotel Not Found',
         description: 'The requested hotel could not be found.',
       };
     }
@@ -62,7 +66,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!hotel) {
       return {
-        title: 'Hotel Not Found | Natlaupa',
+        title: 'Hotel Not Found',
         description: 'The requested hotel could not be found.',
       };
     }
@@ -72,16 +76,39 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // page component, so no surface can disagree about what is public.
     if (!isPubliclyListable(hotel)) return RETIRED_METADATA;
 
-    const title = hotel.metaTitle || `${hotel.name} - ${hotel.city}, ${hotel.country} | Natlaupa`;
-    const description = hotel.metaDescription || hotel.shortDescription || `Experience luxury at ${hotel.name} in ${hotel.city}. ${hotel.starRating ? `${hotel.starRating}-star` : 'Premium'} accommodation with world-class amenities.`;
+    // 🔴 Both SERP fields overflowed here, measured across ALL 84 live hotel pages 2026-08-17:
+    //   titles      36 of 84 (42%) over 60 chars — range 44-93, median 59
+    //   descriptions 84 of 84 (100%) over 155     — range 229-658, MEDIAN 391
+    // 33 descriptions ran past 450 characters, so Google was discarding up to ~75% of the text
+    // on the pages that carry the entire bookable inventory. Nothing in the codebase bounded
+    // either field; `src/lib/seo-meta.ts` now does.
+    const rawTitle = hotel.metaTitle || `${hotel.name} - ${hotel.city}, ${hotel.country}`;
+
+    // The fallback CHAIN is unchanged on purpose — metaDescription, then shortDescription, then
+    // the generated line. buildDescription only bounds whichever one wins, so this is a pure
+    // length fix and not a change to which copy gets shown.
+    const rawDescription =
+      hotel.metaDescription ||
+      hotel.shortDescription ||
+      `Experience luxury at ${hotel.name} in ${hotel.city}. ${hotel.starRating ? `${hotel.starRating}-star` : 'Premium'} accommodation with world-class amenities.`;
+
+    const description = buildDescription(rawDescription);
+
+    // Social cards have NO 60-character limit, so they get the full text with only a duplicate
+    // brand suffix removed. Clamping them would be pure loss — same rule as the TRD property.
+    const socialTitle = stripBrandSuffix(rawTitle);
     const imageUrl = hotel.bannerImage || hotel.thumbnailImage;
     const canonicalUrl = `https://www.natlaupa.com/hotel/${hotel.slug || hotel.id}`;
 
     return {
-      title,
+      // `absolute` so the root layout's `template: '%s | Natlaupa'` cannot re-append the brand.
+      // buildTitle already adds it when it fits, and strips one the CMS value may carry — the
+      // live values are formatted "{name} | {city} | Luxury Hotel | Natlaupa", so without the
+      // strip this would have rendered the brand twice.
+      title: { absolute: buildTitle(rawTitle) },
       description,
       openGraph: {
-        title,
+        title: socialTitle,
         description,
         url: canonicalUrl,
         siteName: 'Natlaupa',
@@ -91,7 +118,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       twitter: {
         card: 'summary_large_image',
-        title,
+        title: socialTitle,
         description,
         images: imageUrl ? [imageUrl] : [],
       },
@@ -106,7 +133,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } catch (error) {
     console.error('Error fetching hotel for metadata:', error);
     return {
-      title: 'Hotel Not Found | Natlaupa',
+      title: 'Hotel Not Found',
       description: 'The requested hotel could not be found.',
     };
   }

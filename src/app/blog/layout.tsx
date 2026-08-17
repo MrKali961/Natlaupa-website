@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Travel Blog | Stories, Tips & Insider Insights',
-  description: 'Explore Natlaupa\'s travel blog for inspiring stories, luxury destination guides, insider tips, and curated insights from the world\'s most extraordinary places.',
+  description: 'Luxury destination guides, insider tips and curated insights from the world\'s most extraordinary places.',
   alternates: {
     canonical: 'https://www.natlaupa.com/blog',
   },
   openGraph: {
     title: 'Travel Blog | Natlaupa',
-    description: 'Explore Natlaupa\'s travel blog for inspiring stories, luxury destination guides, insider tips, and curated insights from the world\'s most extraordinary places.',
+    description: 'Luxury destination guides, insider tips and curated insights from the world\'s most extraordinary places.',
     url: 'https://www.natlaupa.com/blog',
     siteName: 'Natlaupa',
     type: 'website',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Travel Blog | Natlaupa',
-    description: 'Explore Natlaupa\'s travel blog for inspiring stories, luxury destination guides, insider tips, and curated insights from the world\'s most extraordinary places.',
+    description: 'Luxury destination guides, insider tips and curated insights from the world\'s most extraordinary places.',
     images: ['https://www.natlaupa.com/opengraph-image'],
   },
 };

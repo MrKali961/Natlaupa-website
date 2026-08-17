@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { isValidSlug } from '@/lib/slugify';
+import { buildTitle, buildDescription, stripBrandSuffix } from '@/lib/seo-meta';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // regardless — without this it still issues /offers/slug/null.
   if (!isValidSlug(id)) {
     return {
-      title: 'Offer Not Found | Natlaupa',
+      title: 'Offer Not Found',
       description: 'The requested offer could not be found.',
     };
   }
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!response.ok) {
       return {
-        title: 'Offer Not Found | Natlaupa',
+        title: 'Offer Not Found',
         description: 'The requested offer could not be found.',
       };
     }
@@ -36,21 +37,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!offer) {
       return {
-        title: 'Offer Not Found | Natlaupa',
+        title: 'Offer Not Found',
         description: 'The requested offer could not be found.',
       };
     }
 
-    const title = offer.metaTitle || `${offer.title} | Natlaupa Experiences`;
-    const description = offer.metaDescription || offer.tagline || offer.description || `Experience ${offer.title} - an exclusive offer curated by Natlaupa.`;
+    // 🔴 Both SERP fields were unbounded here. Measured on production 2026-08-17:
+    // destination descriptions reached 355 chars, offers 160, styles 158 — all past Google's
+    // ~155 limit, and the page `title` carried a literal '| Natlaupa' that the root layout's
+    // `template: '%s | Natlaupa'` then appended a SECOND time. seo-meta.ts bounds both.
+    const rawTitle = offer.metaTitle || `${offer.title} | Natlaupa Experiences`;
+    const rawDescription = offer.metaDescription || offer.tagline || offer.description || `Experience ${offer.title} - an exclusive offer curated by Natlaupa.`;
+    // Bounds only — the fallback CHAIN above is deliberately unchanged, so this does
+    // not alter which copy is shown, just how much of it survives truncation.
+    const description = buildDescription(rawDescription);
+    // Social cards have no 60-char limit; give them the full text.
+    const socialTitle = stripBrandSuffix(rawTitle);
     const imageUrl = offer.imageUrl || offer.coverImage;
     const canonicalUrl = `https://www.natlaupa.com/offer/${offer.slug || offer.id}`;
 
     return {
-      title,
+      title: { absolute: buildTitle(rawTitle) },
       description,
       openGraph: {
-        title,
+        title: socialTitle,
         description,
         url: canonicalUrl,
         siteName: 'Natlaupa',
@@ -60,7 +70,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       twitter: {
         card: 'summary_large_image',
-        title,
+        title: socialTitle,
         description,
         images: imageUrl ? [imageUrl] : [],
       },
@@ -75,7 +85,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } catch (error) {
     console.error('Error fetching offer for metadata:', error);
     return {
-      title: 'Offer Not Found | Natlaupa',
+      title: 'Offer Not Found',
       description: 'The requested offer could not be found.',
     };
   }

@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Hotel Styles',
-  description: 'Browse Natlaupa\'s luxury hotel categories by accommodation style. Whether you seek eco-lodges, urban suites, historic castles, or overwater villas — find the perfect style for your next journey.',
+  description: 'Browse luxury hotels by style — eco-lodges, urban suites, historic castles, overwater villas — and find the one that fits your journey.',
   alternates: {
     canonical: 'https://www.natlaupa.com/styles',
   },
   openGraph: {
     title: 'Hotel Styles | Natlaupa',
-    description: 'Browse Natlaupa\'s luxury hotel categories by accommodation style. Whether you seek eco-lodges, urban suites, historic castles, or overwater villas — find the perfect style for your next journey.',
+    description: 'Browse luxury hotels by style — eco-lodges, urban suites, historic castles, overwater villas — and find the one that fits your journey.',
     url: 'https://www.natlaupa.com/styles',
     siteName: 'Natlaupa',
     type: 'website',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Hotel Styles | Natlaupa',
-    description: 'Browse Natlaupa\'s luxury hotel categories by accommodation style. Whether you seek eco-lodges, urban suites, historic castles, or overwater villas — find the perfect style for your next journey.',
+    description: 'Browse luxury hotels by style — eco-lodges, urban suites, historic castles, overwater villas — and find the one that fits your journey.',
     images: ['https://www.natlaupa.com/opengraph-image'],
   },
 };

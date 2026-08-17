@@ -36,16 +36,10 @@
 import { test, expect, type APIRequestContext } from '@playwright/test';
 
 /**
- * Length limits Google truncates at.
- *
- * 🔴 Hardcoded here because, unlike the TRD property, THIS SITE HAS NO LENGTH-BOUNDING HELPER.
- * TRD imports TITLE_MAX / DESCRIPTION_MAX from `src/lib/seo-meta.ts`, so its tests and its
- * runtime cannot disagree. Natlaupa has no such module, which is precisely why every
- * description currently overflows (measured 2026-08-17: 177 / 203 / 194 / 209 / 193 chars).
- * When a `seo-meta.ts` equivalent lands here, import from it and delete these two lines.
+ * Imported from the runtime module, never re-hardcoded, so the test and the shipped code cannot
+ * disagree about what the bound is. Raise TITLE_MAX in the helper and these move with it.
  */
-const TITLE_MAX = 60;
-const DESCRIPTION_MAX = 155;
+import { TITLE_MAX, DESCRIPTION_MAX } from '@/lib/seo-meta';
 
 /**
  * Per-collection sitemap floors.
@@ -352,16 +346,23 @@ test.describe('SEO regression guards (shipped fixes)', () => {
 // `test.fail()` line and the test becomes a permanent guard. Every entry names its owner.
 // ===========================================================================
 
-test.describe('Known-open defects (test.fail — flip when fixed)', () => {
+test.describe('Defects with an owner (delete the test.fail when one deploys)', () => {
+  // ⚠️ NO test.fail() — this defect is FIXED in this branch, so it is a permanent guard now.
+  // It will still fail until the fix DEPLOYS; that is expected, and it is the cheapest proof the
+  // deploy worked. Do not re-add a test.fail() to make it green.
+  //
+  // What it caught, measured on production 2026-08-17 BEFORE the fix:
+  //   hubs:          /countries 209, /about 203, /styles 194, /destinations 193, / 177, /blog 159
+  //                  — six of seven over; only /mentions-legales (124) fit
+  //   hotel details: descriptions 84 of 84 (100%) over, range 229-658, MEDIAN 391 (33 past 450)
+  //                  titles        36 of 84 (42%) over, range 44-93
+  //   destinations 355 · offers 160 · styles 158
+  //
+  // ⚠️ Length is ALL this asserts, and length is not quality. Clamping cannot write copy — some
+  // clamped titles now end on an incomplete phrase ("… | Trou d'Eau", "… | Luxury"). Authored
+  // metaTitle / metaDescription values in the CMS remain the real fix for those; the helper only
+  // guarantees Google stops discarding two thirds of the text.
   test('D01: no title over TITLE_MAX, no description over DESCRIPTION_MAX', async ({ request }) => {
-    test.fail(
-      true,
-      'OPEN — no owner yet. This site has no seo-meta.ts equivalent, so nothing bounds ' +
-        'metadata length. Measured on production 2026-08-17: / 177, /about 203, /styles 194, ' +
-        '/countries 209, /destinations 193, /blog 159. Only /mentions-legales (124) passes. ' +
-        'Fix: port TRD\'s src/lib/seo-meta.ts buildTitle/buildDescription, then delete this line.',
-    );
-
     const routes = sampleRoutes(await sitemapPaths(request));
     const over: string[] = [];
     for (const path of routes) {
