@@ -114,10 +114,15 @@ export function stripBrandSuffix(rawTitle: string): string {
  * the 37 titles that already fit perfectly. Cascading word-strip removes 5%.
  *
  * ⚠️ MODIFIER is domain-tuned to a luxury-hotel inventory and is a heuristic, not a grammar. A
- * modifier not listed here simply survives as the last word — the failure mode is an unimproved
- * title, never a corrupted one. The cascade also self-limits: when a descriptor collapses to
- * nothing, `tidy` removes the now-trailing separator and the title degrades to `Name | Brand`,
- * which is exactly right for the cases where no part of the descriptor could survive intact.
+ * modifier not listed here simply survives as the last word, so the failure mode there is an
+ * unimproved title.
+ *
+ * ⚠️ Both lists contain words that can legitimately END a hotel name — `grand`, `royal`, `new`,
+ * `private`, `beach`, the compass points — plus a possessive test that matches "Claridge's". So
+ * applying them to a whole title DOES corrupt names; that was a real bug here, not a theoretical
+ * one. `repairClampedTail` is what makes them safe, by confining the strip to the single segment
+ * `clamp` could have truncated. Read its comment before touching either list, and never call
+ * `stripDanglingWords` on a full title.
  */
 const DANGLING_FUNCTION_WORDS = new Set([
   'in', 'on', 'at', 'the', 'a', 'an', 'of', 'and', 'or', 'by', 'to', 'for', 'with', 'from',
@@ -139,15 +144,16 @@ const DANGLING_MODIFIERS = new Set([
  * ("… on Marbella’s" once "Golden Mile" has been clamped away).
  *
  * Stops at the first word that CAN end a phrase, so a descriptor ending in a real noun
- * ("5-Star Luxury Hotel") is left completely alone.
+ * ("5-Star Luxury Hotel") is left completely alone. Returns '' when every word is strippable —
+ * the caller decides what that means.
+ *
+ * ⚠️ NEVER call this on a whole title. See `repairClampedTail`.
  */
-function stripDanglingTail(text: string): string {
-  let current = tidy(text);
+function stripDanglingWords(segment: string): string {
+  let current = tidy(segment);
 
-  for (;;) {
+  while (current) {
     const tokens = current.split(' ');
-    if (tokens.length < 2) return current;
-
     const last = tokens[tokens.length - 1];
     const bare = last.toLowerCase().replace(/[.,;:]+$/, '');
     const isDangling =
@@ -156,12 +162,55 @@ function stripDanglingTail(text: string): string {
       /['’]s$/.test(last);
 
     if (!isDangling) return current;
-
-    // tidy() also strips a separator left exposed when a segment empties out.
-    const next = tidy(tokens.slice(0, -1).join(' '));
-    if (!next) return current;
-    current = next;
+    current = tidy(tokens.slice(0, -1).join(' '));
   }
+
+  return '';
+}
+
+/**
+ * Repair a title that `clamp` cut mid-phrase.
+ *
+ * 🔴 The strip is applied to the FINAL `|` segment ONLY, and that boundary is the whole
+ * correctness argument — not a stylistic preference. `clamp` can only have truncated the last
+ * segment; every segment before it survived intact, and on this data segment 1 is the hotel name.
+ *
+ * An earlier version of this ran the cascade across the whole string. Once `tidy` removed the
+ * separator exposed by an emptied descriptor, the loop walked into the name and ate words out of
+ * it. Measured against the compiled helper, not hypothesised:
+ *
+ *   "Jumeirah Beach | Luxury Beachfront Design Boutique Grand Modern Iconic"
+ *      → "Jumeirah | Natlaupa"     ← 'beach' is in DANGLING_MODIFIERS
+ *   "The Royal | Luxury Beachfront Design Boutique Modern Iconic Premier Grand"
+ *      → "The | Natlaupa"          ← 'royal' is too
+ *
+ * A corrupted brand name is far worse than the dangling word this module exists to remove. No
+ * current record reaches that path, so "all 84 titles pass" could never have caught it — `grand`,
+ * `royal`, `new`, `private`, `beach` and the compass points are all plausible name-final tokens in
+ * a growing inventory, as is a possessive ("Claridge's").
+ *
+ * If the final segment strips away entirely, that segment is dropped and the preceding segments
+ * are returned verbatim — so the worst case is `Name | Natlaupa`, never a shortened name.
+ *
+ * Single-segment titles (the destinations route's "Luxury Hotels in Bali") ARE stripped, and that
+ * is consistent rather than an exception: with no separator, the clamp truncated that very text, so
+ * "Luxury Hotels in" → "Luxury Hotels" repairs the cut instead of editing intact copy.
+ */
+function repairClampedTail(text: string): string {
+  const segments = text
+    .split('|')
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+  if (segments.length === 0) return '';
+
+  const head = segments.slice(0, -1);
+  const repairedTail = stripDanglingWords(segments[segments.length - 1]);
+
+  // Nothing of the truncated segment survives: drop it, keep everything before it verbatim.
+  if (!repairedTail) return head.join(' | ');
+
+  return [...head, repairedTail].join(' | ');
 }
 
 /**
@@ -186,8 +235,9 @@ export function buildTitle(rawTitle: string): string {
   }
 
   // Too long for the brand, so it must be clamped. Repair a cut that landed on a word which
-  // cannot end a phrase (see stripDanglingTail) before deciding whether the brand now fits.
-  const trimmed = stripDanglingTail(clamp(base, TITLE_MAX));
+  // cannot end a phrase, WITHOUT touching the segments before it (see
+  // repairClampedTail), before deciding whether the brand now fits.
+  const trimmed = repairClampedTail(clamp(base, TITLE_MAX));
 
   // Never return less than the plain clamp would have: if the repair consumed everything,
   // a truncated-but-present title beats an empty one.

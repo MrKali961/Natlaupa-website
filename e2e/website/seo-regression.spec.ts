@@ -34,6 +34,7 @@
  */
 
 import { test, expect, type APIRequestContext } from '@playwright/test';
+import { buildTitle } from '@/lib/seo-meta';
 
 /**
  * Imported from the runtime module, never re-hardcoded, so the test and the shipped code cannot
@@ -480,5 +481,76 @@ test.describe('Defects with an owner (delete the test.fail when one deploys)', (
     // load-more button would leave the hotels sitemap-only again, which is the defect S01 fixed.
     expect(html, '/hotels must link page 2 with a real href').toMatch(/href="[^"]*\/hotels\?page=2/);
     expect(html, 'active page link must carry aria-current').toMatch(/aria-current="page"/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// buildTitle — unit assertions. No fixtures, no network, runs against any origin.
+//
+// 🔴 Why these are unit tests and not production probes. `buildTitle` repairs a title that the
+// 60-char clamp cut mid-phrase by dropping trailing words that cannot end a phrase. An earlier
+// version applied that strip to the WHOLE title, so once the descriptor emptied out the cascade
+// walked into the hotel name and ate words from it:
+//
+//   "Jumeirah Beach | Luxury Beachfront Design Boutique Grand Modern Iconic"
+//      -> "Jumeirah | Natlaupa"      ('beach' is in the modifier list)
+//   "The Royal | Luxury Beachfront Design Boutique Modern Iconic Premier Grand"
+//      -> "The | Natlaupa"           ('royal' is too)
+//
+// NO CURRENT RECORD REACHES THAT PATH, which is exactly why a production sweep could not catch it —
+// "all 84 titles clean" was true and the bug was still there. It needs a title whose descriptor is
+// entirely strippable, and the inventory does not contain one YET. `grand`, `royal`, `new`,
+// `private`, `beach` and the compass points are all plausible name-final tokens, so a future CMS
+// entry would have shipped a corrupted brand name silently.
+//
+// These cases pin the invariant instead of the inventory: the text before the final `|` is never
+// edited, because the clamp cannot have truncated it.
+// ---------------------------------------------------------------------------
+test.describe('buildTitle invariants', () => {
+  const CORRUPTION_CASES = [
+    'Jumeirah Beach | Luxury Beachfront Design Boutique Grand Modern Iconic',
+    'Hotel Grand | Luxury Beachfront Design Boutique Modern Iconic Premier',
+    "Claridge's | Luxury Iconic Historic Boutique Design Modern Premier Grand",
+    'Resort North | Beachfront Luxury Design Boutique Grand Modern Iconic Premier',
+    'The Royal | Luxury Beachfront Design Boutique Modern Iconic Premier Grand',
+  ];
+
+  test('U01: never edits the text before the final separator', () => {
+    const mangled: string[] = [];
+    for (const raw of CORRUPTION_CASES) {
+      const out = buildTitle(raw);
+      const nameIn = raw.split('|')[0].trim();
+      const nameOut = out.split('|')[0].trim();
+      if (nameIn !== nameOut) mangled.push(`"${nameIn}" became "${nameOut}"  (from: ${raw})`);
+    }
+    expect(mangled, `buildTitle corrupted the leading segment:\n${mangled.join('\n')}`).toEqual([]);
+  });
+
+  test('U02: still bounds length and still repairs a dangling cut', () => {
+    // Real live strings. Left column measured on production 2026-08-17.
+    const cases: Array<[string, number]> = [
+      ['Hôtel Byblos Saint-Tropez | 5-Star Palace Hotel in Saint-Tropez', 63],
+      ['The Peninsula Istanbul | Luxury 5-Star Hotel on the Bosphorus', 61],
+      ['Alanda Marbella Hotel | 5-Star Luxury Hotel on Marbella’s Golden Mile', 69],
+    ];
+    for (const [raw, rawLength] of cases) {
+      expect(raw.length, 'test fixture drifted from the measured value').toBe(rawLength);
+      const out = buildTitle(raw);
+      expect(out.length, `over the limit: "${out}"`).toBeLessThanOrEqual(TITLE_MAX);
+      // No dangling function word or orphaned possessive survives the repair.
+      expect(out, `still ends mid-phrase: "${out}"`).not.toMatch(
+        /\s(?:in|on|at|the|a|an|of|and|or|by|to|for|with|from)$/i
+      );
+      expect(out, `orphaned possessive survived: "${out}"`).not.toMatch(/['’]s$/);
+    }
+  });
+
+  test('U03: does not double the brand, and does not strip a brand-prefixed phrase', () => {
+    // layout.tsx applies `template: '%s | Natlaupa'`, so a value already carrying the suffix
+    // rendered "Hotel Not Found | Natlaupa | Natlaupa" live. Guard both directions.
+    expect(buildTitle('Hotel Not Found | Natlaupa')).toBe('Hotel Not Found | Natlaupa');
+    // 'Natlaupa Experiences' is NOT the brand suffix and must survive intact.
+    expect(buildTitle('Natlaupa Experiences')).toBe('Natlaupa Experiences | Natlaupa');
+    expect(buildTitle('')).toBe('Natlaupa');
   });
 });
