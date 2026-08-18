@@ -506,21 +506,28 @@ test.describe('Defects with an owner (delete the test.fail when one deploys)', (
 // These cases pin the invariant instead of the inventory: the text before the final `|` is never
 // edited, because the clamp cannot have truncated it.
 // ---------------------------------------------------------------------------
-// Each of U01-U03 was proven able to go RED, against the mutation it owns. Measured 2026-08-18 by
+// Every guard below was proven able to go RED, against the mutation it owns. Measured 2026-08-18 by
 // applying each mutation to src/lib/seo-meta.ts and re-running this describe block:
 //
-//   mutation                                            U01    U02    U03
-//   A  drop the segment boundary (the original bug)      RED   green  green
-//   B  stripDanglingWords -> identity (repair off)       green   RED   green
-//   C  remove the stripBrandSuffix call                  green  green   RED
+//   mutation                                          U01    U02   U02b   U03
+//   A  drop the segment boundary (the original bug)    RED   green  green  green
+//   B  stripDanglingWords -> identity (repair off)    green   RED    RED   green
+//   C  remove the stripBrandSuffix call               green  green  green   RED
+//   D  remove 'luxury' from DANGLING_MODIFIERS        green  green   RED   green
 //
-// Read that as a contract: U01 owns the boundary, U02 owns the repair, U03 owns the brand. No two
-// of them cover the same failure, and none of them is decorative. If you change buildTitle and only
-// one goes red, that is the guard telling you which invariant you touched.
+// Read it as a contract. U01 owns the segment boundary, U02 + U02b own the repair, U02b alone owns
+// the word lists, U03 owns the brand. Every mutation has a red and no guard is decorative, so if you
+// change buildTitle the pattern of reds tells you which invariant you touched.
+//
+// 🔴 Mutation D is the one that matters, because it is the edit this code actually invites: a hotel
+// named "The Grand" arrives and someone takes `grand` out of DANGLING_MODIFIERS. A/B/C are mutations
+// nobody would make by hand. U02's cases cannot catch D — their clamped tails end on "Hotel", so the
+// cascade stops at the first word whatever the lists contain. U02b exists for exactly that gap.
 //
 // ⚠️ U02 previously asserted `not.toMatch(/\s(?:in|on|the|...)$/)` instead of the exact output. That
 // regex was a subset of DANGLING_FUNCTION_WORDS and never looked at DANGLING_MODIFIERS, so it stayed
-// green under mutation B as well as A — it proved nothing. Keep the exact strings.
+// green under B and D as well as A — it proved nothing. Keep the exact strings, and if you add a word
+// to either list, add a case here whose clamped tail ends on it.
 test.describe('buildTitle invariants', () => {
   const CORRUPTION_CASES = [
     'Jumeirah Beach | Luxury Beachfront Design Boutique Grand Modern Iconic',
@@ -571,6 +578,49 @@ test.describe('buildTitle invariants', () => {
       expect(out, `repair changed for: ${raw}`).toBe(expected);
       // Redundant with toBe, kept because it is the contract the helper exists to hold.
       expect(out.length, `over the limit: "${out}"`).toBeLessThanOrEqual(TITLE_MAX);
+    }
+  });
+
+  // 🔴 The cases above never exercise DANGLING_MODIFIERS: their clamped tails end on "Hotel",
+  // so the cascade stops at the first word either way. Measured — removing `luxury` from
+  // DANGLING_MODIFIERS leaves U01, U02 and U03 all green. That is the edit this code actually
+  // invites (a hotel named "The Grand" arrives, someone takes `grand` out of the list), so a matrix
+  // that only covers mutations nobody would make is not covering the real risk.
+  //
+  // These three ARE live values whose whole descriptor is strippable, so they run the cascade
+  // through the modifier list and out the far side into repairClampedTail's drop-the-segment
+  // branch — the branch the original bug used to walk into the hotel name.
+  test('U02b: exercises the modifier list and the dropped-segment branch', () => {
+    // [input, input length, expected output]. Live CMS values 2026-08-17; outputs from the
+    // compiled helper 2026-08-18. Each descriptor strips to nothing, so the segment is dropped
+    // and the name is returned verbatim with the brand re-attached.
+    const cases: Array<[string, number, string]> = [
+      [
+        // clamp lands on 'serviced' -> 'Luxury Serviced' -> '' (both listed)
+        'Radisson Collection Residences Riyadh | Luxury Serviced Residences',
+        66,
+        'Radisson Collection Residences Riyadh | Natlaupa',
+      ],
+      [
+        // clamp lands on 'luxury' -> '5-Star Luxury' -> '' (both listed)
+        '7Pines Resort Ibiza, Destination by Hyatt | 5-Star Luxury Resort',
+        64,
+        '7Pines Resort Ibiza, Destination by Hyatt | Natlaupa',
+      ],
+      [
+        // clamp lands on 'beach' -> 'Luxury 5-Star Beach' -> '' (all three listed)
+        'Shangri-La Le Touessrok Mauritius | Luxury 5-Star Beach Resort',
+        62,
+        'Shangri-La Le Touessrok Mauritius | Natlaupa',
+      ],
+    ];
+
+    for (const [raw, rawLength, expected] of cases) {
+      expect(raw.length, 'test fixture drifted from the measured value').toBe(rawLength);
+      const out = buildTitle(raw);
+      expect(out, `repair changed for: ${raw}`).toBe(expected);
+      // The name must survive the dropped segment untouched — U01's invariant, on real data.
+      expect(out.split('|')[0].trim(), `name mangled: "${out}"`).toBe(raw.split('|')[0].trim());
     }
   });
 
