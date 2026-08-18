@@ -68,7 +68,7 @@ export default function Home() {
         to "en" (see plan item 6.8).
       */}
       <section
-        className="bg-deepBlue border-t border-white/10 px-6 py-12 md:px-12"
+        className="bg-noir border-t border-white/10 px-6 py-12 md:px-12"
         aria-labelledby="service-disclosure-heading"
       >
         <div className="mx-auto max-w-4xl">
