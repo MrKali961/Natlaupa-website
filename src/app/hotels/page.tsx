@@ -93,7 +93,7 @@ export default async function HotelsPage({ searchParams }: Props) {
   // ---------------------------------------------------------------------------
   if (hotels.length === 0) {
     return (
-      <main className="bg-deepBlue min-h-screen">
+      <main className="bg-noir min-h-screen">
         <section className="mx-auto max-w-3xl px-6 py-32 text-center md:py-40">
           <h1 className="font-serif text-4xl text-white md:text-5xl">Our collection is loading</h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/70">
@@ -103,7 +103,7 @@ export default async function HotelsPage({ searchParams }: Props) {
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/destinations"
-              className="border border-gold px-8 py-4 text-xs uppercase tracking-widest text-gold transition-colors hover-capable:hover:bg-gold hover-capable:hover:text-deepBlue"
+              className="border border-gold px-8 py-4 text-xs uppercase tracking-widest text-gold transition-colors hover-capable:hover:bg-gold hover-capable:hover:text-noir"
             >
               Browse by destination
             </Link>
@@ -129,7 +129,7 @@ export default async function HotelsPage({ searchParams }: Props) {
   const pageHotels = hotels.slice(start, start + PER_PAGE);
 
   return (
-    <main className="bg-deepBlue min-h-screen">
+    <main className="bg-noir min-h-screen">
       <JsonLd
         data={[
           // breadcrumbList takes relative paths and absolutises them itself.
@@ -227,7 +227,7 @@ function Pagination({ page, totalPages }: { page: number; totalPages: number }) 
           <span
             key={n}
             aria-current="page"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center border border-gold bg-gold px-5 text-xs font-bold uppercase tracking-widest text-deepBlue"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center border border-gold bg-gold px-5 text-xs font-bold uppercase tracking-widest text-noir"
           >
             {n}
           </span>
