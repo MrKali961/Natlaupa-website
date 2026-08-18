@@ -342,15 +342,42 @@ test.describe('SEO regression guards (shipped fixes)', () => {
 // ===========================================================================
 // KNOWN-OPEN DEFECTS
 //
-// Each uses test.fail(), which asserts the test DOES fail. So each stays green while the
-// defect is live and turns RED the moment it is fixed — at which point delete the
-// `test.fail()` line and the test becomes a permanent guard. Every entry names its owner.
+// The convention: a defect that is live but already fixed on an unmerged branch carries
+// test.fail(), which asserts the test DOES fail. It stays green while the defect is live and turns
+// RED the moment the fix deploys — at which point you delete the `test.fail()` line and the test
+// becomes a permanent guard. Never weaken an assertion to match broken output instead.
+//
+// ✅ As of 2026-08-18 there are NO test.fail() markers left. PRs #3, #4 and #5 all deployed and
+// D02 / D03 / D05 went red exactly as designed, so their markers were deleted and all three are
+// permanent guards now. If you add a marker, name its owning branch and the condition for
+// deleting it, the way those three did.
 // ===========================================================================
 
 test.describe('Defects with an owner (delete the test.fail when one deploys)', () => {
-  // ⚠️ NO test.fail() — this defect is FIXED in this branch, so it is a permanent guard now.
-  // It will still fail until the fix DEPLOYS; that is expected, and it is the cheapest proof the
-  // deploy worked. Do not re-add a test.fail() to make it green.
+  // No markers remain here. D01 below is RED on purpose: a real, open defect.
+  // 🔴 THIS GUARD IS RED ON PRODUCTION RIGHT NOW, AND IT IS RIGHT TO BE. Do not add a
+  // test.fail() to silence it, and do not loosen the limits.
+  //
+  // The note that used to be here said the defect was "FIXED in this branch" and would pass once
+  // it deployed. It deployed on 2026-08-18 (PR #7 -> master, 42bec83) and this guard is still red.
+  // Re-measured across ALL 84 production hotel pages right after that deploy:
+  //
+  //   titles over 60         36 of 84    <- identical to the pre-fix figure
+  //   descriptions over 155   84 of 84   <- identical to the pre-fix figure
+  //   max description        658         mean 405
+  //
+  // Byte-for-byte the pre-fix numbers: the fix has ZERO effect on hotel pages. Cause, read out of
+  // the source rather than guessed — /hotel/[id] has TWO generateMetadata exports. `layout.tsx` is
+  // wired to buildTitle/buildDescription (what PR #7 fixed); `page.tsx` has its own, building
+  // `name | city | Luxury Hotel` and the raw `hotel.description` with NEITHER helper. In the App
+  // Router the page's metadata merges last and wins, so the bounded version in the layout never
+  // reaches the response. `page.tsx`'s own comment claims "layout.tsx is the authoritative
+  // metadata source for this route", which is not how App Router metadata resolution works.
+  //
+  // Fixing it is a design call (the layout owns retired-hotel noindex, the page owns the CUID
+  // redirect), so it was reported rather than patched blind. Until then this names 8 routes /
+  // 10 violations: 3 sampled hotels, plus /contact 156, /hospitality 281, /offers 178 and /cgu
+  // title 62 — static routes using literal `metadata` exports the helper was never applied to.
   //
   // What it caught, measured on production 2026-08-17 BEFORE the fix:
   //   hubs:          /countries 209, /about 203, /styles 194, /destinations 193, / 177, /blog 159
@@ -381,13 +408,6 @@ test.describe('Defects with an owner (delete the test.fail when one deploys)', (
   });
 
   test('D02: no unresolved TODO placeholder is served to visitors', async ({ request }) => {
-    test.fail(
-      true,
-      'OPEN — fixed on branch fix/natlaupa-discovery-hygiene (PR #5, plan item 2.7), not yet ' +
-        'merged. Production still serves 2 occurrences on /about, the page that explains ' +
-        'pricing, on a site that is selling. Delete this line once #5 deploys.',
-    );
-
     // Matches the bracketed literal on purpose. A case-insensitive /todo/ search flakes against
     // the RSC flight payload and ordinary prose, which is how a check like this gets deleted
     // for being noisy rather than being trusted.
@@ -401,13 +421,6 @@ test.describe('Defects with an owner (delete the test.fail when one deploys)', (
   });
 
   test('D03: no crawler-only hidden text', async ({ request }) => {
-    test.fail(
-      true,
-      'OPEN — fixed on branch fix/ungate-homepage-and-restore-scrollbars (PR #3, plan items ' +
-        '5.1 / 10.5), not yet merged. Production still serves the 1x1px clipped, aria-hidden ' +
-        'block on / holding ~1600 chars and a 9-link nav. Delete this line once #3 deploys.',
-    );
-
     // ⚠️ Two things that are NOT this defect and must not be flagged:
     //   - SVG <clipPath> elements, which are legitimate graphics. A regex for the bare word
     //     `clipPath` matches those. (The sister TRD property serves 4 per page, in its logo.)
@@ -466,13 +479,6 @@ test.describe('Defects with an owner (delete the test.fail when one deploys)', (
   });
 
   test('D05: /hotels index exists and is paginated', async ({ request }) => {
-    test.fail(
-      true,
-      'OPEN — built on branch feat/hotels-index (PR #4, plan items 5.2 / T4), not yet merged. ' +
-        'Production returns 404 for /hotels, so 84 hotels are reachable only via the sitemap. ' +
-        'Delete this line once #4 deploys.',
-    );
-
     const res = await request.get('/hotels');
     expect(res.status(), '/hotels should exist').toBe(200);
     const html = await res.text();
