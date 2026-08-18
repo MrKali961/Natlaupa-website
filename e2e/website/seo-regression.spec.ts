@@ -506,6 +506,21 @@ test.describe('Defects with an owner (delete the test.fail when one deploys)', (
 // These cases pin the invariant instead of the inventory: the text before the final `|` is never
 // edited, because the clamp cannot have truncated it.
 // ---------------------------------------------------------------------------
+// Each of U01-U03 was proven able to go RED, against the mutation it owns. Measured 2026-08-18 by
+// applying each mutation to src/lib/seo-meta.ts and re-running this describe block:
+//
+//   mutation                                            U01    U02    U03
+//   A  drop the segment boundary (the original bug)      RED   green  green
+//   B  stripDanglingWords -> identity (repair off)       green   RED   green
+//   C  remove the stripBrandSuffix call                  green  green   RED
+//
+// Read that as a contract: U01 owns the boundary, U02 owns the repair, U03 owns the brand. No two
+// of them cover the same failure, and none of them is decorative. If you change buildTitle and only
+// one goes red, that is the guard telling you which invariant you touched.
+//
+// ⚠️ U02 previously asserted `not.toMatch(/\s(?:in|on|the|...)$/)` instead of the exact output. That
+// regex was a subset of DANGLING_FUNCTION_WORDS and never looked at DANGLING_MODIFIERS, so it stayed
+// green under mutation B as well as A — it proved nothing. Keep the exact strings.
 test.describe('buildTitle invariants', () => {
   const CORRUPTION_CASES = [
     'Jumeirah Beach | Luxury Beachfront Design Boutique Grand Modern Iconic',
@@ -526,22 +541,36 @@ test.describe('buildTitle invariants', () => {
     expect(mangled, `buildTitle corrupted the leading segment:\n${mangled.join('\n')}`).toEqual([]);
   });
 
-  test('U02: still bounds length and still repairs a dangling cut', () => {
-    // Real live strings. Left column measured on production 2026-08-17.
-    const cases: Array<[string, number]> = [
-      ['Hôtel Byblos Saint-Tropez | 5-Star Palace Hotel in Saint-Tropez', 63],
-      ['The Peninsula Istanbul | Luxury 5-Star Hotel on the Bosphorus', 61],
-      ['Alanda Marbella Hotel | 5-Star Luxury Hotel on Marbella’s Golden Mile', 69],
+  // 🔴 Pins the EXACT repaired output, not the absence of one symptom — see the mutation matrix
+  // above for why the earlier regex form proved nothing. Do not weaken these back to a pattern.
+  test('U02: repairs the clamped tail to exactly this text, and stays in budget', () => {
+    // [input, input length, expected output]. Inputs are real live CMS values measured on
+    // production 2026-08-17; outputs measured from the compiled helper 2026-08-18.
+    const cases: Array<[string, number, string]> = [
+      [
+        'Hôtel Byblos Saint-Tropez | 5-Star Palace Hotel in Saint-Tropez',
+        63,
+        'Hôtel Byblos Saint-Tropez | 5-Star Palace Hotel | Natlaupa',
+      ],
+      [
+        'The Peninsula Istanbul | Luxury 5-Star Hotel on the Bosphorus',
+        61,
+        'The Peninsula Istanbul | Luxury 5-Star Hotel | Natlaupa',
+      ],
+      [
+        // Clamps mid-possessive ("on Marbella’s"), which the repair must also strip.
+        'Alanda Marbella Hotel | 5-Star Luxury Hotel on Marbella’s Golden Mile',
+        69,
+        'Alanda Marbella Hotel | 5-Star Luxury Hotel | Natlaupa',
+      ],
     ];
-    for (const [raw, rawLength] of cases) {
+
+    for (const [raw, rawLength, expected] of cases) {
       expect(raw.length, 'test fixture drifted from the measured value').toBe(rawLength);
       const out = buildTitle(raw);
+      expect(out, `repair changed for: ${raw}`).toBe(expected);
+      // Redundant with toBe, kept because it is the contract the helper exists to hold.
       expect(out.length, `over the limit: "${out}"`).toBeLessThanOrEqual(TITLE_MAX);
-      // No dangling function word or orphaned possessive survives the repair.
-      expect(out, `still ends mid-phrase: "${out}"`).not.toMatch(
-        /\s(?:in|on|at|the|a|an|of|and|or|by|to|for|with|from)$/i
-      );
-      expect(out, `orphaned possessive survived: "${out}"`).not.toMatch(/['’]s$/);
     }
   });
 
