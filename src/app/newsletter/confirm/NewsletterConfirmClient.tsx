@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -8,63 +8,95 @@ import { MailCheck, CheckCircle, Loader2, AlertCircle } from "lucide-react";
 
 const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
-type State = "missing" | "loading" | "success" | "error";
+type State = "missing" | "ready" | "loading" | "success" | "error";
 
 export default function NewsletterConfirmClient() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  const [state, setState] = useState<State>(token ? "loading" : "missing");
+  const [state, setState] = useState<State>(token ? "ready" : "missing");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // The server matches on { confirmToken, confirmedAt: null }, so a second call
-  // with the same token is a hard 404. React StrictMode runs effects twice in
-  // development, so the guard is set synchronously BEFORE the await — never in
-  // a `.then`, or the second run fires before the first resolves.
+  // DO NOT confirm on mount. Mailbox providers and security gateways (Gmail link
+  // scanning, Outlook Safe Links, corporate mail filters) fetch every URL in an
+  // incoming message, and some execute the page's JavaScript. While this component
+  // POSTed from a useEffect, a scanner completed the opt-in 23 seconds after the
+  // confirmation email was sent — verified in production 2026-08-26, no human
+  // involved — then retried 2 seconds later and hit the already-consumed 404.
+  //
+  // That defeats the whole point of double opt-in: confirmation has to prove a
+  // PERSON read the mailbox, not that a machine dereferenced a link. It also made
+  // the SES production-access application untrue where it says a subscriber "is not
+  // mailable until that link is clicked". The POST is gated behind a real click and
+  // must stay that way — do not "simplify" this back into an effect.
+  //
+  // The server matches on { confirmToken, confirmedAt: null }, so a second call with
+  // the same token is a hard 404; hence the in-flight guard below.
   const hasFired = useRef(false);
 
-  useEffect(() => {
+  const handleConfirm = useCallback(async () => {
     if (!token) return;
     if (hasFired.current) return;
     hasFired.current = true;
 
-    let cancelled = false;
+    setState("loading");
 
-    const confirm = async () => {
-      try {
-        const response = await fetch(`${API_URL}/newsletters/confirm`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
-        });
+    try {
+      const response = await fetch(`${API_URL}/newsletters/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
 
-        if (!response.ok) {
-          // 404 is the server's answer for both "unknown token" and "already
-          // confirmed" — it cannot tell them apart, so neither can the copy.
-          const data = await response.json().catch(() => null);
-          throw new Error(
-            response.status === 404 || response.status === 400
-              ? "Ce lien de confirmation n'est plus valide."
-              : data?.error?.message || data?.message || "Une erreur est survenue."
-          );
-        }
-
-        if (!cancelled) setState("success");
-      } catch (err) {
-        if (cancelled) return;
-        setErrorMessage(
-          err instanceof Error ? err.message : "Une erreur est survenue. Veuillez réessayer."
+      if (!response.ok) {
+        // 404 is the server's answer for both "unknown token" and "already
+        // confirmed" — it cannot tell them apart, so neither can the copy.
+        const data = await response.json().catch(() => null);
+        throw new Error(
+          response.status === 404 || response.status === 400
+            ? "Ce lien de confirmation n'est plus valide."
+            : data?.error?.message || data?.message || "Une erreur est survenue."
         );
-        setState("error");
       }
-    };
 
-    void confirm();
-
-    return () => {
-      cancelled = true;
-    };
+      setState("success");
+    } catch (err) {
+      setErrorMessage(
+        err instanceof Error ? err.message : "Une erreur est survenue. Veuillez réessayer."
+      );
+      setState("error");
+    }
   }, [token]);
+
+  if (state === "ready") {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center py-8"
+      >
+        <div className="w-14 h-14 mx-auto mb-8 rounded-full bg-gold/10 flex items-center justify-center">
+          <MailCheck className="text-gold" size={26} />
+        </div>
+        <p className="text-gold text-xs uppercase tracking-[0.3em] mb-4">Newsletter</p>
+        <h1 className="font-serif text-3xl md:text-4xl text-white mb-4">
+          Confirmez votre inscription
+        </h1>
+        <div className="w-12 h-px bg-gold/40 mx-auto mb-5" />
+        <p className="text-slate-400 text-sm leading-relaxed mb-8 max-w-sm mx-auto">
+          Une dernière étape&nbsp;: confirmez que cette adresse est bien la vôtre, et nos
+          adresses en avant-première vous parviendront.
+        </p>
+        <button
+          type="button"
+          onClick={handleConfirm}
+          className="block w-full max-w-xs mx-auto bg-gold text-noir font-bold uppercase tracking-widest py-4 hover:bg-white transition-colors duration-300"
+        >
+          Confirmer mon inscription
+        </button>
+      </motion.div>
+    );
+  }
 
   if (state === "loading") {
     return (
