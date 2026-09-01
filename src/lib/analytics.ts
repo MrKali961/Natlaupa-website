@@ -1,5 +1,5 @@
 /**
- * Thin wrapper over the GA4 gtag already loaded in app/layout.tsx (G-ESC050HLP4).
+ * Thin wrapper over the GA4 gtag already loaded in app/layout.tsx (G-8M912MLKPN).
  * Calls are no-ops until gtag exists, and GA4 Consent Mode v2 gates whether the
  * event is actually stored/sent — so this is safe to call without extra checks.
  *
