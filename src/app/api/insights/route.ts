@@ -18,7 +18,11 @@ export async function GET() {
     let hotelsData: { name: string; country: string; city?: string }[] = [];
     if (hotelsResponse.ok) {
       const data = await hotelsResponse.json();
-      hotelsData = data.data?.hotels || data.hotels || [];
+      // `items` is the real envelope key — `/hotels` returns
+      // `data: { items, total, page, limit, totalPages, hasMore }`. Reading only `hotels` left
+      // this [] on every request, so the insights below silently fell through to their
+      // hardcoded placeholder branch instead of being derived from the 20 hotels just fetched.
+      hotelsData = data.data?.items || data.data?.hotels || data.hotels || [];
     }
 
     // Generate AI-powered insights

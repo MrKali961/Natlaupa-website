@@ -108,7 +108,11 @@ const ConciergeRecommendations: React.FC = () => {
       // Fetch destinations (hotels) from database
       const destResponse = await fetch('/api/hotels?limit=2');
       const destData = await destResponse.json();
-      const hotelsData = destData.data?.hotels || destData.hotels || [];
+      // `/api/hotels` proxies the API envelope verbatim: `data: { items, total, page, limit,
+      // totalPages, hasMore }`. There is no `hotels` key on it and never was, so the previous
+      // `destData.data?.hotels` read resolved to [] on every load and this section rendered zero
+      // destinations permanently. `items` is the real key; the legacy fallbacks are kept last.
+      const hotelsData = destData.data?.items || destData.data?.hotels || destData.hotels || [];
       if (hotelsData.length > 0) {
         // Create destination objects from hotels
         const trendingDestinations: Destination[] = hotelsData.slice(0, 2).map((hotel: { id: string; name: string; slug?: string; country: string; thumbnailImage?: string; imageUrl?: string }) => ({
