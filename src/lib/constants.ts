@@ -13,8 +13,18 @@ export interface MapDestination {
 // Fallback destinations (used when no hotels with coordinates are available)
 export const MAP_DESTINATIONS: MapDestination[] = [];
 
+/**
+ * Primary navigation.
+ *
+ * Hotels / Destinations / Styles are here deliberately. They were previously footer-only, which
+ * left the entire catalogue — 85 hotels, 33 destinations, 7 styles — with no entry point in the
+ * primary nav on any page. The footer is a fallback discovery surface, not the only one.
+ */
 export const NAV_LINKS = [
   { name: "Private Travel", path: "/" },
+  { name: "Hotels", path: "/hotels" },
+  { name: "Destinations", path: "/destinations" },
+  { name: "Styles", path: "/styles" },
   { name: "About Us", path: "/about" },
   { name: "Contact", path: "/contact" },
 ];
