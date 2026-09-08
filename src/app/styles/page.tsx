@@ -37,34 +37,50 @@ interface PaginationMeta {
 
 const ITEMS_PER_PAGE = 10;
 
+/** Public collection endpoints reject `limit > 100` with a 422, so this is the ceiling. */
+const API_PAGE_SIZE = 100;
+/** Hard stop so a malformed `totalPages` cannot spin forever. */
+const MAX_API_PAGES = 20;
+
 export default function StylesPage() {
   const [stylesWithData, setStylesWithData] = useState<StyleWithUI[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState<PaginationMeta | null>(null);
 
-  const fetchStyles = useCallback(async (page: number) => {
+  const fetchStyles = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/styles?page=${page}&limit=${ITEMS_PER_PAGE}`);
-      const data = await response.json();
+      // Fetch the whole collection, then paginate locally — same fix as /destinations.
+      // The API envelope is `data: { items, total, page, limit, totalPages }`; there is no `meta`
+      // key, so the old `data.data.meta` read left `pagination` null forever and the pager below
+      // never rendered. That is latent rather than visible here only because 7 styles happen to
+      // fit under one page of 10 — the 11th style would have become unreachable silently.
+      const collected: StyleData[] = [];
+      for (let page = 1; page <= MAX_API_PAGES; page++) {
+        const response = await fetch(`/api/styles?page=${page}&limit=${API_PAGE_SIZE}`);
+        const data = await response.json();
 
-      if (response.ok && data.data?.items) {
-        const styles = data.data.items as StyleData[];
-        setStylesWithData(
-          styles.map((style: StyleData) => ({
-            ...style,
-            featuredImage: style.imageUrl || 'https://picsum.photos/600/400',
-            Icon: categoryIcons[style.name] || Building2,
-          }))
-        );
-        if (data.data.meta) {
-          setPagination(data.data.meta);
+        if (!response.ok || !data.data?.items) {
+          if (collected.length === 0) {
+            setError(data.error || 'Failed to fetch styles');
+            return;
+          }
+          break;
         }
-      } else {
-        setError(data.error || 'Failed to fetch styles');
+
+        collected.push(...(data.data.items as StyleData[]));
+        if (page >= (data.data.totalPages ?? 1)) break;
       }
+
+      setError(null);
+      setStylesWithData(
+        collected.map((style: StyleData) => ({
+          ...style,
+          featuredImage: style.imageUrl || 'https://picsum.photos/600/400',
+          Icon: categoryIcons[style.name] || Building2,
+        }))
+      );
     } catch (err) {
       console.error('Error fetching styles:', err);
       setError('Failed to fetch styles');
@@ -74,8 +90,21 @@ export default function StylesPage() {
   }, []);
 
   useEffect(() => {
-    fetchStyles(currentPage);
-  }, [currentPage, fetchStyles]);
+    fetchStyles();
+  }, [fetchStyles]);
+
+  // Derived from the fetched collection so the pager's counts always match the rendered cards.
+  const totalPages = Math.max(1, Math.ceil(stylesWithData.length / ITEMS_PER_PAGE));
+  const pagination: PaginationMeta = {
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+    total: stylesWithData.length,
+    totalPages,
+  };
+  const visibleStyles = stylesWithData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -115,7 +144,7 @@ export default function StylesPage() {
               </div>
             ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {stylesWithData.map((style, index) => (
+              {visibleStyles.map((style, index) => (
                 <motion.div
                   key={style.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -168,7 +197,7 @@ export default function StylesPage() {
             )}
 
             {/* Pagination */}
-            {pagination && pagination.totalPages > 1 && (
+            {pagination.totalPages > 1 && (
               <div className="mt-12 flex items-center justify-center gap-2">
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
@@ -227,7 +256,7 @@ export default function StylesPage() {
             )}
 
             {/* Page info */}
-            {pagination && (
+            {stylesWithData.length > 0 && (
               <div className="mt-4 text-center text-sm text-slate-400">
                 Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, pagination.total)} of {pagination.total} styles
               </div>

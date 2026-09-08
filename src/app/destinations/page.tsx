@@ -25,6 +25,11 @@ interface PaginationMeta {
 
 const ITEMS_PER_PAGE = 12;
 
+/** Public collection endpoints reject `limit > 100` with a 422, so this is the ceiling. */
+const API_PAGE_SIZE = 100;
+/** Hard stop so a malformed `totalPages` cannot spin forever. */
+const MAX_API_PAGES = 20;
+
 export default function DestinationsPage() {
   const [destinationsWithData, setDestinationsWithData] = useState<Array<{
     id: string;
@@ -36,34 +41,55 @@ export default function DestinationsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState<PaginationMeta | null>(null);
 
-  const fetchDestinations = useCallback(async (page: number) => {
+  const fetchDestinations = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/destinations?page=${page}&limit=${ITEMS_PER_PAGE}`);
-      const data = await response.json();
+      // Fetch the WHOLE collection, then filter/sort/paginate locally.
+      //
+      // Two reasons this cannot be a single `?page=N&limit=12` request:
+      //  1. The eligibility filter (`hotelCount > 0`) and the hotelCount sort below are
+      //     collection-wide operations. Applied to one server page they rank 12 arbitrary rows
+      //     against each other and drop rows mid-page, so a page can render 11 cards while the
+      //     pager claims 12.
+      //  2. The API envelope is `data: { items, total, page, limit, totalPages }` — there is no
+      //     `meta` key. Reading `data.data.meta` left `pagination` null forever, which silently
+      //     disabled the pager below and stranded every destination past the first page.
+      //
+      // API_PAGE_SIZE is 100 because the public endpoints hard-reject `limit > 100` with a 422
+      // (`Number must be less than or equal to 100`) and a rejected request renders zero rows —
+      // so "just ask for everything at once" is not available.
+      const collected: DestinationData[] = [];
+      for (let page = 1; page <= MAX_API_PAGES; page++) {
+        const response = await fetch(`/api/destinations?page=${page}&limit=${API_PAGE_SIZE}`);
+        const data = await response.json();
 
-      if (response.ok && data.data?.items) {
-        const destinations = data.data.items as DestinationData[];
-        setDestinationsWithData(
-          destinations
-            .filter((d: DestinationData) => d.isActive && d.hotelCount > 0)
-            .sort((a, b) => b.hotelCount - a.hotelCount)
-            .map((d: DestinationData) => ({
-              id: d.id,
-              name: d.name,
-              slug: d.slug,
-              hotelCount: d.hotelCount,
-              imageUrl: d.imageUrl || 'https://picsum.photos/600/400?random=50',
-            }))
-        );
-        if (data.data.meta) {
-          setPagination(data.data.meta);
+        if (!response.ok || !data.data?.items) {
+          // Partial collection is still worth showing; only a total failure is an error.
+          if (collected.length === 0) {
+            setError(data.error || 'Failed to fetch destinations');
+            return;
+          }
+          break;
         }
-      } else {
-        setError(data.error || 'Failed to fetch destinations');
+
+        collected.push(...(data.data.items as DestinationData[]));
+        if (page >= (data.data.totalPages ?? 1)) break;
       }
+
+      setError(null);
+      setDestinationsWithData(
+        collected
+          .filter((d: DestinationData) => d.isActive && d.hotelCount > 0)
+          .sort((a, b) => b.hotelCount - a.hotelCount)
+          .map((d: DestinationData) => ({
+            id: d.id,
+            name: d.name,
+            slug: d.slug,
+            hotelCount: d.hotelCount,
+            imageUrl: d.imageUrl || 'https://picsum.photos/600/400?random=50',
+          }))
+      );
     } catch (err) {
       console.error('Error fetching destinations:', err);
       setError('Failed to fetch destinations');
@@ -73,8 +99,22 @@ export default function DestinationsPage() {
   }, []);
 
   useEffect(() => {
-    fetchDestinations(currentPage);
-  }, [currentPage, fetchDestinations]);
+    fetchDestinations();
+  }, [fetchDestinations]);
+
+  // Pagination is derived from the fetched collection, not from the server envelope, so the
+  // counts the pager shows always match the cards actually rendered.
+  const totalPages = Math.max(1, Math.ceil(destinationsWithData.length / ITEMS_PER_PAGE));
+  const pagination: PaginationMeta = {
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+    total: destinationsWithData.length,
+    totalPages,
+  };
+  const visibleDestinations = destinationsWithData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -114,7 +154,7 @@ export default function DestinationsPage() {
               </div>
             ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {destinationsWithData.map((destination, index) => (
+              {visibleDestinations.map((destination, index) => (
                 <motion.div
                   key={destination.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -158,7 +198,7 @@ export default function DestinationsPage() {
             )}
 
             {/* Pagination */}
-            {pagination && pagination.totalPages > 1 && (
+            {pagination.totalPages > 1 && (
               <div className="mt-12 flex items-center justify-center gap-2">
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
@@ -217,7 +257,7 @@ export default function DestinationsPage() {
             )}
 
             {/* Page info */}
-            {pagination && (
+            {destinationsWithData.length > 0 && (
               <div className="mt-4 text-center text-sm text-slate-400">
                 Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, pagination.total)} of {pagination.total} destinations
               </div>
