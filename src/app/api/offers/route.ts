@@ -48,18 +48,32 @@ export async function GET(request: NextRequest) {
       if (value) params.set(key, value);
     }
 
+    // Keys this route INJECTS on the caller's behalf, as opposed to keys the caller sent itself.
+    // Only injected keys may be dropped by the empty-result fallback below — a filter the caller
+    // asked for explicitly must be honoured even when it matches nothing.
+    const injectedKeys: string[] = [];
+
     switch (type) {
       case 'seasonal':
         // Get offers matching current season's experience type
-        params.set('experienceType', searchParams.get('experienceType') || getSeasonalExperienceType());
+        if (!searchParams.get('experienceType')) {
+          params.set('experienceType', getSeasonalExperienceType());
+          injectedKeys.push('experienceType');
+        }
         break;
 
       case 'trending':
-        params.set('isTrending', 'true');
+        if (!searchParams.get('isTrending')) {
+          params.set('isTrending', 'true');
+          injectedKeys.push('isTrending');
+        }
         break;
 
       case 'for-you':
-        params.set('isFeatured', 'true');
+        if (!searchParams.get('isFeatured')) {
+          params.set('isFeatured', 'true');
+          injectedKeys.push('isFeatured');
+        }
         break;
 
       // No type → catalogue: no curation filter at all.
@@ -68,27 +82,58 @@ export async function GET(request: NextRequest) {
     // Fetch from server API (using public endpoint). A search term is arbitrary
     // user input, so caching it would mint a cache entry per one-off query; the
     // curated modes are a small fixed set of URLs and cache normally.
-    const response = await fetch(`${API_URL}/offers/public?${params.toString()}`, {
-      headers: { 'Content-Type': 'application/json' },
-      cache: search ? 'no-store' : undefined,
-      next: search ? undefined : { revalidate: 60 },
-    });
+    const fetchOffers = async (qs: URLSearchParams) => {
+      const response = await fetch(`${API_URL}/offers/public?${qs.toString()}`, {
+        headers: { 'Content-Type': 'application/json' },
+        cache: search ? 'no-store' : undefined,
+        next: search ? undefined : { revalidate: 60 },
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        return { ok: false as const, status: response.status, message: errorData.error?.message };
+      }
+
+      const data = await response.json();
+      return {
+        ok: true as const,
+        offers: data.data?.offers || [],
+        pagination: data.data?.pagination,
+      };
+    };
+
+    let result = await fetchOffers(params);
+    if (!result.ok) {
       return NextResponse.json(
-        { error: errorData.error?.message || 'Failed to fetch offers' },
-        { status: response.status }
+        { error: result.message || 'Failed to fetch offers' },
+        { status: result.status }
       );
     }
 
-    const data = await response.json();
-    const offers = data.data?.offers || [];
-    const pagination = data.data?.pagination;
+    // A curated tab that matches nothing must not render an empty section. Every offer in the
+    // catalogue currently has isTrending = isFeatured = false and an experienceType that does not
+    // match the season map, so all three curated modes returned 0 of 6 offers on every page load.
+    // Curation is a ranking preference, not a visibility rule: when the injected filter empties the
+    // result, retry without it and serve the catalogue instead.
+    let fellBackFrom: string[] = [];
+    if (result.offers.length === 0 && injectedKeys.length > 0) {
+      const relaxed = new URLSearchParams(params);
+      injectedKeys.forEach((key) => relaxed.delete(key));
+      const retry = await fetchOffers(relaxed);
+      if (retry.ok && retry.offers.length > 0) {
+        result = retry;
+        fellBackFrom = injectedKeys;
+      }
+    }
+
+    const { offers, pagination } = result;
 
     return NextResponse.json({
       success: true,
       type,
+      // Names the filters that were dropped to avoid an empty section, so a caller (or anyone
+      // debugging) can tell a curated result from a fallback one.
+      relaxedFilters: fellBackFrom.length > 0 ? fellBackFrom : undefined,
       count: offers.length,
       // The real match count, not the page length. `count` is kept for existing callers.
       total: pagination?.total ?? offers.length,
